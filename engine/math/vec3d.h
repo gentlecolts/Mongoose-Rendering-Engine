@@ -1,0 +1,6 @@
+#ifndef VEC3D_H_INCLUDED
+#define VEC3D_H_INCLUDED
+
+
+
+#endif // VEC3D_H_INCLUDED

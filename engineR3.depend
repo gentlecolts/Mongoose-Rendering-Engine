@@ -1,0 +1,43 @@
+# depslib dependency file v1.0
+1427128433 source:c:\users\jack\documents\github\enginer3\engine\camera\camera.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\math\matrix.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\math\quat.cpp
+
+1427496782 source:c:\users\jack\documents\github\enginer3\engine\math\vec2d.cpp
+	"vec2d.h"
+	<cmath>
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\math\vec3d.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\io\polytooct.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\io\polytopoint.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\io\readfile.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\io\writefile.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\obj.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\oct.cpp
+
+1427128590 source:c:\users\jack\documents\github\enginer3\engine\object\point.cpp
+
+1427484396 source:c:\users\jack\documents\github\enginer3\main.cpp
+	<SDL2/SDL.h>
+	"engine/engine.h"
+
+1427497016 c:\users\jack\documents\github\enginer3\engine\engine.h
+	"2d/surface.h"
+
+1427484572 source:c:\users\jack\documents\github\enginer3\engine\core\engine.cpp
+	"../engine.h"
+
+1427496831 c:\users\jack\documents\github\enginer3\engine\2d\surface.h
+	<stdint.h>
+	<SDL2/SDL.h>
+
+1427496759 c:\users\jack\documents\github\enginer3\engine\math\vec2d.h
+

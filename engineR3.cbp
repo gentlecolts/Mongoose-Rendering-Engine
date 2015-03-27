@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="engineR3" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/engineR3" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/engineR3" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-march=core2" />
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+		</Compiler>
+		<Linker>
+			<Add option="-lmingw32 -lsdlmain -lsdl" />
+		</Linker>
+		<Unit filename="demos/demos.h" />
+		<Unit filename="engine/2d/surface.h" />
+		<Unit filename="engine/camera/camera.cpp" />
+		<Unit filename="engine/core/engine.cpp" />
+		<Unit filename="engine/engine.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="engine/math/math.h" />
+		<Unit filename="engine/math/matrix.cpp" />
+		<Unit filename="engine/math/matrix.h" />
+		<Unit filename="engine/math/quat.cpp" />
+		<Unit filename="engine/math/quat.h" />
+		<Unit filename="engine/math/vec2d.cpp" />
+		<Unit filename="engine/math/vec2d.h" />
+		<Unit filename="engine/math/vec3d.cpp" />
+		<Unit filename="engine/math/vec3d.h" />
+		<Unit filename="engine/object/io/polyToOct.cpp" />
+		<Unit filename="engine/object/io/polyToPoint.cpp" />
+		<Unit filename="engine/object/io/readFile.cpp" />
+		<Unit filename="engine/object/io/writeFile.cpp" />
+		<Unit filename="engine/object/obj.cpp" />
+		<Unit filename="engine/object/oct.cpp" />
+		<Unit filename="engine/object/point.cpp" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
