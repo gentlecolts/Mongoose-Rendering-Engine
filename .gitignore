@@ -44,3 +44,4 @@ Temporary Items
 
 # Dont include executables
 bin
+obj
