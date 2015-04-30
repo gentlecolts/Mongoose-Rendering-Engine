@@ -43,9 +43,7 @@
 		<Unit filename="engine/2d/surface.h" />
 		<Unit filename="engine/camera/camera.cpp" />
 		<Unit filename="engine/core/engine.cpp" />
-		<Unit filename="engine/engine.h">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
+		<Unit filename="engine/engine.h" />
 		<Unit filename="engine/math/math.h" />
 		<Unit filename="engine/math/matrix.cpp" />
 		<Unit filename="engine/math/matrix.h" />

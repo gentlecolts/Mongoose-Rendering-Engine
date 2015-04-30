@@ -41,3 +41,56 @@
 
 1427496759 c:\users\jack\documents\github\enginer3\engine\math\vec2d.h
 
+1427128433 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\camera\camera.cpp
+
+1427484572 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\engine.cpp
+	"../engine.h"
+
+1430364634 c:\users\jack\documents\github\mongoose-rendering-engine\engine\engine.h
+	"2d/surface.h"
+
+1427496831 c:\users\jack\documents\github\mongoose-rendering-engine\engine\2d\surface.h
+	<stdint.h>
+	<SDL2/SDL.h>
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\matrix.cpp
+
+1430364675 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\quat.cpp
+	"quat.h"
+	<cmath>
+
+1430362226 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\vec2d.cpp
+	"vec2d.h"
+	<cmath>
+
+1430365733 c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\vec2d.h
+
+1430362409 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\vec3d.cpp
+	"vec3d.h"
+	<cmath>
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\io\polytooct.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\io\polytopoint.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\io\readfile.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\io\writefile.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\obj.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\oct.cpp
+
+1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\point.cpp
+
+1430365317 source:c:\users\jack\documents\github\mongoose-rendering-engine\main.cpp
+	<SDL2/SDL.h>
+	"engine/engine.h"
+	"engine/math/quat.h"
+	"engine/math/vec3d.h"
+
+1430365711 c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\vec3d.h
+
+1430365778 c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\quat.h
+	"vec3d.h"
+
