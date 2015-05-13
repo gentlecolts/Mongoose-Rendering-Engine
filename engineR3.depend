@@ -46,7 +46,8 @@
 1427484572 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\engine.cpp
 	"../engine.h"
 
-1430364634 c:\users\jack\documents\github\mongoose-rendering-engine\engine\engine.h
+1431537716 c:\users\jack\documents\github\mongoose-rendering-engine\engine\engine.h
+	<SDL2/SDL.h>
 	"2d/surface.h"
 
 1427496831 c:\users\jack\documents\github\mongoose-rendering-engine\engine\2d\surface.h

@@ -7,15 +7,21 @@ the user should not need to specify any particular datatypes
 
 all aspects of this engine must use the namespace MG
 */
+#include <SDL2/SDL.h>
 #include "2d/surface.h"
 
 namespace MG{
 	class engine{
 	public:
 		surface screen;
-		///TODO: determine necessary parameters
+		///TODO: determine need for alternate constructors
 		engine();//these should simply be a call to init
-		bool init();
+		~engine();//i know i am going to need this at some point
+
+		void init();//(re)initialize the engine.  this should initialize everything and free any objects that might have been in use
+		void initScreen(int width,int height,int flags=-1);
+
+		void update();
 	};
 }
 
