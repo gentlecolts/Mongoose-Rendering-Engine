@@ -37,12 +37,17 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lsdlmain -lsdl" />
+			<Add option="-lmingw32 -lsdl2main -lsdl2" />
 		</Linker>
 		<Unit filename="demos/demos.h" />
+		<Unit filename="engine/2d/surface.cpp" />
 		<Unit filename="engine/2d/surface.h" />
 		<Unit filename="engine/camera/camera.cpp" />
-		<Unit filename="engine/core/engine.cpp" />
+		<Unit filename="engine/core/core.h" />
+		<Unit filename="engine/core/draw.cpp" />
+		<Unit filename="engine/core/events.cpp" />
+		<Unit filename="engine/core/main.cpp" />
+		<Unit filename="engine/core/scene.cpp" />
 		<Unit filename="engine/engine.h" />
 		<Unit filename="engine/math/math.h" />
 		<Unit filename="engine/math/matrix.cpp" />
@@ -53,11 +58,13 @@
 		<Unit filename="engine/math/vec2d.h" />
 		<Unit filename="engine/math/vec3d.cpp" />
 		<Unit filename="engine/math/vec3d.h" />
+		<Unit filename="engine/object/chunk.h" />
 		<Unit filename="engine/object/io/polyToOct.cpp" />
 		<Unit filename="engine/object/io/polyToPoint.cpp" />
 		<Unit filename="engine/object/io/readFile.cpp" />
 		<Unit filename="engine/object/io/writeFile.cpp" />
 		<Unit filename="engine/object/obj.cpp" />
+		<Unit filename="engine/object/object.h" />
 		<Unit filename="engine/object/oct.cpp" />
 		<Unit filename="engine/object/point.cpp" />
 		<Unit filename="main.cpp" />

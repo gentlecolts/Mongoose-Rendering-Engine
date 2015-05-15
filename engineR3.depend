@@ -46,11 +46,10 @@
 1427484572 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\engine.cpp
 	"../engine.h"
 
-1431537716 c:\users\jack\documents\github\mongoose-rendering-engine\engine\engine.h
-	<SDL2/SDL.h>
-	"2d/surface.h"
+1431723408 c:\users\jack\documents\github\mongoose-rendering-engine\engine\engine.h
+	"core/core.h"
 
-1427496831 c:\users\jack\documents\github\mongoose-rendering-engine\engine\2d\surface.h
+1431725424 c:\users\jack\documents\github\mongoose-rendering-engine\engine\2d\surface.h
 	<stdint.h>
 	<SDL2/SDL.h>
 
@@ -84,7 +83,7 @@
 
 1427128590 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\point.cpp
 
-1430365317 source:c:\users\jack\documents\github\mongoose-rendering-engine\main.cpp
+1431725505 source:c:\users\jack\documents\github\mongoose-rendering-engine\main.cpp
 	<SDL2/SDL.h>
 	"engine/engine.h"
 	"engine/math/quat.h"
@@ -94,4 +93,28 @@
 
 1430365778 c:\users\jack\documents\github\mongoose-rendering-engine\engine\math\quat.h
 	"vec3d.h"
+
+1431719392 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\engine_main.cpp
+	"../engine.h"
+	<SDL2/SDL.h>
+
+1431720941 c:\users\jack\documents\github\mongoose-rendering-engine\engine\object\object.h
+	"../math/vec3d.h"
+
+1431724174 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\draw.cpp
+
+1431724155 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\scene.cpp
+
+1431725439 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\2d\surface.cpp
+	"surface.h"
+
+1431725466 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\events.cpp
+	"core.h"
+
+1431725489 c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\core.h
+	"../2d/surface.h"
+	"../object/object.h"
+
+1431724220 source:c:\users\jack\documents\github\mongoose-rendering-engine\engine\core\main.cpp
+	"core.h"
 
