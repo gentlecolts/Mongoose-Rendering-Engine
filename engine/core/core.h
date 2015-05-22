@@ -11,22 +11,35 @@ all aspects of this engine must use the namespace MG
 #include "../object/object.h"
 
 namespace MG{
+	///TODO: please stop doing this...
+	typedef SDL_Event event;
+
 	class engine{
 		//need to intelegently store map chunks
+
+		event evt;
+		void (*evtProc)(event*)=0;
+		bool isEventAsync=false;
 	public:
 		surface screen;
+
+		//the following are implemented in core.cpp
 		///TODO: determine need for alternate constructors
 		engine();//these should simply be a call to init
 		~engine();//i know i am going to need this at some point
 
 		void init();//(re)initialize the engine.  this should initialize everything and free any objects that might have been in use
 
+		//the following are implemented in scene.cpp
 		void addToScene(obj *o);
 		void removeFromScene(obj *o);
 		void clearScene();
+
+		//the following are implemented in draw.cpp
 		void update();
 
-		///TODO: figure out how to do event handling
+		//the following are implemented in events.cpp
+		void setEventHandler(void (*eventProcessor)(event*));
 		//bool getEvents()
 	};
 }

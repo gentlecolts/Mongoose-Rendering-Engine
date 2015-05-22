@@ -12,10 +12,9 @@ look into BVH
 #include <cstdlib>
 using namespace std;
 
-SDL_Event evt;
-void checkClose(){
-	if(SDL_PollEvent(&evt)){
-		switch(evt.type){
+void checkClose(MG::event *evt){
+	if(SDL_PollEvent(evt)){
+		switch(evt->type){
 		case SDL_QUIT:
 			SDL_Quit();
 			exit(0);
@@ -25,11 +24,11 @@ void checkClose(){
 
 int main(int argc,char** argv){
 	MG::engine e;
+ 	e.setEventHandler(&checkClose);
 
 	e.screen.initScreen(1280,720);
 	while(1){
-		e.screen.update();
-		checkClose();
+		e.update();
 	}
 	return 0;
 }
