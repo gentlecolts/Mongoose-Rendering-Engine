@@ -19,7 +19,7 @@ namespace MG{
 
 		event evt;
 		void (*evtProc)(event*)=0;
-		bool isEventAsync=false;
+		bool isEventSync=true;//if this is false, then
 	public:
 		surface screen;
 
@@ -40,7 +40,8 @@ namespace MG{
 
 		//the following are implemented in events.cpp
 		void setEventHandler(void (*eventProcessor)(event*));
-		//bool getEvents()
+		void setEventHandler(void (*eventProcessor)(event*),bool b);
+		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
 	};
 }
 
