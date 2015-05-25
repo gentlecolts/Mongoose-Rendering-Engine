@@ -20,8 +20,17 @@ namespace MG{
 		event evt;
 		void (*evtProc)(event*)=0;
 		bool isEventSync=true;//if this is false, then
+
+		//window win;
 	public:
-		surface screen;
+		///TODO: figure this whole mess out
+		/*
+		surface hud,scene;//2d overlay and 3d render surface respectively
+		bool showHud=false,showScene=true;
+		/*/
+		window win;
+		//*/
+		uint32_t bgCol=0;
 
 		//the following are implemented in core.cpp
 		///TODO: determine need for alternate constructors

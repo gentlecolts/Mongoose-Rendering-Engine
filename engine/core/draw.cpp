@@ -12,5 +12,5 @@ void engine::update(){
 	//step physics(?)
 	//render scene
 	//update window
-	screen.update();
+	win.update();
 }

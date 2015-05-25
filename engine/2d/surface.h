@@ -4,14 +4,30 @@
 #include <SDL2/SDL.h>
 
 namespace MG{
+	/*
 	struct surface{
-		SDL_Window *win;
-		SDL_Renderer *r;
 		SDL_Texture *tex;
 		uint32_t *pixels;
+
+		void initSurface(int width,int height);
+		void update();
+	};
+	//*/
+
+	struct window{
+		SDL_Window *win;
+		SDL_Renderer *r;
+		/*
+		surface s;
+		/*/
+		SDL_Texture *tex;
+		uint32_t *pixels;
+		//*/
+
 		int w,h;
 
-		void initScreen(int width,int height,int flags=SDL_WINDOW_SHOWN);
+		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
+		//void blit(surface &s);
 		void update();
 	};
 }

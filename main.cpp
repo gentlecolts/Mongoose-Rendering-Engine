@@ -26,7 +26,7 @@ int main(int argc,char** argv){
 	MG::engine e;
  	e.setEventHandler(&checkClose);
 
-	e.screen.initScreen(1280,720);
+	e.win.initWindow(1280,720);
 	while(1){
 		e.update();
 	}
