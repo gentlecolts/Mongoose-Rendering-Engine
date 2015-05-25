@@ -21,15 +21,10 @@ namespace MG{
 		void (*evtProc)(event*)=0;
 		bool isEventSync=true;//if this is false, then
 
-		//window win;
-	public:
-		///TODO: figure this whole mess out
-		/*
-		surface hud,scene;//2d overlay and 3d render surface respectively
-		bool showHud=false,showScene=true;
-		/*/
 		window win;
-		//*/
+	public:
+		surface hud,scene;//2d overlay and 3d render surface respectively
+		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
 
 		//the following are implemented in core.cpp
@@ -46,6 +41,8 @@ namespace MG{
 
 		//the following are implemented in draw.cpp
 		void update();
+		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
+		void setTitle(const char* title);
 
 		//the following are implemented in events.cpp
 		void setEventHandler(void (*eventProcessor)(event*));

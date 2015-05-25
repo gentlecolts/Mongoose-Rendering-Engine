@@ -25,8 +25,10 @@ void checkClose(MG::event *evt){
 int main(int argc,char** argv){
 	MG::engine e;
  	e.setEventHandler(&checkClose);
+ 	e.initWindow(1280,720);
+	e.setTitle("Mongoose Rendering Engine Demo");
 
-	e.win.initWindow(1280,720);
+
 	while(1){
 		e.update();
 	}
