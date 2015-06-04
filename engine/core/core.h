@@ -22,6 +22,7 @@ namespace MG{
 		std::thread *evtThread=0;
 		void (*evtProc)(event*)=0;
 		bool isEventSync=true;//if this is false, then
+		//void loopEvt();
 
 		window win;
 	public:

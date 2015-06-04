@@ -13,6 +13,10 @@ void engine::setEventHandler(void (*eventProcessor)(SDL_Event*),bool b){
 	setEventAsync(b);
 }
 
+void loopEvt(void (*evtProc)(event*),event *evt){
+    while(1){evtProc(evt);}
+}
+
 bool engine::setEventAsync(bool b){
 	if(b!=isEventSync){//no need to do anything if the state of threaded or not is unchanged
 		return true;
@@ -20,7 +24,7 @@ bool engine::setEventAsync(bool b){
 
 	///TODO: learn how c++11 threading works
 	if(b){//create event thread
-		evtThread=new std::thread(*evtProc);
+		evtThread=new std::thread(loopEvt,evtProc,&evt);
 	}else{//terminate event thread if it exists
 		delete evtThread;
 	}
