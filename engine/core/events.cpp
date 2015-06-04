@@ -20,10 +20,12 @@ bool engine::setEventAsync(bool b){
 
 	///TODO: learn how c++11 threading works
 	if(b){//create event thread
+		evtThread=new std::thread(*evtProc);
 	}else{//terminate event thread if it exists
+		delete evtThread;
 	}
 
 	//if we've reached this point, then everything went well and we can return
-	isEventSync=b;
+	isEventSync=!b;
 	return true;//everything went well
 }

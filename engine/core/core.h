@@ -9,6 +9,7 @@ all aspects of this engine must use the namespace MG
 */
 #include "../2d/surface.h"
 #include "../object/object.h"
+#include <thread>
 
 namespace MG{
 	///TODO: please stop doing this...
@@ -18,6 +19,7 @@ namespace MG{
 		//need to intelegently store map chunks
 
 		event evt;
+		std::thread *evtThread=0;
 		void (*evtProc)(event*)=0;
 		bool isEventSync=true;//if this is false, then
 
