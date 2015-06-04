@@ -10,7 +10,9 @@ void engine::update(){
 		evtProc(&evt);
 	}
 	///step physics(?)
+	///TODO
 	///render scene(?)
+	///TODO
 	///update window
 	//win.update();
 	if(showScene){scene.update();}

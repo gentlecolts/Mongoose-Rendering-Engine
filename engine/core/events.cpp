@@ -25,6 +25,7 @@ bool engine::setEventAsync(bool b){
 	///TODO: learn how c++11 threading works
 	if(b){//create event thread
 		evtThread=new std::thread(loopEvt,evtProc,&evt);
+		evtThread->detach();
 	}else{//terminate event thread if it exists
 		delete evtThread;
 	}

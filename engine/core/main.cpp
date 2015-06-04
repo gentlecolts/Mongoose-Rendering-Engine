@@ -8,7 +8,18 @@ using namespace MG;
 engine::engine(){
 	init();
 }
-void engine::init(){
-}
 engine::~engine(){
+}
+
+void checkClose(MG::event *evt){
+	if(SDL_PollEvent(evt)){
+		switch(evt->type){
+		case SDL_QUIT:
+			SDL_Quit();
+			exit(0);
+		}
+	}
+}
+void engine::init(){
+	setEventHandler(checkClose);
 }

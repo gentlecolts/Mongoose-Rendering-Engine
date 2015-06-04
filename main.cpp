@@ -12,22 +12,14 @@ look into BVH
 #include <cstdlib>
 using namespace std;
 
-void checkClose(MG::event *evt){
-	if(SDL_PollEvent(evt)){
-		switch(evt->type){
-		case SDL_QUIT:
-			SDL_Quit();
-			exit(0);
-		}
-	}
-}
-
 int main(int argc,char** argv){
 	MG::engine e;
- 	e.setEventHandler(&checkClose);
+ 	//e.setEventHandler(&checkClose);//moved this to be the default event handler
  	e.initWindow(1280,720);
 	e.setTitle("Mongoose Rendering Engine Demo");
 
+	e.setEventAsync(true);
+	//e.setEventAsync(false);
 
 	while(1){
 		e.update();
