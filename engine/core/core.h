@@ -18,6 +18,7 @@ namespace MG{
 	class engine{
 		//need to intelegently store map chunks
 
+		///TODO: check event before even calling the event handler
 		event evt;
 		std::thread *evtThread=0;
 		void (*evtProc)(event*)=0;
