@@ -10,7 +10,12 @@ look into BVH
 #include "engine/math/quat.h"
 #include "engine/math/vec3d.h"
 #include <cstdlib>
+#include <iostream>
 using namespace std;
+
+void threadtest(){
+	while(true){cout<<"thread is running"<<endl;}
+}
 
 int main(int argc,char** argv){
 	MG::engine e;
@@ -18,8 +23,10 @@ int main(int argc,char** argv){
  	e.initWindow(1280,720);
 	e.setTitle("Mongoose Rendering Engine Demo");
 
-	e.setEventAsync(true);
+	//e.setEventAsync(true);
 	//e.setEventAsync(false);
+	thread t(threadtest);
+	t.detach();
 
 	while(1){
 		e.update();
