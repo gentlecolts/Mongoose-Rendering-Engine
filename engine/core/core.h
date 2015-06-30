@@ -19,7 +19,6 @@ namespace MG{
 		//need to intelegently store map chunks
 
 		///TODO: check event before even calling the event handler
-		event evt;
 		std::thread *evtThread=0;
 		void (*evtProc)(event*)=0;
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
@@ -27,6 +26,7 @@ namespace MG{
 
 		window win;
 	public:
+		event evt;
 		surface hud,scene;//2d overlay and 3d render surface respectively
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
