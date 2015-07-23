@@ -9,6 +9,7 @@ all aspects of this engine must use the namespace MG
 */
 #include "../2d/surface.h"
 #include "../object/object.h"
+#include "../object/meta.h"
 #include <thread>
 
 namespace MG{
@@ -52,6 +53,11 @@ namespace MG{
 		void setEventHandler(void (*eventProcessor)(event*));
 		void setEventHandler(void (*eventProcessor)(event*),bool b);
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
+
+		//the following are implemented in io.cpp
+		obj& newObj(meta *metadata=0);
+		obj& newObjFromFile(std::string fname,meta *metadata=0);
+		obj& newOctreeFromFile(std::string fname,meta *metadata=0);
 	};
 }
 

@@ -4,6 +4,7 @@ use SDL2 -try to hide it as much as possible, any external libraries should be t
 use c++11 threading
 
 look into BVH
+look into gcc's automated profiling
 */
 #include "demos/demos.h"
 #include <cstdlib>
@@ -15,6 +16,7 @@ void threadtest(){
 }
 
 int main(int argc,char** argv){
-	demos::simpleStartup();
+	//demos::simpleStartup();
+	demos::simpleScene();
 	return 0;
 }

@@ -9,7 +9,7 @@
 	"vec2d.h"
 	<cmath>
 
-1433537202 
+1435683152 
 
 1427128590 source:c:\users\jack\documents\github\enginer3\engine\math\vec3d.cpp
 
@@ -141,120 +141,50 @@
 1432583045 source:/mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 	"surface.h"
-
-1432583034 /mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.h
-	<stdint.h>
-	<SDL2/SDL.h>
-	<stdint.h>
-	<SDL2/SDL.h>
-
-1427124833 source:/mnt/share/Mongoose-Rendering-Engine/engine/camera/camera.cpp
-
-1433452544 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/draw.cpp
-	"core.h"
-	"core.h"
-
-1433452186 /mnt/share/Mongoose-Rendering-Engine/engine/core/core.h
-	"../2d/surface.h"
-	"../object/object.h"
-	<thread>
-	"../2d/surface.h"
-	"../object/object.h"
-	<thread>
-
-1431717341 /mnt/share/Mongoose-Rendering-Engine/engine/object/object.h
-	"../math/vec3d.h"
-	"../math/vec3d.h"
-
-1430362111 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.h
-
-1433452822 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/events.cpp
-	"core.h"
-	"core.h"
-
-1433452362 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/main.cpp
-	"core.h"
-	"core.h"
-
-1431720555 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/scene.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/matrix.cpp
-
-1430361075 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/quat.cpp
-	"quat.h"
-	<cmath>
-	"quat.h"
-	<cmath>
-
-1430362178 /mnt/share/Mongoose-Rendering-Engine/engine/math/quat.h
-	"vec3d.h"
-	"vec3d.h"
-
-1430358626 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.cpp
-	"vec2d.h"
-	<cmath>
-	"vec2d.h"
-	<cmath>
-
-1430362133 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.h
-
-1430358809 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.cpp
-	"vec3d.h"
-	<cmath>
-	"vec3d.h"
-	<cmath>
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/polyToOct.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/polyToPoint.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/readFile.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/writeFile.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/obj.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/oct.cpp
-
-1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/point.cpp
-
-1433452845 source:/mnt/share/Mongoose-Rendering-Engine/main.cpp
-	<SDL2/SDL.h>
-	"engine/engine.h"
-	"engine/math/quat.h"
-	"engine/math/vec3d.h"
-	<cstdlib>
-	<SDL2/SDL.h>
-	"engine/engine.h"
-	"engine/math/quat.h"
-	"engine/math/vec3d.h"
-	<cstdlib>
-
-1431719808 /mnt/share/Mongoose-Rendering-Engine/engine/engine.h
-	"core/core.h"
-	"core/core.h"
-
-1432583045 source:/mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
 1433600683 /mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.h
+	<stdint.h>
+	<SDL2/SDL.h>
+	<stdint.h>
+	<SDL2/SDL.h>
 	<SDL2/SDL.h>
 	<stdint.h>
 
 1427124833 source:/mnt/share/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 
 1433452544 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/draw.cpp
+	"core.h"
+	"core.h"
 	"core.h"
 
 1433624522 /mnt/share/Mongoose-Rendering-Engine/engine/core/core.h
 	"../2d/surface.h"
 	"../object/object.h"
 	<thread>
+	"../2d/surface.h"
+	"../object/object.h"
+	<thread>
+	"../2d/surface.h"
+	"../object/object.h"
+	<thread>
 
 1431717341 /mnt/share/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
+	"../math/vec3d.h"
+	"../math/vec3d.h"
 
 1430362111 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.h
+
+1433529229 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/events.cpp
+	"core.h"
+	"core.h"
+	"core.h"
+
+1433529229 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/main.cpp
+	"core.h"
+	"core.h"
+	"core.h"
 
 1431720555 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/scene.cpp
 
@@ -263,17 +193,31 @@
 1430361075 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/quat.cpp
 	"quat.h"
 	<cmath>
+	"quat.h"
+	<cmath>
+	"quat.h"
+	<cmath>
 
 1430362178 /mnt/share/Mongoose-Rendering-Engine/engine/math/quat.h
 	"vec3d.h"
+	"vec3d.h"
+	"vec3d.h"
 
 1430358626 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.cpp
+	"vec2d.h"
+	<cmath>
+	"vec2d.h"
+	<cmath>
 	"vec2d.h"
 	<cmath>
 
 1430362133 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.h
 
 1430358809 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.cpp
+	"vec3d.h"
+	<cmath>
+	"vec3d.h"
+	<cmath>
 	"vec3d.h"
 	<cmath>
 
@@ -291,16 +235,25 @@
 
 1427124990 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/point.cpp
 
-1433529229 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/events.cpp
-	"core.h"
-
-1433529229 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/main.cpp
-	"core.h"
-
 1435683152 source:/mnt/share/Mongoose-Rendering-Engine/main.cpp
+	<SDL2/SDL.h>
+	"engine/engine.h"
+	"engine/math/quat.h"
+	"engine/math/vec3d.h"
+	<cstdlib>
+	<SDL2/SDL.h>
+	"engine/engine.h"
+	"engine/math/quat.h"
+	"engine/math/vec3d.h"
+	<cstdlib>
 	"demos/demos.h"
 	<cstdlib>
 	<iostream>
+
+1431719808 /mnt/share/Mongoose-Rendering-Engine/engine/engine.h
+	"core/core.h"
+	"core/core.h"
+	"core/core.h"
 
 1435683430 /mnt/share/Mongoose-Rendering-Engine/demos/demos.h
 	<SDL2/SDL.h>
@@ -308,9 +261,100 @@
 	"../engine/math/quat.h"
 	"../engine/math/vec3d.h"
 
-1431719808 /mnt/share/Mongoose-Rendering-Engine/engine/engine.h
-	"core/core.h"
+1435683430 /math/vec3d.h"
 
 1435683198 source:/mnt/share/Mongoose-Rendering-Engine/demos/simpleStartup.cpp
 	"demos.h"
+
+1432915063 source:/mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.cpp
+	"surface.h"
+
+1434116736 /mnt/share/Mongoose-Rendering-Engine/engine/2d/surface.h
+	<SDL2/SDL.h>
+	<stdint.h>
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+
+1432915064 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/scene.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/matrix.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/quat.cpp
+	"quat.h"
+	<cmath>
+
+1431547225 /mnt/share/Mongoose-Rendering-Engine/engine/math/quat.h
+	"vec3d.h"
+
+1431547225 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.h
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.cpp
+	"vec2d.h"
+	<cmath>
+
+1431547225 /mnt/share/Mongoose-Rendering-Engine/engine/math/vec2d.h
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/math/vec3d.cpp
+	"vec3d.h"
+	<cmath>
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/polyToOct.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/polyToPoint.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/readFile.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/io/writeFile.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/obj.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/oct.cpp
+
+1431547225 source:/mnt/share/Mongoose-Rendering-Engine/engine/object/point.cpp
+
+1437609158 source:/mnt/share/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+	"demos.h"
+	<ctime>
+
+1436208954 /mnt/share/Mongoose-Rendering-Engine/demos/demos.h
+	<SDL2/SDL.h>
+	"../engine/engine.h"
+	"../engine/math/quat.h"
+	"../engine/math/vec3d.h"
+
+1432915064 /mnt/share/Mongoose-Rendering-Engine/engine/engine.h
+	"core/core.h"
+
+1437609273 /mnt/share/Mongoose-Rendering-Engine/engine/core/core.h
+	"../2d/surface.h"
+	"../object/object.h"
+	"../object/meta.h"
+	<thread>
+
+1432915064 /mnt/share/Mongoose-Rendering-Engine/engine/object/object.h
+	"../math/vec3d.h"
+
+1436208954 source:/mnt/share/Mongoose-Rendering-Engine/demos/simpleStartup.cpp
+	"demos.h"
+
+1433521118 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/draw.cpp
+	"core.h"
+
+1433521118 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/events.cpp
+	"core.h"
+
+1433521118 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/main.cpp
+	"core.h"
+
+1437609174 /mnt/share/Mongoose-Rendering-Engine/engine/object/meta.h
+	"object.h"
+	<string>
+
+1437609013 source:/mnt/share/Mongoose-Rendering-Engine/engine/core/io.cpp
+	"core.h"
+
+1437597583 source:/mnt/share/Mongoose-Rendering-Engine/main.cpp
+	"demos/demos.h"
+	<cstdlib>
+	<iostream>
 

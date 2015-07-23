@@ -121,6 +121,7 @@
 		<Unit filename="engine/core/core.h" />
 		<Unit filename="engine/core/draw.cpp" />
 		<Unit filename="engine/core/events.cpp" />
+		<Unit filename="engine/core/io.cpp" />
 		<Unit filename="engine/core/main.cpp" />
 		<Unit filename="engine/core/scene.cpp" />
 		<Unit filename="engine/engine.h" />
@@ -138,6 +139,7 @@
 		<Unit filename="engine/object/io/polyToPoint.cpp" />
 		<Unit filename="engine/object/io/readFile.cpp" />
 		<Unit filename="engine/object/io/writeFile.cpp" />
+		<Unit filename="engine/object/meta.h" />
 		<Unit filename="engine/object/obj.cpp" />
 		<Unit filename="engine/object/object.h" />
 		<Unit filename="engine/object/oct.cpp" />
