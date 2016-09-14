@@ -1,3 +1,5 @@
+#include "core.h"
+
 namespace MG{
 	class event{
 	protected:

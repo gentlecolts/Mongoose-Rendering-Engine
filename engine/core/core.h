@@ -14,17 +14,17 @@ all aspects of this engine must use the namespace MG
 #include <thread>
 
 namespace MG{
-	///TODO: please stop doing this...
+	///TODO: convert to new object-based event
 	typedef SDL_Event event;
 
 	class engine{
+	private:
 		//need to intelegently store map chunks
 
 		///TODO: check event before even calling the event handler
-		std::thread *evtThread=0;
-		void (*evtProc)(event*)=0;
+		std::vector<event*> events();
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
-		//void loopEvt();
+		void pollEvents();
 
 		window win;
 	public:
@@ -51,8 +51,7 @@ namespace MG{
 		void setTitle(const char* title);
 
 		//the following are implemented in events.cpp
-		void setEventHandler(void (*eventProcessor)(event*));
-		void setEventHandler(void (*eventProcessor)(event*),bool b);
+		int registerEvent(event* evt);//returns the array index
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
 
 		//the following are implemented in io.cpp
