@@ -4,7 +4,7 @@
 #include "object.h"
 
 /**
-a chunk is a special type of object that in fact contains several objects
+a chunk is a special type of object that contains several objects in a spacial partition
 */
 
 namespace MG{

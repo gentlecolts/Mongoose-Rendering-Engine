@@ -6,5 +6,6 @@ this file simply includes several important pieces of the engine
 */
 
 #include "core/core.h"
+#include "object/object.h"
 
 #endif // ENGINE_H_INCLUDED

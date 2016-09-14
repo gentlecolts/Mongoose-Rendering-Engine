@@ -21,5 +21,6 @@ void checkClose(MG::event *evt){
 	}
 }
 void engine::init(){
+	//TODO: replace this with a default event class
 	setEventHandler(checkClose);
 }

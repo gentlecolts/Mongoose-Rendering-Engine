@@ -21,7 +21,14 @@ namespace MG{
 	public:
 		vec3d pos;
 		virtual bool bounceRay(ray &r,uint32_t &color,double *d=0,vec3d *normal=0) = 0;
-		virtual void update() = 0;//will be called every frame
+
+		virtual void firstUpdate(){};//the firstUpdate of every object will be called each frame before any object's update
+		virtual void staticUpdate(){};//will be called every frame after firstUpdate
+		virtual void asyncUpdate(){};//this will be called in parallel to all staticUpdate calls
+		virtual void timedUpdate(){};//called at a setable interval unless the previous batch has not finished
+
+		//this is called before any child constructors
+		obj(){};
 	};
 }
 

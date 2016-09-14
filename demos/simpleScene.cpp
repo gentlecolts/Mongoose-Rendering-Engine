@@ -11,6 +11,14 @@ need to implement:
 -ray tracing
 --possibly research metropolis light transport
 */
+
+class cube:MG::obj{
+double rotVel;
+public:
+	cube(double rotationalVel):rotVel(rotationalVel){}
+};
+
+
 void demos::simpleScene(){
 	MG::engine e;
  	//e.setEventHandler(&checkClose);//moved this to be the default event handler
@@ -21,11 +29,13 @@ void demos::simpleScene(){
 
 	const long fps=60;
 
-	//load file
+	//generate some objects
 
 	//draw scene at desired framerate
-	//long time=time();
+	long time=clock();
 	while(1){
-		e.update();
+		if((clock()-time)*fps>CLOCK_PER_SEC){//dclock/clockpersec>1/fps
+			e.update();
+		}
 	}
 }

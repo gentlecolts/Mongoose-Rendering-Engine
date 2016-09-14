@@ -10,6 +10,7 @@ all aspects of this engine must use the namespace MG
 #include "../2d/surface.h"
 #include "../object/object.h"
 #include "../object/meta.h"
+#include "event.h"
 #include <thread>
 
 namespace MG{
