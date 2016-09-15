@@ -5,8 +5,12 @@ this file implements all functionality of the engine class that pertain to core 
 #include "core.h"
 using namespace MG;
 
-engine::engine(){
+engine::engine():event(0){
 	init();
+	registerEvent(this);
+	//index and parent for event superclass
+	index=0;
+	parent=this;
 }
 engine::~engine(){
 }
@@ -23,6 +27,4 @@ void checkClose(MG::event *evt){
 	*/
 }
 void engine::init(){
-	//TODO: replace this with a default event class
-	//setEventHandler(checkClose);
 }

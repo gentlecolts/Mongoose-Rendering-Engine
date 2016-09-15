@@ -3,7 +3,7 @@
 
 /*
 includes all relevant definitions and classes
-the user should not need to specify any particular datatypes
+the user should not need to specify includes for any particular datatypes
 
 all aspects of this engine must use the namespace MG
 */
@@ -15,12 +15,10 @@ all aspects of this engine must use the namespace MG
 #include <vector>
 
 namespace MG{
-	class engine{
+	class engine:public event{
 	private:
-		//need to intelegently store map chunks
-
-		///TODO: check event before even calling the event handler
-		std::vector<event*> events();
+		///TODO: need to intelegently store map chunks
+		std::vector<event*> events;
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
 		void pollEvents();
 		void threadedPolling();
@@ -28,7 +26,6 @@ namespace MG{
 
 		window win;
 	public:
-		//event evt;
 		surface hud,scene;//2d overlay and 3d render surface respectively
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
@@ -50,9 +47,13 @@ namespace MG{
 		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
 		void setTitle(const char* title);
 
-		//the following are implemented in events.cpp
+		//the following are implemented in envineEvents.cpp
 		int registerEvent(event* evt);//returns the array index
+		void removeEvent(int index);//TODO: maybe createe one that takes a pointer instead
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
+
+		//from event class
+		virtual void quit();
 
 		//the following are implemented in io.cpp
 		obj& newObj(meta *metadata=0);

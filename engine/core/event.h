@@ -1,15 +1,21 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
-#include "core.h"
 
 namespace MG{
+	class engine;
+
 	class event{
 	protected:
-		virtual void quit();//called when main engine object is destroyed
-		virtual void keyDown(char key);
-		virtual void keyUp(char key);
+		engine *parent;
+		int index;
 	public:
-		event();
+		event(engine* engineParent);
+		~event();
+
+		virtual void quit(){}
+		virtual void keyDown(char key){}
+		virtual void keyUp(char key){}
 	};
 }
+
 #endif // EVENT_H_INCLUDED

@@ -406,7 +406,7 @@
 	"core/core.h"
 	"object/object.h"
 
-1473910199 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
+1473973312 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
 	"../2d/surface.h"
 	"../object/object.h"
 	"../object/meta.h"
@@ -427,8 +427,7 @@
 	"object.h"
 	<string>
 
-1473910766 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.h
-	"core.h"
+1473973762 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.h
 
 1466460908 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.h
 	"vec3d.h"
@@ -476,11 +475,25 @@
 
 1466460908 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/object/point.cpp
 
-1473909113 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1473976686 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 	<ctime>
 
-1473910600 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.cpp
-	"core.h"
+1473977776 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.cpp
 	"event.h"
+	"core.h"
+
+1473977007 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
+	"core.h"
+	<stdio.h>
+	<iostream>
+
+1473974831 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/main.cpp
+	"demos/demos.h"
+	<cstdlib>
+	<iostream>
+
+1473977779 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/engineEvents.cpp
+	"core.h"
+	"SDL2/SDL.h"
 

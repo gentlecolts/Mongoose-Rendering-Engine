@@ -1,37 +1,16 @@
 /**
-this file implements all functionality of the engine class that pertain to handling and reporting events
+this file implements all functionality of the event class
 */
 
-#include "core.h"
 #include "event.h"
+#include "core.h"
 using namespace MG;
 
-///////core engine event functions///////
-void engine::threadedPolling(){
-	while(1){pollEvents();}
-}
-
-bool engine::setEventAsync(bool b){
-	if(b!=isEventSync){//no need to do anything if the state of threaded or not is unchanged
-		return true;
+event::event(engine *eventParent):parent(eventParent){
+	if(eventParent){
+		index=eventParent->registerEvent(this);
 	}
-
-	///TODO: learn how c++11 threading works
-	if(b){//create event thread
-		evtThread=new std::thread(&engine::threadedPolling,this);
-		evtThread->detach();
-	}else{//terminate event thread if it exists
-		delete evtThread;
-	}
-
-	//if we've reached this point, then everything went well and we can return
-	isEventSync=!b;
-	return true;//everything went well
 }
-
-void engine::pollEvents(){
-	//TODO:iterate through all events, ideally reduce number of checks that need to be done to see if events are called
+event::~event(){
+	parent->removeEvent(index);
 }
-
-///////event class functions///////
-
