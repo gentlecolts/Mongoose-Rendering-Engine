@@ -34,7 +34,7 @@ void demos::simpleScene(){
 	//draw scene at desired framerate
 	long time=clock();
 	while(1){
-		if((clock()-time)*fps>CLOCK_PER_SEC){//dclock/clockpersec>1/fps
+		if((clock()-time)*fps>CLOCKS_PER_SEC){//dclock/clockpersec>1/fps
 			e.update();
 		}
 	}

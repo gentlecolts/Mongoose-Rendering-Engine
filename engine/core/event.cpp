@@ -6,11 +6,10 @@ this file implements all functionality of the engine class that pertain to handl
 #include "event.h"
 using namespace MG;
 
-void loopEvt(void (*evtProc)(event*),event *evt){
-    while(1){evtProc(evt);}
-}
-
 ///////core engine event functions///////
+void engine::threadedPolling(){
+	while(1){pollEvents();}
+}
 
 bool engine::setEventAsync(bool b){
 	if(b!=isEventSync){//no need to do anything if the state of threaded or not is unchanged
@@ -19,7 +18,7 @@ bool engine::setEventAsync(bool b){
 
 	///TODO: learn how c++11 threading works
 	if(b){//create event thread
-		evtThread=new std::thread(loopEvt,this.pollEvents,&evt);
+		evtThread=new std::thread(&engine::threadedPolling,this);
 		evtThread->detach();
 	}else{//terminate event thread if it exists
 		delete evtThread;

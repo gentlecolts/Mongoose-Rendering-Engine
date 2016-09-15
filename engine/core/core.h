@@ -12,11 +12,9 @@ all aspects of this engine must use the namespace MG
 #include "../object/meta.h"
 #include "event.h"
 #include <thread>
+#include <vector>
 
 namespace MG{
-	///TODO: convert to new object-based event
-	typedef SDL_Event event;
-
 	class engine{
 	private:
 		//need to intelegently store map chunks
@@ -25,10 +23,12 @@ namespace MG{
 		std::vector<event*> events();
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
 		void pollEvents();
+		void threadedPolling();
+		std::thread *evtThread;
 
 		window win;
 	public:
-		event evt;
+		//event evt;
 		surface hud,scene;//2d overlay and 3d render surface respectively
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;

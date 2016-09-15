@@ -12,6 +12,7 @@ engine::~engine(){
 }
 
 void checkClose(MG::event *evt){
+	/*
 	if(SDL_PollEvent(evt)){
 		switch(evt->type){
 		case SDL_QUIT:
@@ -19,8 +20,9 @@ void checkClose(MG::event *evt){
 			exit(0);
 		}
 	}
+	*/
 }
 void engine::init(){
 	//TODO: replace this with a default event class
-	setEventHandler(checkClose);
+	//setEventHandler(checkClose);
 }

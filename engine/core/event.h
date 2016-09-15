@@ -1,3 +1,5 @@
+#ifndef EVENT_H_INCLUDED
+#define EVENT_H_INCLUDED
 #include "core.h"
 
 namespace MG{
@@ -10,3 +12,4 @@ namespace MG{
 		event();
 	};
 }
+#endif // EVENT_H_INCLUDED

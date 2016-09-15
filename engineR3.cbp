@@ -120,7 +120,7 @@
 		<Unit filename="engine/camera/camera.cpp" />
 		<Unit filename="engine/core/core.h" />
 		<Unit filename="engine/core/draw.cpp" />
-		<Unit filename="engine/core/events.cpp" />
+		<Unit filename="engine/core/event.cpp" />
 		<Unit filename="engine/core/io.cpp" />
 		<Unit filename="engine/core/main.cpp" />
 		<Unit filename="engine/core/scene.cpp" />

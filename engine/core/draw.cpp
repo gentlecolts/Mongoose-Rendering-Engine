@@ -7,7 +7,7 @@ using namespace MG;
 void engine::update(){
 	///check events if they're not running in a separate thread
 	if(isEventSync){
-		evtProc(&evt);
+		pollEvents();
 	}
 	///step physics(?)
 	///TODO

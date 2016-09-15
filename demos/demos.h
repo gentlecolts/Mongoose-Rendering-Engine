@@ -1,7 +1,6 @@
 #ifndef DEMOS_H_INCLUDED
 #define DEMOS_H_INCLUDED
 
-
 #include <SDL2/SDL.h>
 #include "../engine/engine.h"
 #include "../engine/math/quat.h"
