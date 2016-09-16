@@ -11,13 +11,14 @@ all aspects of this engine must use the namespace MG
 #include "../object/object.h"
 #include "../object/meta.h"
 #include "event.h"
+#include "threadpool.h"
 #include <thread>
 #include <vector>
 
 namespace MG{
 	class engine:public event{
 	private:
-		///TODO: need to intelegently store map chunks
+		///TODO: need to intelligently store map chunks
 		std::vector<event*> events;
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
 		void pollEvents();

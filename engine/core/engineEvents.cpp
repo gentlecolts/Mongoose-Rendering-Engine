@@ -35,12 +35,21 @@ void engine::quit(){
 
 SDL_Event e;
 void engine::pollEvents(){
-#define loopall(x) for(int i=0;i<events.size();i++){x;}
-	if(SDL_PollEvent(&e)){
+#define loopall(x) for(int i=0;i<events.size();i++){events[i]->x;} break;
+	while(SDL_PollEvent(&e)){
 		switch(e.type){
 		case SDL_QUIT:
-			loopall(events[i]->quit())
-			break;
+			loopall(quit())
+		case SDL_KEYDOWN:
+			loopall(keyEvent(true,e.key.keysym.sym))
+		case SDL_KEYUP:
+			loopall(keyEvent(false,e.key.keysym.sym))
+		case SDL_MOUSEMOTION:
+			loopall(mouseMoved(e.motion.x,e.motion.y,e.motion.xrel,e.motion.yrel))
+		case SDL_MOUSEBUTTONDOWN:
+			loopall(mouseButton(true,e.button.button))
+		case SDL_MOUSEBUTTONUP:
+			loopall(mouseButton(false,e.button.button))
 		}
 	}
 #undef loopall

@@ -1,6 +1,8 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
 
+#include <stdint.h>
+
 namespace MG{
 	class engine;
 
@@ -13,8 +15,9 @@ namespace MG{
 		~event();
 
 		virtual void quit(){}
-		virtual void keyDown(char key){}
-		virtual void keyUp(char key){}
+		virtual void keyEvent(bool keyDown,int key){}
+		virtual void mouseMoved(int x,int y,int dx,int dy){}
+		virtual void mouseButton(bool buttonDown,uint8_t button){}
 	};
 }
 
