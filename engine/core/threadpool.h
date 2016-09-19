@@ -7,6 +7,7 @@ namespace MG{
 	class empty{};
 	template<typename T=empty>
 	class threadPool{
+	private:
 		int systemThreads;
 		void (*fn)(int,int,void*);//index, total threads, params
 		void (T::*classfn)(int,int,void*);//class ptr, index, total threads, params
@@ -27,10 +28,15 @@ namespace MG{
 			}
 
 			void stop(){
+				printf("got it, i'm stopping\n");
+				/**TODO: fix this?
 				if(mythread->joinable()){
-					mythread->detach();//detach the thread so it can be stopped mid-execution
-				}
+					//printf("was joinable, is not anymore\n");
+					//mythread->detach();//detach the thread so it can be stopped mid-execution
+					mythread->join();//just hope that this finishes
+				}//*/
 				delete mythread;
+				mythread=0;
 			}
 			~pooledThread(){
 				stop();
@@ -40,13 +46,15 @@ namespace MG{
 		pooledThread** threads=0;
 		int runningThreads=0;
 
+		std::thread* statusThread=0;
+
 		void statusChecker(){
 			for(int i=0;i<runningThreads;i++){
 				threads[i]->mythread->join();
 			}
+			stop();
 			isdone=true;
 		}
-		std::thread* statusThread=0;
 	public:
 		int threadsInPool;
 		bool isdone=true;
@@ -59,50 +67,66 @@ namespace MG{
 		}
 
 		void startAsync(void *params=0){//run all threads parallel to the thread which called this
-			printf("starting async\n");
+			//printf("starting async\n");
 			while(!isdone){}//no new instances of this pool until it's finished
+			if(statusThread){delete statusThread;statusThread=0;};//clean up the status thread from any potential past runs
 			isdone=false;
-			printf("any past instances have finished running\n");
+			//printf("any past instances have finished running\n");
 			runningThreads=(threadsInPool>0)?threadsInPool:systemThreads;
+
+			//if(runningThreads<1){isdone=true;return;}//above line makes this irrelevant
+
 			threads=new pooledThread*[runningThreads];
 
-			printf("we're running %i threads\n",runningThreads);
+			//printf("we're running %i threads\n",runningThreads);
 
 			if(isclass){
-				printf("we're using a class function\n");
+				//printf("we're using a class function\n");
 				for(int i=0;i<runningThreads;i++){
-					printf("making thread %i\n",i);
+					//printf("making thread %i\n",i);
 					threads[i]=new pooledThread(classptr,i,runningThreads,params,classfn);
-					printf("done\n");
+					//printf("done\n");
 				}
 			}else{
-				printf("we're using a normal function\n");
+				//printf("we're using a normal function\n");
 				for(int i=0;i<runningThreads;i++){
-					printf("making thread %i\n",i);
+					//printf("making thread %i\n",i);
 					threads[i]=new pooledThread(i,runningThreads,params,fn);
-					printf("done\n");
+					//printf("done\n");
 				}
 			}
 
 			statusThread=new std::thread(&threadPool::statusChecker,this);
-			statusThread->detach();
+			//statusThread->detach();
 		}
 		void start(void *params=0){//run all threads, but only return once they're all finished
+			//printf("starting inline\n");
+			startAsync(params);
+			printf("waiting for async to finish\n");
+			statusChecker();
+			printf("static pool finished\n");
 		}
+
+		//note that calling delete on running threads is very bad, make sure things are done by the time this is reached
 		void stop(){
+			if(isdone){return;}
+            //printf("stopping the pool\n");
 			for(int i=0;i<runningThreads;i++){
 				delete threads[i];
 			}
 			delete[] threads;
 			threads=0;
 
+			/*this is removed because the status checker needs to call stop for cleanup purposes
 			delete statusThread;
-			statusThread=0;
+			statusThread=0;//*/
 			isdone=true;
+			//printf("pool stopped\n");
 		}
 
 		~threadPool(){
 			stop();
+			if(statusThread){delete statusThread;statusThread=0;};
 		}
 	};
 }
