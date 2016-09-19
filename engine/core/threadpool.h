@@ -27,8 +27,8 @@ namespace MG{
 			}
 
 			void stop(){
-				if(mythread.joinable()){
-					mythread.detach();//detach the thread so it can be stopped mid-execution
+				if(mythread->joinable()){
+					mythread->detach();//detach the thread so it can be stopped mid-execution
 				}
 				delete mythread;
 			}

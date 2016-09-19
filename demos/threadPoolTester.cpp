@@ -6,6 +6,12 @@ void test1(int index,int threads,void *teststuff){
 	printf("function thread #%i/%i and the magic number is %i\n",index,threads,*(int*)teststuff);
 }
 
+void test2(int index,int threads,void *teststuff){
+	while(1){
+		printf("i'm an evil infinite loop in thread #%i/%i\n",index,threads);
+	}
+}
+
 class testclass{
 private:
 	int a;
@@ -15,6 +21,8 @@ private:
 public:
 	testclass():a(rand()){
 		MG::threadPool<testclass> classtest(this,&testclass::testfn);
+		classtest.start();
+		printf("finished the class thread\n");
 	}
 };
 
@@ -28,5 +36,11 @@ void demos::threadPoolTest(){
 	while(!fntest.isdone){}
 	printf("finished!\n");
 
+	MG::threadPool<> looptester(test2,2);
+	looptester.startAsync();
 
+	testclass classtester();
+
+	looptester.stop();
+	printf("and we're done!\n");
 }
