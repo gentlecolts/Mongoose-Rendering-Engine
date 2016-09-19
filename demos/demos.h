@@ -9,6 +9,7 @@
 namespace demos{
 	void simpleStartup();
 	void simpleScene();
+	void threadPoolTest();
 }
 
 #endif // DEMOS_H_INCLUDED

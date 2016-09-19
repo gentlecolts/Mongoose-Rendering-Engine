@@ -113,6 +113,7 @@
 		<Unit filename="demos/demos.h" />
 		<Unit filename="demos/simpleScene.cpp" />
 		<Unit filename="demos/simpleStartup.cpp" />
+		<Unit filename="demos/threadPoolTester.cpp" />
 		<Unit filename="engine/2d/surface.cpp" />
 		<Unit filename="engine/2d/surface.h" />
 		<Unit filename="engine/2d/ui/button.h" />
@@ -126,6 +127,7 @@
 		<Unit filename="engine/core/io.cpp" />
 		<Unit filename="engine/core/main.cpp" />
 		<Unit filename="engine/core/scene.cpp" />
+		<Unit filename="engine/core/threadpool.h" />
 		<Unit filename="engine/engine.h" />
 		<Unit filename="engine/math/math.h" />
 		<Unit filename="engine/math/matrix.cpp" />
