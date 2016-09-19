@@ -2,7 +2,6 @@
 #include "stdio.h"
 using namespace std;
 
-//void test1(int index,int threads,void *teststuff){
 void test1(int index,int threads,void *teststuff){
 	printf("function thread #%i/%i and the magic number is %i\n",index,threads,*(int*)teststuff);
 }
@@ -11,6 +10,7 @@ class testclass{
 private:
 	int a;
 	void testfn(int index,int threads,void *teststuff){
+		printf("class function thread #%i/%i and the magic number is %i\n",index,threads,a);
 	}
 public:
 	testclass():a(rand()){
@@ -26,5 +26,7 @@ void demos::threadPoolTest(){
 	printf("function's threads started\n");
 
 	while(!fntest.isdone){}
-	printf("finished!");
+	printf("finished!\n");
+
+
 }
