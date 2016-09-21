@@ -9,7 +9,7 @@ void test1(int index,int threads,void *teststuff){
 void test2(int index,int threads,void *teststuff){
 	loop:
 		printf("i'm an evil infinite loop in thread #%i/%i\n",index,threads);
-	//goto loop;
+	goto loop;
 }
 
 class testclass{
@@ -44,6 +44,6 @@ void demos::threadPoolTest(){
 	testclass classtester();
 
 	printf("class has finished, killing the inf loop\n");
-	//looptester.stop();
+	//looptester.finish();//will never finish
 	printf("and we're done!\n");
 }

@@ -28,12 +28,12 @@ namespace MG{
 			}
 
 			~pooledThread(){
-				printf("got it, i'm stopping\n");
+				//printf("got it, i'm stopping\n");
 				/**TODO: fix this?
 				if(mythread->joinable()){
 					//printf("was joinable, is not anymore\n");
-					//mythread->detach();//detach the thread so it can be stopped mid-execution
-					mythread->join();//just hope that this finishes
+					mythread->detach();//detach the thread so it can be stopped mid-execution
+					//mythread->join();//just hope that this finishes
 				}//*/
 				delete mythread;
 				mythread=0;
@@ -49,12 +49,12 @@ namespace MG{
 			for(int i=0;i<runningThreads;i++){
 				threads[i]->mythread->join();
 			}
-			stop();
+			finish();
 			isdone=true;
 		}
 		void cleanStatusThread(){
 			if(statusThread){
-				printf("status thread not free, killing\n");
+				//printf("status thread not free, killing\n");
 				statusThread->join();
 				delete statusThread;
 				statusThread=0;
@@ -107,26 +107,28 @@ namespace MG{
 		void start(void *params=0){//run all threads, but only return once they're all finished
 			//printf("starting inline\n");
 			startAsync(params);
-			printf("waiting for async to finish\n");
+			//printf("waiting for async to finish\n");
 			statusChecker();
-			printf("static pool finished\n");
+			//printf("static pool finished\n");
 		}
 
 		~threadPool(){
 			/*dont do anything until we've completely finished
 			TODO: figure out how to terminate threads without crashing so this can be removed*/
 			while(!isdone){}
-			printf("thread pool is deleting\n");
-			stop();
-			printf("any leftover threads have been stopped and freed\n");
+			//printf("thread pool is deleting\n");
+			finish();
+			//printf("any leftover threads have been stopped and freed\n");
 			cleanStatusThread();
-			printf("done with pool cleanup\n");
+			//printf("done with pool cleanup\n");
 		}
 
-	private://this function causes problems if called
-		//note that calling delete on running threads is very bad, make sure things are done by the time this is reached
-		void stop(){
-			//if(isdone){return;}
+		void finish(){
+			/*wait for the threads to finish before clearing them
+			note that this will loop forever if any thread is an infinite loop
+			TODO: is there a better way to do this?*/
+			while(!isdone){}
+
 			if(threads){
 				//printf("stopping the pool\n");
 				for(int i=0;i<runningThreads;i++){
