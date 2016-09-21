@@ -27,7 +27,7 @@ namespace MG{
 				mythread=new std::thread(pfunc,ptr,index,totalThreads,params);
 			}
 
-			void stop(){
+			~pooledThread(){
 				printf("got it, i'm stopping\n");
 				/**TODO: fix this?
 				if(mythread->joinable()){
@@ -37,9 +37,6 @@ namespace MG{
 				}//*/
 				delete mythread;
 				mythread=0;
-			}
-			~pooledThread(){
-				stop();
 			}
 		};
 
@@ -55,6 +52,14 @@ namespace MG{
 			stop();
 			isdone=true;
 		}
+		void cleanStatusThread(){
+			if(statusThread){
+				printf("status thread not free, killing\n");
+				statusThread->join();
+				delete statusThread;
+				statusThread=0;
+			}
+		}
 	public:
 		int threadsInPool;
 		bool isdone=true;
@@ -69,7 +74,7 @@ namespace MG{
 		void startAsync(void *params=0){//run all threads parallel to the thread which called this
 			//printf("starting async\n");
 			while(!isdone){}//no new instances of this pool until it's finished
-			if(statusThread){delete statusThread;statusThread=0;};//clean up the status thread from any potential past runs
+			cleanStatusThread();//clean up the status thread from any potential past runs
 			isdone=false;
 			//printf("any past instances have finished running\n");
 			runningThreads=(threadsInPool>0)?threadsInPool:systemThreads;
@@ -107,26 +112,35 @@ namespace MG{
 			printf("static pool finished\n");
 		}
 
+		~threadPool(){
+			/*dont do anything until we've completely finished
+			TODO: figure out how to terminate threads without crashing so this can be removed*/
+			while(!isdone){}
+			printf("thread pool is deleting\n");
+			stop();
+			printf("any leftover threads have been stopped and freed\n");
+			cleanStatusThread();
+			printf("done with pool cleanup\n");
+		}
+
+	private://this function causes problems if called
 		//note that calling delete on running threads is very bad, make sure things are done by the time this is reached
 		void stop(){
-			if(isdone){return;}
-            //printf("stopping the pool\n");
-			for(int i=0;i<runningThreads;i++){
-				delete threads[i];
+			//if(isdone){return;}
+			if(threads){
+				//printf("stopping the pool\n");
+				for(int i=0;i<runningThreads;i++){
+					if(threads[i]){delete threads[i];}
+				}
+				delete[] threads;
+				threads=0;
 			}
-			delete[] threads;
-			threads=0;
 
 			/*this is removed because the status checker needs to call stop for cleanup purposes
 			delete statusThread;
 			statusThread=0;//*/
 			isdone=true;
 			//printf("pool stopped\n");
-		}
-
-		~threadPool(){
-			stop();
-			if(statusThread){delete statusThread;statusThread=0;};
 		}
 	};
 }

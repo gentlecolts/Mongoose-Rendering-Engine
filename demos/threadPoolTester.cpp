@@ -37,13 +37,13 @@ void demos::threadPoolTest(){
 	while(!fntest.isdone){}
 	printf("finished!\n");
 
-	MG::threadPool<> looptester(test2,2);
-	looptester.startAsync();
+	//MG::threadPool<> looptester(test2,2);
+	//looptester.startAsync();
 
 	printf("starting the class\n");
-	//testclass classtester();
+	testclass classtester();
 
-	//printf("class has finished, killing the inf loop\n");
-	looptester.stop();
+	printf("class has finished, killing the inf loop\n");
+	//looptester.stop();
 	printf("and we're done!\n");
 }
