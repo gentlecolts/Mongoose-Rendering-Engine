@@ -406,7 +406,7 @@
 	"core/core.h"
 	"object/object.h"
 
-1474058825 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
+1474656663 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
 	"../2d/surface.h"
 	"../object/object.h"
 	"../object/meta.h"
@@ -419,7 +419,7 @@
 	<SDL2/SDL.h>
 	<stdint.h>
 
-1471067640 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
+1474490964 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
 
 1466460908 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
@@ -445,7 +445,8 @@
 1466460908 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/io.cpp
 	"core.h"
 
-1466460908 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+1474656343 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+	"core.h"
 
 1466460908 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.cpp
 
@@ -477,7 +478,7 @@
 
 1466460908 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/object/point.cpp
 
-1473976686 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1474655449 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 	<ctime>
 
@@ -485,10 +486,10 @@
 	"event.h"
 	"core.h"
 
-1474038017 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
+1474656663 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
 	"core.h"
 
-1474209269 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/main.cpp
+1474655891 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/main.cpp
 	"demos/demos.h"
 	<cstdlib>
 	<iostream>
@@ -497,13 +498,14 @@
 	"core.h"
 	"SDL2/SDL.h"
 
-1474469522 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
+1474698870 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
 	<thread>
+	<cstdarg>
 
 1474211192 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.cpp
 	"threadpool.h"
 
-1474467534 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/threadPoolTester.cpp
+1474699282 source:/media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/demos/threadPoolTester.cpp
 	"demos.h"
 	"stdio.h"
 

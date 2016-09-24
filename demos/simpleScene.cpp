@@ -15,7 +15,7 @@ need to implement:
 class cube:MG::obj{
 double rotVel;
 public:
-	cube(double rotationalVel):rotVel(rotationalVel){}
+	cube(MG::engine* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
 };
 
 

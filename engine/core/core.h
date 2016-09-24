@@ -18,12 +18,22 @@ all aspects of this engine must use the namespace MG
 namespace MG{
 	class engine:public event{
 	private:
-		///TODO: need to intelligently store map chunks
+		//TODO: vector may not be the best choice of structure, consider linked list or maybe even a tree for parallelism
 		std::vector<event*> events;
 		bool isEventSync=true;//if this is false, then event checking is done in a separate thread
 		void pollEvents();
 		void threadedPolling();
 		std::thread *evtThread;
+
+		//TODO: need to intelligently store map chunks
+		//TODO: need to write functions for retrieving objects, might need a secondary structure to store names, for example
+		std::vector<obj*> objects;
+
+		//task pool that will handle running all staticUpdate and threadedUpdate calls
+		//threadPool<engine> updatepool;
+
+		//implemented in scene.cpp
+		void updateTasks(int id,int numThreads);
 
 		window win;
 	public:
@@ -31,32 +41,30 @@ namespace MG{
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
 
-		//the following are implemented in core.cpp
+		//implemented in core.cpp
 		///TODO: determine need for alternate constructors
 		engine();//these should simply be a call to init
 		~engine();//i know i am going to need this at some point
 
 		void init();//(re)initialize the engine.  this should initialize everything and free any objects that might have been in use
 
-		//the following are implemented in scene.cpp
+		//implemented in scene.cpp
 		void addToScene(obj *o);
 		void removeFromScene(obj *o);
 		void clearScene();
 
-		//the following are implemented in draw.cpp
+		//implemented in draw.cpp
 		void update();
 		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
 		void setTitle(const char* title);
 
-		//the following are implemented in envineEvents.cpp
+		//implemented in envineEvents.cpp
 		int registerEvent(event* evt);//returns the array index
 		void removeEvent(int index);//TODO: maybe createe one that takes a pointer instead
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
+		virtual void quit();//from event class
 
-		//from event class
-		virtual void quit();
-
-		//the following are implemented in io.cpp
+		//implemented in io.cpp
 		obj& newObj(meta *metadata=0);
 		obj& newObjFromFile(std::string fname,meta *metadata=0);
 		obj& newOctreeFromFile(std::string fname,meta *metadata=0);

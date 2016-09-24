@@ -17,7 +17,7 @@ void threadtest(){
 
 int main(int argc,char** argv){
 	//demos::simpleStartup();
-	//demos::simpleScene();
-	demos::threadPoolTest();
+	demos::simpleScene();
+	//demos::threadPoolTest();
 	return 0;
 }

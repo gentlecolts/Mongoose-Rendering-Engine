@@ -5,11 +5,10 @@ this file implements all functionality of the engine class that pertain to core 
 #include "core.h"
 using namespace MG;
 
-engine::engine():event(0){
+engine::engine():event(0){//,updatepool(this,&engine::updateTasks){
 	init();
-	registerEvent(this);
 	//index and parent for event superclass
-	index=0;
+	index=registerEvent(this);//this is probably just 0, but you never know
 	parent=this;
 }
 engine::~engine(){
