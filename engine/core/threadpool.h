@@ -43,6 +43,7 @@ namespace MG{
 		explicit threadPool(void (T::*pfunc)(int,int,_Args...),int threadcount,bool waitUntilDone,T* classptr,_Args... params):waiting(waitUntilDone){
 			//if the value passed in for threadcount is a valid value, use it, otherwise default to the number of avaliable system threads
 			runningThreads=(threadcount>0)?threadcount:std::thread::hardware_concurrency();
+			runningThreads=runningThreads?runningThreads:1;//hardware_concurrency CAN return 0 in some cases, in which case just run a single thread
 			threads=new std::thread*[runningThreads];
 			isdone=false;
 

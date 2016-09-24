@@ -5,6 +5,7 @@ this file contains the definition for the abstract object class, which is the pa
 */
 
 #include "../math/vec3d.h"
+#include <stdint.h>
 
 namespace MG{
 	struct ray{
@@ -29,7 +30,7 @@ namespace MG{
 		virtual void threadedUpdate(){}//this will be called in parallel to all staticUpdate calls
 		virtual void timedUpdate(){}//called at a setable interval unless the previous batch has not finished
 
-		//this is called before any child constructors
+		//this is called before any child constructors, adds itself to the given engine object
 		obj(engine* e);
 	};
 }

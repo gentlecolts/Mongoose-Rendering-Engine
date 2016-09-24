@@ -29,10 +29,8 @@ namespace MG{
 		//TODO: need to write functions for retrieving objects, might need a secondary structure to store names, for example
 		std::vector<obj*> objects;
 
-		//task pool that will handle running all staticUpdate and threadedUpdate calls
-		//threadPool<engine> updatepool;
-
-		//implemented in scene.cpp
+		//implemented in draw.cpp
+		//runs all staticUpdate and threadedUpdate calls
 		void updateTasks(int id,int numThreads);
 
 		window win;
