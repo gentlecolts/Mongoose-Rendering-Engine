@@ -1,11 +1,11 @@
 #ifndef META_H_INCLUDED
 #define META_H_INCLUDED
 
-#include "object.h"
 #include <string>
 
 namespace MG{
-	struct meta{
+	class obj;
+	struct metadata{
 		std::string name;
 		int id;
 		obj *object;

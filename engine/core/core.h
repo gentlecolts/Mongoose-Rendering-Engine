@@ -9,13 +9,25 @@ all aspects of this engine must use the namespace MG
 */
 #include "../2d/surface.h"
 #include "../object/object.h"
-#include "../object/meta.h"
 #include "event.h"
 #include "threadpool.h"
+#include "../camera/camera.h"
 #include <thread>
 #include <vector>
 
 namespace MG{
+	struct sceneContainer{
+		//TODO: need to intelligently store map chunks
+		//TODO: need to write functions for retrieving objects, might need a secondary structure to store names, for example
+		std::vector<obj*> objects;
+		//std::vector<light*> lights;//TODO: need to implement lighting
+
+		sceneContainer();
+
+		//void renderTo(surface &target);
+		void render(camera &cam);
+	};
+
 	class engine:public event{
 	private:
 		//TODO: vector may not be the best choice of structure, consider linked list or maybe even a tree for parallelism
@@ -25,17 +37,17 @@ namespace MG{
 		void threadedPolling();
 		std::thread *evtThread;
 
-		//TODO: need to intelligently store map chunks
-		//TODO: need to write functions for retrieving objects, might need a secondary structure to store names, for example
-		std::vector<obj*> objects;
+		window win;
+		long updateTimestamp=0;
+
+		sceneContainer scene;
 
 		//implemented in draw.cpp
 		//runs all staticUpdate and threadedUpdate calls
 		void updateTasks(int id,int numThreads);
-
-		window win;
 	public:
-		surface hud,scene;//2d overlay and 3d render surface respectively
+		camera mainCamera;
+		surface hud,render;//2d overlay and 3d render surface respectively
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
 
@@ -52,6 +64,7 @@ namespace MG{
 		void clearScene();
 
 		//implemented in draw.cpp
+		bool isTimeToUpdate(int FPS);
 		void update();
 		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
 		void setTitle(const char* title);
@@ -61,11 +74,6 @@ namespace MG{
 		void removeEvent(int index);//TODO: maybe createe one that takes a pointer instead
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
 		virtual void quit();//from event class
-
-		//implemented in io.cpp
-		obj& newObj(meta *metadata=0);
-		obj& newObjFromFile(std::string fname,meta *metadata=0);
-		obj& newOctreeFromFile(std::string fname,meta *metadata=0);
 	};
 }
 

@@ -5,7 +5,9 @@ this file contains the definition for the abstract object class, which is the pa
 */
 
 #include "../math/vec3d.h"
+#include "meta.h"
 #include <stdint.h>
+#include <fstream>
 
 namespace MG{
 	struct ray{
@@ -21,6 +23,7 @@ namespace MG{
 	class engine;
 
 	class obj{
+		std::fstream file;
 	public:
 		vec3d pos;
 		virtual bool bounceRay(ray &r,uint32_t &color,double *d=0,vec3d *normal=0) = 0;
@@ -31,7 +34,8 @@ namespace MG{
 		virtual void timedUpdate(){}//called at a setable interval unless the previous batch has not finished
 
 		//this is called before any child constructors, adds itself to the given engine object
-		obj(engine* e);
+		obj(engine* e,metadata *meta=0);
+		obj(engine* e,std::string fname,metadata *meta=0);
 	};
 }
 

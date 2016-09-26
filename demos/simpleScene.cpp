@@ -1,5 +1,4 @@
 #include "demos.h"
-#include <ctime>
 using namespace std;
 
 /**TODO: as it turns out, simple scenes arent actually so simple
@@ -32,9 +31,8 @@ void demos::simpleScene(){
 	//generate some objects
 
 	//draw scene at desired framerate
-	long time=clock();
 	while(1){
-		if((clock()-time)*fps>CLOCKS_PER_SEC){//dclock/clockpersec>1/fps
+		if(e.isTimeToUpdate(fps)){
 			e.update();
 		}
 	}
