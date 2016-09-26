@@ -517,3 +517,134 @@
 1474901131 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 
+1474817632 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+	"demos.h"
+
+1474208977 /home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/demos.h
+	<SDL2/SDL.h>
+	"../engine/engine.h"
+	"../engine/math/quat.h"
+	"../engine/math/vec3d.h"
+
+1470328210 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/engine.h
+	"core/core.h"
+	"object/object.h"
+
+1474921032 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
+	"../2d/surface.h"
+	"../object/object.h"
+	"event.h"
+	"threadpool.h"
+	"../camera/camera.h"
+	<thread>
+	<vector>
+
+1474829702 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/2d/surface.h
+	<SDL2/SDL.h>
+	<stdint.h>
+
+1474914246 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
+	"../math/vec3d.h"
+	"meta.h"
+	<stdint.h>
+	<fstream>
+
+1466460908 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
+
+1474914226 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/meta.h
+	<string>
+
+1474057594 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.h
+	<stdint.h>
+
+1474736146 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
+	<thread>
+	<cstdarg>
+
+1474921747 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+	"../2d/surface.h"
+	"../math/math.h"
+
+1466460908 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.h
+	"vec3d.h"
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleStartup.cpp
+	"demos.h"
+
+1474699282 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/threadPoolTester.cpp
+	"demos.h"
+	"stdio.h"
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
+	"surface.h"
+
+1474920500 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+	"camera.h"
+
+1474914159 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
+	"core.h"
+	<ctime>
+
+1474057523 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/engineEvents.cpp
+	"core.h"
+	"SDL2/SDL.h"
+
+1473977776 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.cpp
+	"event.h"
+	"core.h"
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/io.cpp
+	"core.h"
+
+1474914674 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
+	"core.h"
+
+1474914692 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+	"core.h"
+
+1474917665 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.cpp
+	"matrix.h"
+
+1474918948 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.h
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.cpp
+	"quat.h"
+	<cmath>
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/vec2d.cpp
+	"vec2d.h"
+	<cmath>
+
+1466460908 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/vec2d.h
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/vec3d.cpp
+	"vec3d.h"
+	<cmath>
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/io/polyToOct.cpp
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/io/polyToPoint.cpp
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/io/readFile.cpp
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/io/writeFile.cpp
+
+1474914265 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/obj.cpp
+	"object.h"
+	"../core/core.h"
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/oct.cpp
+
+1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/point.cpp
+
+1474699343 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/main.cpp
+	"demos/demos.h"
+	<cstdlib>
+	<iostream>
+
+1474919161 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/math.h
+	"vec2d.h"
+	"vec3d.h"
+	"quat.h"
+	"matrix.h"
+

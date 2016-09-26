@@ -71,9 +71,9 @@ namespace MG{
 
 		//implemented in envineEvents.cpp
 		int registerEvent(event* evt);//returns the array index
-		void removeEvent(int index);//TODO: maybe createe one that takes a pointer instead
+		void removeEvent(int index);//TODO: maybe create one that takes a pointer instead
 		bool setEventAsync(bool b);//even if the internals are positive is synchronous, it seems more sensible from a user side to have the function do this
-		virtual void quit();//from event class
+		void quit();//inherited from event class
 	};
 }
 
