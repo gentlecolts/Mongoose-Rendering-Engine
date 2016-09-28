@@ -12,22 +12,11 @@ all aspects of this engine must use the namespace MG
 #include "event.h"
 #include "threadpool.h"
 #include "../camera/camera.h"
+#include "scene.h"
 #include <thread>
 #include <vector>
 
 namespace MG{
-	struct sceneContainer{
-		//TODO: need to intelligently store map chunks
-		//TODO: need to write functions for retrieving objects, might need a secondary structure to store names, for example
-		std::vector<obj*> objects;
-		//std::vector<light*> lights;//TODO: need to implement lighting
-
-		sceneContainer();
-
-		//void renderTo(surface &target);
-		void render(camera &cam);
-	};
-
 	class engine:public event{
 	private:
 		//TODO: vector may not be the best choice of structure, consider linked list or maybe even a tree for parallelism

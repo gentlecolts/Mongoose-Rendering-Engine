@@ -3,14 +3,15 @@
 
 #include "../2d/surface.h"
 #include "../math/math.h"
+#include "../core/scene.h"
 
 namespace MG{
-	class scene;
-
 	class camera{
+		void renderLoop(int id,int numthreads,float *drawTarget,sceneContainer *usingScene);
+		void doPost(int id,int numthreads,float *raw,surface *targetSurface);
 	public:
 		surface *target=0;
-		scene *sceneToDraw=0;
+		sceneContainer *scene=0;
 
 		/*TODO: stronger evaluation of whether 3d or 4d matrix is right,
 		as of right now, however, i remain a fan of the less waste and increased clarity of this option
@@ -18,12 +19,12 @@ namespace MG{
 		matrix3 axes;
 		vec3d position;
 
-		camera(surface* renderTarget,scene* sceneToDraw=0);
+		camera(surface* renderTarget,sceneContainer* sceneToDraw=0);
 
 		void rotateDeg(double angle,vec3d *axis);
 		void rotateRad(double angle,vec3d *axis);
 
-		void render(surface *drawTo=0,scene *drawScene=0);
+		void render(surface *drawTo=0,sceneContainer *drawScene=0);
 	};
 }
 

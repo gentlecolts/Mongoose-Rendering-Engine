@@ -530,12 +530,13 @@
 	"core/core.h"
 	"object/object.h"
 
-1474921032 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
+1475092623 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/core.h
 	"../2d/surface.h"
 	"../object/object.h"
 	"event.h"
 	"threadpool.h"
 	"../camera/camera.h"
+	"scene.h"
 	<thread>
 	<vector>
 
@@ -561,9 +562,10 @@
 	<thread>
 	<cstdarg>
 
-1474921747 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+1475092699 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 	"../math/math.h"
+	"../core/scene.h"
 
 1466460908 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.h
 	"vec3d.h"
@@ -578,7 +580,7 @@
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
-1474920500 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+1475091832 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 	"camera.h"
 
 1474914159 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
@@ -605,7 +607,7 @@
 1474917665 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.cpp
 	"matrix.h"
 
-1474918948 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.h
+1475091128 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.h
 
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.cpp
 	"quat.h"
@@ -647,4 +649,8 @@
 	"vec3d.h"
 	"quat.h"
 	"matrix.h"
+
+1475092838 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.h
+	<vector>
+	"../object/object.h"
 

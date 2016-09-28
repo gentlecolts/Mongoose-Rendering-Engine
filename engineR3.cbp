@@ -129,6 +129,7 @@
 		<Unit filename="engine/core/io.cpp" />
 		<Unit filename="engine/core/main.cpp" />
 		<Unit filename="engine/core/scene.cpp" />
+		<Unit filename="engine/core/scene.h" />
 		<Unit filename="engine/core/threadpool.h" />
 		<Unit filename="engine/engine.h" />
 		<Unit filename="engine/math/math.h" />
