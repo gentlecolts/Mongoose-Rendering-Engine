@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "../core/threadpool.h"
 using namespace MG;
 
 camera::camera(surface* renderTarget,sceneContainer* sceneToDraw){
@@ -23,6 +24,11 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	surface *renderTarget=drawTo?drawTo:target;//if a render target was supplied, use that instead of the stored one
 	sceneContainer *renderScene=drawScene?drawScene:scene;//if a scene was supplied, use that instead of the stored one
 
-	//threadPool
+	float target[renderTarget->w*renderTarget->h];
+
+
+	threadPool drawPool(&camera::renderLoop,-1,true,this,target,renderScene);
+	threadPool postPool(&camera::doPost()
 }
-//camera::renderLoop(){}
+void camera::renderLoop(int id,int numthreads,float *drawTarget,sceneContainer *usingScene){
+}

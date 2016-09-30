@@ -544,7 +544,7 @@
 	<SDL2/SDL.h>
 	<stdint.h>
 
-1474914246 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
+1475268246 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
 	"meta.h"
 	<stdint.h>
@@ -598,7 +598,7 @@
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/io.cpp
 	"core.h"
 
-1474914674 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
+1475092481 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
 	"core.h"
 
 1474914692 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp

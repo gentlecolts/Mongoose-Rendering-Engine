@@ -10,14 +10,16 @@ this file contains the definition for the abstract object class, which is the pa
 #include <fstream>
 
 namespace MG{
-	struct ray{
-		vec3d from,to;
-	};
 	struct color{
 		union{
 			struct{float r,g,b;};
 			float rgb[3];
 		};
+	};
+
+	struct ray{
+		vec3d from,to;
+		color c;
 	};
 
 	class engine;
