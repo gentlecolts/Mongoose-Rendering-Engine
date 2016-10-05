@@ -24,16 +24,20 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	surface *renderTarget=drawTo?drawTo:target;//if a render target was supplied, use that instead of the stored one
 	sceneContainer *renderScene=drawScene?drawScene:scene;//if a scene was supplied, use that instead of the stored one
 
-	color raw[renderTarget->w*renderTarget->h];
+	const int count=renderTarget->w*renderTarget->h;
+	color *raw=new color[count];
 
 	threadPool drawPool(&camera::renderLoop,-1,true,this,raw,renderTarget->w*renderTarget->h,renderScene);
 	threadPool postPool(&camera::doPost,-1,true,this,raw,renderTarget);
+
+	delete[] raw;
 }
 void camera::renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene){
 	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
 	for(int i=start;i<stop;i++){
-		raw[i].g=i%2;
 		raw[i].r=(float(id))/numthreads;
+		raw[i].g=(float(i%4))/3;
+		raw[i].b=0;
 	}
 }
 void camera::doPost(int id,int numthreads,color *raw,surface *target){

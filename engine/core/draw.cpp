@@ -32,6 +32,8 @@ void engine::update(){
 	//draw the scene
 	mainCamera.render();
 
+	showHud=false;
+
 	//win.update();
 	//if the scene or hud are invisible, no reason to waste effort rendering to them
 	if(showScene){render.update();}
