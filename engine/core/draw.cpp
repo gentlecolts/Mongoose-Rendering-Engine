@@ -5,8 +5,11 @@ this file implements all functionality of the engine class that pertain to rende
 #include <ctime>
 using namespace MG;
 
-bool engine::isTimeToUpdate(int fps){
-	return (std::clock()-updateTimestamp)*fps>CLOCKS_PER_SEC;//delta_clock/clockpersec>1/fps
+/*note that in the future this may do a lot more than just a simple time check
+especially if engine.update() ever becomes async
+*/
+bool engine::isTimeToUpdate(){
+	return (std::clock()-updateTimestamp)*targetFPS>CLOCKS_PER_SEC;//delta_clock/clockpersec>1/fps
 }
 
 void engine::update(){

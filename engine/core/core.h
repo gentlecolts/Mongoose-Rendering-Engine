@@ -40,6 +40,8 @@ namespace MG{
 		bool showHud=true,showScene=true;
 		uint32_t bgCol=0;
 
+		long targetFPS=60;//long solely for consistency as it is compared to the return of clock()
+
 		//implemented in core.cpp
 		///TODO: determine need for alternate constructors
 		engine();//these should simply be a call to init
@@ -53,7 +55,7 @@ namespace MG{
 		void clearScene();
 
 		//implemented in draw.cpp
-		bool isTimeToUpdate(int FPS);
+		bool isTimeToUpdate();
 		void update();
 		void initWindow(int width,int height,int flags=SDL_WINDOW_SHOWN);
 		void setTitle(const char* title);

@@ -6,7 +6,7 @@ this file implements all functionality of the engine class that pertain to handl
 #include "SDL2/SDL.h"
 using namespace MG;
 
-///////core engine event functions///////
+//TODO: consider adding a sleep to this?
 void engine::threadedPolling(){
 	while(1){pollEvents();}
 }

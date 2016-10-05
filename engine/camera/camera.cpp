@@ -34,9 +34,10 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 }
 void camera::renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene){
 	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
+	const int patternWid=2;
 	for(int i=start;i<stop;i++){
-		raw[i].r=(float(id))/numthreads;
-		raw[i].g=(float(i%4))/3;
+		raw[i].r=(float(id))/(numthreads-1);
+		raw[i].g=(float(i%patternWid))/(patternWid-1);
 		raw[i].b=0;
 	}
 }
