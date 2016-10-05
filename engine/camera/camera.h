@@ -7,8 +7,8 @@
 
 namespace MG{
 	class camera{
-		void renderLoop(int id,int numthreads,float *drawTarget,sceneContainer *usingScene);
-		void doPost(int id,int numthreads,float *raw,surface *targetSurface);
+		void renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene);
+		void doPost(int id,int numthreads,color *raw,surface *targetSurface);
 	public:
 		surface *target=0;
 		sceneContainer *scene=0;

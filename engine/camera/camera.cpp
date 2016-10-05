@@ -24,11 +24,26 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	surface *renderTarget=drawTo?drawTo:target;//if a render target was supplied, use that instead of the stored one
 	sceneContainer *renderScene=drawScene?drawScene:scene;//if a scene was supplied, use that instead of the stored one
 
-	float target[renderTarget->w*renderTarget->h];
+	color raw[renderTarget->w*renderTarget->h];
 
-
-	threadPool drawPool(&camera::renderLoop,-1,true,this,target,renderScene);
-	threadPool postPool(&camera::doPost()
+	threadPool drawPool(&camera::renderLoop,-1,true,this,raw,renderTarget->w*renderTarget->h,renderScene);
+	threadPool postPool(&camera::doPost,-1,true,this,raw,renderTarget);
 }
-void camera::renderLoop(int id,int numthreads,float *drawTarget,sceneContainer *usingScene){
+void camera::renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene){
+	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
+	for(int i=start;i<stop;i++){
+		raw[i].g=i%2;
+		raw[i].r=(float(id))/numthreads;
+	}
+}
+void camera::doPost(int id,int numthreads,color *raw,surface *target){
+	const int count=target->w*target->h;
+	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
+	uint32_t r,g,b;
+	for(int i=start;i<stop;i++){
+		r=255*raw[i].r;
+		g=255*raw[i].g;
+		b=255*raw[i].b;
+		target->pixels[i]=0xff000000|(r<<16)|(g<<8)|b;
+	}
 }

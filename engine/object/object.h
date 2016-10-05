@@ -5,30 +5,22 @@ this file contains the definition for the abstract object class, which is the pa
 */
 
 #include "../math/vec3d.h"
+#include "../camera/ray.h"
 #include "meta.h"
 #include <stdint.h>
 #include <fstream>
 
+
+
 namespace MG{
-	struct color{
-		union{
-			struct{float r,g,b;};
-			float rgb[3];
-		};
-	};
-
-	struct ray{
-		vec3d from,to;
-		color c;
-	};
-
 	class engine;
 
 	class obj{
 		std::fstream file;
 	public:
 		vec3d pos;
-		virtual bool bounceRay(ray &r,uint32_t &color,double *d=0,vec3d *normal=0) = 0;
+
+		virtual bool bounceRay(ray &r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0) = 0;
 
 		virtual void firstUpdate(){}//the firstUpdate of every object will be called each frame before any object's update
 		virtual void staticUpdate(){}//will be called every frame after firstUpdate

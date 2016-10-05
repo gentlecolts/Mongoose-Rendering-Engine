@@ -29,6 +29,9 @@ void engine::update(){
 	//staticUpdate and threadedUpdate
 	threadPool pool(&engine::updateTasks,-1,true,this);
 
+	//draw the scene
+	mainCamera.render();
+
 	//win.update();
 	//if the scene or hud are invisible, no reason to waste effort rendering to them
 	if(showScene){render.update();}

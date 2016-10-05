@@ -121,6 +121,7 @@
 		<Unit filename="engine/2d/ui/image.h" />
 		<Unit filename="engine/camera/camera.cpp" />
 		<Unit filename="engine/camera/camera.h" />
+		<Unit filename="engine/camera/ray.h" />
 		<Unit filename="engine/core/core.h" />
 		<Unit filename="engine/core/draw.cpp" />
 		<Unit filename="engine/core/engineEvents.cpp" />
