@@ -16,6 +16,8 @@ namespace MG{
 		//void renderTo(surface &target);
 		//void render(camera &cam);
 		void render(int numRays,ray *raysIn,ray *raysOut);
+
+
 	};
 }
 #endif // SCENE_H_INCLUDED

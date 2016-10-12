@@ -36,10 +36,10 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	also sequential pixels will be adjacent in memory
 	this layout is designed for optimizing caching, something which would not be achieved by the 2d array it's initialized as
 	TODO: in the future, this will not be the case, as rays will be emitted from a light source
-	will probably look like: scene.initRays(bounces,this)
+	will probably look like: drawScene.initRays(bounces,this)
 	*/
-	ray *rays=new ray[(bounces+1)*count];//1 is added to bounces to provide space for the initial set of rays
-	threadPool raypool(&camera::makeRays
+	ray **rays=new ray*[numthreads];
+	threadPool raypool(&camera::initRays,numthreads,true,this,rays,count,bounces);
 
 	/*passing numthreads should be equivalent to passing -1
 	however numthreads is passed anyways for consistency in case there is some bizarre edge case in which std::thread::hardware_concurrency() can change*/
@@ -48,7 +48,21 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	threadPool postPool(&camera::doPost,numthreads,true,this,raw,renderTarget);
 
 	delete[] raw;
+	for(int i=0;i<numthreads;i++){
+		delete[] rays[i];
+	}
+	delete[] rays;
 }
+
+void camera::initRays(int id,int numthreads,ray **rays,int count,int bounces){
+	rays[id]=new ray[(bounces+1)*(count/numthreads)];//1 is added to bounces to provide space for the initial set of rays
+	int reali,px,py;
+	const int offset=id*(bounces+1)*(count/numthreads);
+	for(int i=0;i<count/numthreads;i++){
+		reali=i+offset;
+	}
+}
+
 void camera::renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene){
 	//this will run a test pattern, TODO: this can be removed once array bounces are correct
 	#if 0

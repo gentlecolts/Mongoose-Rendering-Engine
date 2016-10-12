@@ -563,7 +563,7 @@
 	<thread>
 	<cstdarg>
 
-1475678273 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+1476301452 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 	"../math/math.h"
 	"../core/scene.h"
@@ -585,7 +585,7 @@
 	"camera.h"
 	"../core/threadpool.h"
 
-1475696691 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
+1476297471 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
 	"core.h"
 	<ctime>
 
@@ -652,7 +652,7 @@
 	"quat.h"
 	"matrix.h"
 
-1475092838 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.h
+1476305212 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.h
 	<vector>
 	"../object/object.h"
 
