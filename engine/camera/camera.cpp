@@ -30,13 +30,16 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 		bounces=0;//TODO: parameterize this
 	color *raw=new color[count];
 
-	/*the order of this array is to be treated as [threadcount][bouncenum][pixels/threadcount]
+	/*the order of this array is to be treated as it were [threadcount][bouncenum][pixels/threadcount]
 	the reason for this is that this this means that sequential pixels and bounces will be adjacent to eachother in memory
 	and will be split evenly between threads
 	also sequential pixels will be adjacent in memory
 	this layout is designed for optimizing caching, something which would not be achieved by the 2d array it's initialized as
+	TODO: in the future, this will not be the case, as rays will be emitted from a light source
+	will probably look like: scene.initRays(bounces,this)
 	*/
 	ray *rays=new ray[(bounces+1)*count];//1 is added to bounces to provide space for the initial set of rays
+	threadPool raypool(&camera::makeRays
 
 	/*passing numthreads should be equivalent to passing -1
 	however numthreads is passed anyways for consistency in case there is some bizarre edge case in which std::thread::hardware_concurrency() can change*/
@@ -48,7 +51,7 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 }
 void camera::renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene){
 	//this will run a test pattern, TODO: this can be removed once array bounces are correct
-	#if 1
+	#if 0
 	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
 	const int patternWid=2;
 	for(int i=start;i<stop;i++){

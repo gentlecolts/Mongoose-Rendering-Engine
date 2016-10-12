@@ -20,6 +20,9 @@ void engine::update(){
 		pollEvents();
 	}
 
+	//TODO: gui updates go here?
+	//TODO: determine if gui update should be separate from regular update, currently leaning towards yes
+
 	///step physics(?)
 	///TODO
 	///render scene(?)
