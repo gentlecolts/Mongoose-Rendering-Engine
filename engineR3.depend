@@ -517,7 +517,7 @@
 1474901131 /media/goose/4cbb6807-4713-4969-b5c1-ba4cd22c038a/home/zangoose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 
-1475695151 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1476282615 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 
 1474208977 /home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/demos.h
@@ -559,7 +559,7 @@
 1474057594 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/event.h
 	<stdint.h>
 
-1474736146 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
+1476285325 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
 	<thread>
 	<cstdarg>
 
@@ -581,15 +581,15 @@
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
-1475696489 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+1476286031 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 	"camera.h"
 	"../core/threadpool.h"
 
-1475694166 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
+1475696691 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
 	"core.h"
 	<ctime>
 
-1474057523 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/engineEvents.cpp
+1475696784 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/engineEvents.cpp
 	"core.h"
 	"SDL2/SDL.h"
 
@@ -658,4 +658,8 @@
 
 1475676755 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/ray.h
 	"../math/vec3d.h"
+
+1476285361 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.cpp
+	"threadpool.h"
+	<algorithm>
 

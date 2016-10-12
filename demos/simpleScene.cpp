@@ -21,8 +21,8 @@ public:
 void demos::simpleScene(){
 	MG::engine e;
  	//e.setEventHandler(&checkClose);//moved this to be the default event handler
- 	e.initWindow(1280,720);
- 	//e.initWindow(640,480);
+ 	//e.initWindow(1280,720);
+ 	e.initWindow(640,480);
  	//e.initWindow(641,481);
 	e.setTitle("Mongoose Rendering Engine Demo");
 
