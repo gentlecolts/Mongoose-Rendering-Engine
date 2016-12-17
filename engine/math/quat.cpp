@@ -54,11 +54,62 @@ quat operator *(const vec3d &v,const quat &q){
 			v.x*q.c-v.y*q.b+v.z*q.a);
 }
 
-vec3d quat::applyTo(const vec3d &v) const{
+void quat::applyTo(vec3d &v) const{
+	const double
+		x=(a*a+b*b-c*c-d*d)*v.x + 2*((b*c-a*d)*v.y + (a*c+b*d)*v.z),
+		y=(a*a-b*b+c*c-d*d)*v.y + 2*((c*d-a*b)*v.z + (a*d+b*c)*v.x),
+		z=(a*a-b*b-c*c+d*d)*v.z + 2*((b*d-a*c)*v.x + (a*b+c*d)*v.y);
+	v.x=x;
+	v.y=y;
+	v.z=z;
+}
+
+void quat::applyTo(vec3d v[],int count) const{
+	const double
+		cx1=(a*a+b*b-c*c-d*d),cx2=2*(b*c-a*d),cx3=2*(a*c+b*d),
+		cy1=(a*a-b*b+c*c-d*d),cy2=2*(c*d-a*b),cy3=2*(a*d+b*c),
+		cz1=(a*a-b*b-c*c+d*d),cz2=2*(b*d-a*c),cz3=2*(a*b+c*d);
+	double x,y,z;
+
+	for(int i=0;i<count;i++){
+		x=cx1*v[i].x + cx2*v[i].y + cx3*v[i].z;
+		y=cy1*v[i].y + cy2*v[i].z + cy3*v[i].x;
+		z=cz1*v[i].z + cz2*v[i].x + cz3*v[i].y;
+		v[i].x=x;v[i].y=y;v[i].z=z;
+	}
+}
+void quat::applyTo(matrix3 &m) const{
+	const double
+		cx1=(a*a+b*b-c*c-d*d),cx2=2*(b*c-a*d),cx3=2*(a*c+b*d),
+		cy1=(a*a-b*b+c*c-d*d),cy2=2*(c*d-a*b),cy3=2*(a*d+b*c),
+		cz1=(a*a-b*b-c*c+d*d),cz2=2*(b*d-a*c),cz3=2*(a*b+c*d);
+	double x,y,z;
+
+	//xyz[3*i] = x cord, xyz[3*i+1] = y cord, xyz[3*i+2] = z cord
+	for(int i=0;i<3;i++){
+		x=cx1*m.xyz[3*i] + cx2*m.xyz[3*i+1] + cx3*m.xyz[3*i+2];
+		y=cy1*m.xyz[3*i+1] + cy2*m.xyz[3*i+2] + cy3*m.xyz[3*i];
+		z=cz1*m.xyz[3*i+2] + cz2*m.xyz[3*i] + cz3*m.xyz[3*i+1];
+		m.xyz[3*i]=x;
+		m.xyz[3*i+1]=y;
+		m.xyz[3*i+2]=z;
+	}
+}
+void quat::applyTo(double v[3]) const{
+	const double
+		x=(a*a+b*b-c*c-d*d)*v[0] + 2*((b*c-a*d)*v[1] + (a*c+b*d)*v[2]),
+		y=(a*a-b*b+c*c-d*d)*v[1] + 2*((c*d-a*b)*v[2] + (a*d+b*c)*v[0]),
+		z=(a*a-b*b-c*c+d*d)*v[2] + 2*((b*d-a*c)*v[0] + (a*b+c*d)*v[1]);
+	v[0]=x;
+	v[1]=y;
+	v[2]=z;
+}
+
+vec3d quat::rotate(const vec3d &v) const{
 	return vec3d(
-		(a*a+b*b-c*c-d*d)*v.x + 2*((b*c - a*d)*v.y + (a*c + b*d)*v.z),
-		(a*a-b*b+c*c-d*d)*v.y + 2*((c*d - a*b)*v.z + (a*d + b*c)*v.x),
-		(a*a-b*b-c*c+d*d)*v.z + 2*((b*d - a*c)*v.x + (a*b + c*d)*v.y)
+		(a*a+b*b-c*c-d*d)*v.x + 2*((b*c-a*d)*v.y + (a*c+b*d)*v.z),
+		(a*a-b*b+c*c-d*d)*v.y + 2*((c*d-a*b)*v.z + (a*d+b*c)*v.x),
+		(a*a-b*b-c*c+d*d)*v.z + 2*((b*d-a*c)*v.x + (a*b+c*d)*v.y)
 	);
 }
 

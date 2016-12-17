@@ -28,7 +28,7 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 		pxcount=renderTarget->w*renderTarget->h,//how many pixels
 		raycount=pxcount,//number of rays, for now this is equal to number of pixels
 		numthreads=threadPool::getMaxThreads(),
-		bounces=0;//TODO: parameterize this
+		bounces=1;//TODO: parameterize this
 	color *raw=new color[pxcount];
 
 	/*the order of this array is to be treated as it were [threadcount][bouncenum][pixels/threadcount]
@@ -44,7 +44,7 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 
 	/*passing numthreads should be equivalent to passing -1
 	however numthreads is passed anyways for consistency in case there is some bizarre edge case in which std::thread::hardware_concurrency() can change*/
-	threadPool drawPool(&camera::renderLoop,numthreads,true,this,raw,raycount,pxcount,renderScene);
+	threadPool drawPool(&camera::renderLoop,numthreads,true,this,rays,raw,raycount,pxcount,bounces,renderScene);
 	//TODO: add one more function for rasterizing the ray array?
 	threadPool postPool(&camera::doPost,numthreads,true,this,raw,renderTarget);
 
@@ -82,14 +82,14 @@ void camera::initRays(int id,int numthreads,ray **rays,int raycount,int bounces)
 		py=2*(double)(reali/target->w)/target->h-1;
 
 		rays[id][i].from=this->position;
-		rays[id][i].to=px*vec3d(this->axes.x)+py*vec3d(this->axes.y)+vec3d(this->axes.z);//TODO: determine if using +z or -z for right vs left hand coords
-		rays[id][i].to.normalize();
+		rays[id][i].dir=px*vec3d(this->axes.x)+py*vec3d(this->axes.y)+vec3d(this->axes.z);//TODO: determine if using +z or -z for right vs left hand coords
+		rays[id][i].dir.normalize();
 	}
 }
 
-void camera::renderLoop(int id,int numthreads,color *raw,int raycount,int pxcount,sceneContainer *usingScene){
+void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount,int pxcount,int bounces,sceneContainer *usingScene){
 	//this will run a test pattern, TODO: this can be removed once ray bounces are correct
-	#if 1
+	#if 0
 	const int start=(id*pxcount)/numthreads,stop=((id+1)*pxcount)/numthreads;
 	const int patternWid=2;
 	for(int i=start;i<stop;i++){
@@ -98,6 +98,17 @@ void camera::renderLoop(int id,int numthreads,color *raw,int raycount,int pxcoun
 		raw[i].b=0;
 	}
 	#else
+	//compute all rays in the scene
+	const int rcount=raycount/numthreads;
+	for(int i=0;i<bounces;i++){
+		usingScene->render(rcount,&(rays[id][i*rcount]),&(rays[id][(i+1)*rcount]));
+	}
+
+	//convert rays to raw image
+	//for(int i=0;i<((bounces+1)*raycount)/numthreads;i++){//this loop is for actually using all rays
+	for(int i=rcount;i<2*rcount;i++){//rays are from camera, only the first bounce matters, TODO: remove and replace with above line when possible
+		//put ray on the image
+	}
 	#endif
 }
 void camera::doPost(int id,int numthreads,color *raw,surface *target){

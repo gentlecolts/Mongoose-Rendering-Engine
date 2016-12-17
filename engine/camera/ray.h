@@ -11,8 +11,16 @@ namespace MG{
 		};
 	};
 
+	/*TODO: consider need for additional parameters, such as:
+	-travel distance at "from"
+	-intensity (ie how much real light does the ray represent)
+	-polarization
+	-real ray vs shadow vs miss vs DNE (ray after a miss?)
+	-visible to the camera or not?
+	and other factors that might be needed
+	*/
 	struct ray{
-		vec3d from,to;
+		vec3d from,dir;
 		color c;
 	};
 }

@@ -25,7 +25,7 @@ namespace MG{
 		virtual void firstUpdate(){}//the firstUpdate of every object will be called each frame before any object's update
 		virtual void staticUpdate(){}//will be called every frame after firstUpdate
 		virtual void threadedUpdate(){}//this will be called in parallel to all staticUpdate calls
-		virtual void timedUpdate(){}//called at a setable interval unless the previous batch has not finished
+		virtual void timedUpdate(){}//called at a settable interval unless the previous batch has not finished
 
 		//this is called before any child constructors, adds itself to the given engine object
 		obj(engine* e,metadata *meta=0);

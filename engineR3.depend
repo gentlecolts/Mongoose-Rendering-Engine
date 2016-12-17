@@ -544,7 +544,7 @@
 	<SDL2/SDL.h>
 	<stdint.h>
 
-1475676889 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
+1482018929 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	"meta.h"
@@ -563,13 +563,14 @@
 	<thread>
 	<cstdarg>
 
-1482010025 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+1482012078 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 	"../math/math.h"
 	"../core/scene.h"
 
-1466460908 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.h
+1482016109 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.h
 	"vec3d.h"
+	"matrix.h"
 
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/demos/simpleStartup.cpp
 	"demos.h"
@@ -581,7 +582,7 @@
 1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
-1482011422 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+1482018544 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 	"camera.h"
 	"../core/threadpool.h"
 
@@ -603,15 +604,16 @@
 1475092481 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/main.cpp
 	"core.h"
 
-1474914692 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+1482018208 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
 	"core.h"
+	"scene.h"
 
 1474917665 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.cpp
 	"matrix.h"
 
 1475091128 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/matrix.h
 
-1466460908 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.cpp
+1482017156 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/math/quat.cpp
 	"quat.h"
 	<cmath>
 
@@ -652,11 +654,11 @@
 	"quat.h"
 	"matrix.h"
 
-1476305212 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.h
+1482018208 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/scene.h
 	<vector>
 	"../object/object.h"
 
-1475676755 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/ray.h
+1482018394 /home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/camera/ray.h
 	"../math/vec3d.h"
 
 1476285361 source:/home/goose/Desktop/git/Mongoose-Rendering-Engine/engine/core/threadpool.cpp

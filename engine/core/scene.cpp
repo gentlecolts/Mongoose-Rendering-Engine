@@ -2,10 +2,18 @@
 this file implements all functionality of the engine class that pertain to managing the scene
 */
 #include "core.h"
+#include "scene.h"
 using namespace MG;
+
+/////FROM sceneContainer CLASS/////
 
 sceneContainer::sceneContainer(){
 }
+
+void sceneContainer::render(int numRays,ray *raysIn,ray *raysOut){
+}
+
+/////FROM engine CLASS/////
 
 void engine::addToScene(obj *o){
 	scene.objects.push_back(o);

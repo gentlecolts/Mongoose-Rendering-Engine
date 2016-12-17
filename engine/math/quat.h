@@ -2,6 +2,7 @@
 #define QUAT_H_INCLUDED
 
 #include "vec3d.h"
+#include "matrix.h"
 
 namespace MG{
 	struct quat{
@@ -26,7 +27,12 @@ namespace MG{
 
 		quat operator *(const vec3d &v) const;
 
-		vec3d applyTo(const vec3d &v) const;
+		void applyTo(vec3d &v) const;
+		void applyTo(vec3d v[],int count) const;
+		void applyTo(matrix3 &m) const;
+		void applyTo(double v[3]) const;
+
+		vec3d rotate(const vec3d &v) const;
 
 		quat& operator +=(const quat &q);
 		quat& operator -=(const quat &q);
