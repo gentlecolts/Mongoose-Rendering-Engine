@@ -17,6 +17,7 @@ namespace MG{
 
 		vec2d():x(0),y(0){}
 		vec2d(double x0,double y0):x(x0),y(y0){}
+		vec2d(double v[2]):x(v[0]),y(v[1]){}
 
 		vec2d operator +(const vec2d &v) const;
 		vec2d operator -(const vec2d &v) const;

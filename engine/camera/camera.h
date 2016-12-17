@@ -7,10 +7,10 @@
 
 namespace MG{
 	class camera{
-		void renderLoop(int id,int numthreads,color *raw,int count,sceneContainer *usingScene);
+		void renderLoop(int id,int numthreads,color *raw,int raycount,int pxcount,sceneContainer *usingScene);
 		void doPost(int id,int numthreads,color *raw,surface *targetSurface);
 
-		void initRays(int id,int numthreads,ray **rays,int count,int bounces);
+		void initRays(int id,int numthreads,ray **rays,int raycount,int bounces);
 	public:
 		surface *target=0;
 		sceneContainer *scene=0;

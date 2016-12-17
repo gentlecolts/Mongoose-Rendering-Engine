@@ -17,6 +17,7 @@ namespace MG{
 
 		vec3d():x(0),y(0),z(0){}
 		vec3d(double x0,double y0,double z0):x(x0),y(y0),z(z0){}
+		vec3d(double v[3]):x(v[0]),y(v[1]),z(v[2]){}
 
 		vec3d operator +(const vec3d &v) const;
 		vec3d operator -(const vec3d &v) const;

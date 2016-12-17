@@ -55,7 +55,7 @@ vec3d& vec3d::operator /=(double a){
 }
 
 void vec3d::normalize(){
-	const double d=1/sqrt(x*x+y*y);
+	const double d=1/sqrt(x*x+y*y+z*z);
 	x*=d;
 	y*=d;
 	z*=d;
