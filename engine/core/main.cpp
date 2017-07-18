@@ -16,3 +16,6 @@ engine::~engine(){
 
 void engine::init(){
 }
+
+void engine::mainLooper(){
+}

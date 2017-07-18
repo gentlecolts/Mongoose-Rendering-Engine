@@ -9,6 +9,14 @@ namespace MG{
 			struct{float r,g,b;};
 			float rgb[3];
 		};
+
+		color():r(0),g(0),b(0){}
+		color(double r0,double g0,double b0):r(r0),g(g0),b(b0){}
+		color(double c[3]):r(c[0]),g(c[1]),b(c[2]){}
+
+		explicit operator vec3d() const{
+			return vec3d(r,g,b);
+		}
 	};
 
 	/*TODO: consider need for additional parameters, such as:

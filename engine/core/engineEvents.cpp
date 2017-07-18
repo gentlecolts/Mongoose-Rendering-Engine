@@ -16,6 +16,7 @@ bool engine::setEventAsync(bool b){
 		return true;
 	}
 
+	//TODO: revise this so that, instead of deleting the thread, it terminates itself when the bool flips, deleting threads can be unsafe
 	if(b){//create event thread
 		evtThread=new std::thread(&engine::threadedPolling,this);
 		evtThread->detach();

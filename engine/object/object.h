@@ -23,8 +23,8 @@ namespace MG{
 		virtual bool bounceRay(ray &r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0) = 0;
 
 		virtual void firstUpdate(){}//the firstUpdate of every object will be called each frame before any object's update
-		virtual void staticUpdate(){}//will be called every frame after firstUpdate
-		virtual void threadedUpdate(){}//this will be called in parallel to all staticUpdate calls
+		virtual void forkedUpdate(){}//forkedUpdate is called after first update and is called in true threaded parallel
+		virtual void joinedUpdate(){}//called after all forkedUpdates finish
 		virtual void timedUpdate(){}//called at a settable interval unless the previous batch has not finished
 
 		//this is called before any child constructors, adds itself to the given engine object

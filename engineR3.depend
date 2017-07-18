@@ -811,3 +811,151 @@
 	<cstdlib>
 	<iostream>
 
+1476282615 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+	"demos.h"
+
+1474208977 /home/zangoose/git/Mongoose-Rendering-Engine/demos/demos.h
+	<SDL2/SDL.h>
+	"../engine/engine.h"
+	"../engine/math/quat.h"
+	"../engine/math/vec3d.h"
+
+1470328210 /home/zangoose/git/Mongoose-Rendering-Engine/engine/engine.h
+	"core/core.h"
+	"object/object.h"
+
+1500395550 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/core.h
+	"../2d/surface.h"
+	"../object/object.h"
+	"event.h"
+	"threadpool.h"
+	"../camera/camera.h"
+	"scene.h"
+	<thread>
+	<vector>
+
+1474829702 /home/zangoose/git/Mongoose-Rendering-Engine/engine/2d/surface.h
+	<SDL2/SDL.h>
+	<stdint.h>
+
+1499445693 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/object.h
+	"../math/vec3d.h"
+	"../camera/ray.h"
+	"meta.h"
+	<stdint.h>
+	<fstream>
+
+1482010964 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
+
+1500396440 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/ray.h
+	"../math/vec3d.h"
+
+1474914226 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/meta.h
+	<string>
+
+1474057594 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/event.h
+	<stdint.h>
+
+1476285325 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/threadpool.h
+	<thread>
+	<cstdarg>
+
+1482012078 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+	"../2d/surface.h"
+	"../math/math.h"
+	"../core/scene.h"
+
+1474919161 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/math.h
+	"vec2d.h"
+	"vec3d.h"
+	"quat.h"
+	"matrix.h"
+
+1482011580 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec2d.h
+
+1482016109 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/quat.h
+	"vec3d.h"
+	"matrix.h"
+
+1475091128 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/matrix.h
+
+1482018208 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.h
+	<vector>
+	"../object/object.h"
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleStartup.cpp
+	"demos.h"
+
+1474699282 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/threadPoolTester.cpp
+	"demos.h"
+	"stdio.h"
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
+	"surface.h"
+
+1482018544 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+	"camera.h"
+	"../core/threadpool.h"
+
+1473977776 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/event.cpp
+	"event.h"
+	"core.h"
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/io.cpp
+	"core.h"
+
+1500395548 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/main.cpp
+	"core.h"
+
+1482018208 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+	"core.h"
+	"scene.h"
+
+1476285361 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/threadpool.cpp
+	"threadpool.h"
+	<algorithm>
+
+1474917665 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/math/matrix.cpp
+	"matrix.h"
+
+1482017156 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/math/quat.cpp
+	"quat.h"
+	<cmath>
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec2d.cpp
+	"vec2d.h"
+	<cmath>
+
+1482011377 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec3d.cpp
+	"vec3d.h"
+	<cmath>
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/io/polyToOct.cpp
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/io/polyToPoint.cpp
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/io/readFile.cpp
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/io/writeFile.cpp
+
+1474914265 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/obj.cpp
+	"object.h"
+	"../core/core.h"
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/oct.cpp
+
+1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/point.cpp
+
+1474699343 source:/home/zangoose/git/Mongoose-Rendering-Engine/main.cpp
+	"demos/demos.h"
+	<cstdlib>
+	<iostream>
+
+1500396185 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/draw.cpp
+	"core.h"
+	<ctime>
+
+1484266323 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/engineEvents.cpp
+	"core.h"
+	"SDL2/SDL.h"
+

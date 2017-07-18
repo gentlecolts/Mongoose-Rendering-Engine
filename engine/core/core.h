@@ -49,6 +49,8 @@ namespace MG{
 
 		void init();//(re)initialize the engine.  this should initialize everything and free any objects that might have been in use
 
+		void mainLooper();//do main loop and waiting for the user
+
 		//implemented in scene.cpp
 		void addToScene(obj *o);
 		void removeFromScene(obj *o);

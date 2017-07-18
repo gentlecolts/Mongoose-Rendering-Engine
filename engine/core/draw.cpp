@@ -12,7 +12,22 @@ bool engine::isTimeToUpdate(){
 	return (std::clock()-updateTimestamp)*targetFPS>CLOCKS_PER_SEC;//delta_clock/clockpersec>1/fps
 }
 
+#define FIRST_JOIN_FORK 1
+
 void engine::update(){
+	/*TODO: consider re-organizing this so that last frame's gpu tasks happen first, then this frame's cpu tasks
+	reson being that...
+	if user is manually calling update:
+		after calling update, all non-render specific data for the current frame would be ready to go for them after update is called,
+		allowing for any further adjustments to take place before rendering is performed
+	for engine's own main loop:
+		might make wait timing better, since gpu and cpu tasks are completely independent parts
+
+	also on the TODO: make engine::isTimeToUpdate() return true when both the gpu task is done AND the timer says it's time to update, in case the gpu side takes too long
+
+	also TODO: regardless of any of the above, maybe split processing and rendering into separate function calls
+		this'd help organiztion and make it easier for server code to completely skip the render task
+	*/
 	updateTimestamp=std::clock();//done at the beginning of update so that processing time is included in the dt
 
 	///check events if they're not running in a separate thread
@@ -32,8 +47,13 @@ void engine::update(){
 	for(int i=0;i<scene.objects.size();i++){
 		scene.objects[i]->firstUpdate();
 	}
-	//staticUpdate and threadedUpdate
+	//staticUpdate and forkedUpdate
 	threadPool pool(&engine::updateTasks,-1,true,this);
+	#if FIRST_JOIN_FORK
+	for(int i=0;i<scene.objects.size();i++){
+		scene.objects[i]->joinedUpdate();
+	}
+	#endif
 
 	//draw the scene
 	mainCamera.render();
@@ -63,10 +83,11 @@ void engine::setTitle(const char* title){
 }
 
 void engine::updateTasks(int id,int numThreads){
+	#if !FIRST_JOIN_FORK
 	if(numThreads==1){//if there is only one thread, then we need to handle both update calls in this thread
 		for(int i=0;i<scene.objects.size();i++){
 			scene.objects[i]->staticUpdate();
-			scene.objects[i]->threadedUpdate();
+			scene.objects[i]->forkedUpdate();
 		}
 	//}else if(numThreads>objects.size()){//if we for some reason have more threads than objects
 	}else{
@@ -77,12 +98,22 @@ void engine::updateTasks(int id,int numThreads){
 				start=(scene.objects.size()*(id-1))/(numThreads-1),
 				stop=(scene.objects.size()*id)/(numThreads-1);
 			for(int i=start;i<stop;i++){
-				scene.objects[i]->threadedUpdate();
+				scene.objects[i]->forkedUpdate();
 			}
 		}else{
 			for(int i=0;i<scene.objects.size();i++){
-				scene.objects[i]->staticUpdate();
+				scene.objects[i]->joinedUpdate();
 			}
 		}
 	}
+	#else
+    /*note that if the number of async threads is greater than the number of objects, then some instances of start and stop will have the same value and not loop
+    thus there will be no duplicate calls anyways*/
+	const int
+        start=(scene.objects.size()*(id-1))/(numThreads-1),
+        stop=(scene.objects.size()*id)/(numThreads-1);
+    for(int i=start;i<stop;i++){
+        scene.objects[i]->forkedUpdate();
+    }
+    #endif
 }
