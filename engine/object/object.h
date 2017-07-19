@@ -16,6 +16,9 @@ namespace MG{
 	class engine;
 
 	class obj{
+		/*TODO: file streaming/caching is probably wanted, but does this really need to be in the global object model?
+		also worth noting is future plan to read a more sophisticated file format via dictionaries or something, which will need more work
+		*/
 		std::fstream file;
 	public:
 		vec3d pos;

@@ -139,6 +139,8 @@
 		<Unit filename="engine/object/object.h" />
 		<Unit filename="engine/object/oct.cpp" />
 		<Unit filename="engine/object/point.cpp" />
+		<Unit filename="engine/object/pointcloud.cpp" />
+		<Unit filename="engine/object/pointcloud.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

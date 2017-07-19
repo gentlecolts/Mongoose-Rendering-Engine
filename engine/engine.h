@@ -7,5 +7,6 @@ this file simply includes several important pieces of the engine
 
 #include "core/core.h"
 #include "object/object.h"
+#include "object/pointcloud.h"
 
 #endif // ENGINE_H_INCLUDED

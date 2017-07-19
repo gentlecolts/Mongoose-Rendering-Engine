@@ -38,7 +38,7 @@ namespace MG{
 
 	double abs(const vec2d &v);//returns the magnitude
 	double abs2(const vec2d &v);//returns the magnitude squared
-	double invabs(const vec2d &v);//returns 1/magnitude, reason for inclusion being common use and potential (hardware) optimization
+	double invabs(const vec2d &v);//returns 1/magnitude
 	double invabs2(const vec2d &v);//returns 1/magnitude^2
 }
 //this is outside of the namespace because otherwise things refuse to compile
