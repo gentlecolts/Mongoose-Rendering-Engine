@@ -1,5 +1,6 @@
 #include "pointcloud.h"
 #include <cmath>
+#include <algorithm>
 using namespace MG;
 
 ///// point stuff goes here /////
@@ -36,14 +37,14 @@ inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
 	c=|P1|^2 - 1
 	*/
 	const vec3d P1(
-		(r.from.x-p.pos.x)/p.wx,
-		(r.from.y-p.pos.y)/p.wy,
-		(r.from.z-p.pos.z)/p.wz
+		(r.from.x-p.pos.x)/p.wid.x,
+		(r.from.y-p.pos.y)/p.wid.y,
+		(r.from.z-p.pos.z)/p.wid.z
 	);
 	const vec3d v1(
-		r.dir.x/p.wx,
-		r.dir.y/p.wy,
-		r.dir.z/p.wz
+		r.dir.x/p.wid.x,
+		r.dir.y/p.wid.y,
+		r.dir.z/p.wid.z
 	);
 
 	const float
@@ -132,28 +133,70 @@ spacehash::~spacehash(){
 }
 
 //linear transform applied to any given point that's going to be mapped
-#define MAPTF(point,dim) (dim*(point))
+inline vec3d pointTF(const spacehash &space,const vec3d &p){
+	/*not to self: not being modulus is good, but there is one edge case
+	if (point-space.pos)/space.scale were to be 1, there would be an issue
+	however, since determining pos and scale accounts for the size of each point,
+	this could not happen unless a point had zero width/height/depth
+	*/
+	return vec3d(
+		space.xdim*(p.x-space.pos.x)/space.scale.x,
+		space.ydim*(p.y-space.pos.y)/space.scale.y,
+		space.zdim*(p.z-space.pos.z)/space.scale.z
+	);
+}
 //#define MAPTF(point,dim) (dim*((point)+1)/2)
 
 //the int representing index in the array
-#define REMAP(point,dim,mask) (MAPTF((unsigned int)point,dim)&mask)
+inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned int &y,unsigned int &z){
+	const vec3d mapped=pointTF(space,p);
+	x=((unsigned int)mapped.x)&space.xmask;
+	y=((unsigned int)mapped.y)&space.ymask;
+	z=((unsigned int)mapped.z)&space.zmask;
+}
 
 void spacehash::hash(point points[],int npoints){
+	vec3d
+		minp=points[0].pos-points[0].wid,
+		maxp=points[0].pos+points[0].wid,
+		mintest,maxtest;
+
+	for(int i=1;i<npoints;i++){
+		mintest=points[i].pos-points[i].wid;
+		maxtest=points[i].pos+points[i].wid;
+
+		minp.x=std::min(minp.x,mintest.x);
+		minp.y=std::min(minp.y,mintest.y);
+		minp.z=std::min(minp.z,mintest.z);
+
+		maxp.x=std::max(maxp.x,maxtest.x);
+		maxp.y=std::max(maxp.y,maxtest.y);
+		maxp.z=std::max(maxp.z,maxtest.z);
+	}
+
+	/*
+	//map all points to [-1,1]
+	pos=(maxp+minp)/2;
+	scale=(maxp-minp)/2;
+	/*/
+	//map all points to [0,1]
+	pos=minp;
+	scale=maxp-minp;
+	//*/
+
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
-		const unsigned int
-			x=REMAP(pointarr[i].pos.x,xdim,xmask),
-			y=REMAP(pointarr[i].pos.y,ydim,ymask),
-			z=REMAP(pointarr[i].pos.z,zdim,zmask);
+
+		unsigned int x,y,z;
+		remap(*this,pointarr[i].pos,x,y,z);
+
 		pointhash[x+xdim*(y+ydim*z)].push_back(i);
 	}
 }
 
 inline std::list<int>& fetch(const spacehash& space,const vec3d& point){
-	const unsigned int
-		x=REMAP(point.x,space.xdim,space.xmask),
-		y=REMAP(point.y,space.ydim,space.ymask),
-		z=REMAP(point.x,space.zdim,space.zmask);
+	unsigned int x,y,z;
+		remap(space,point,x,y,z);
 	return space.pointhash[x+space.xdim*(y+space.ydim*z)];
 }
 
@@ -174,12 +217,8 @@ bool pointcloud::bounceRay(const ray &r_in,uint32_t &color,ray &r_out,double *d,
 	ray transRay=r_in;
 	transRay.from-=pos;
 	//[matrix part would go here]
-	transRay.from.x=MAPTF(transRay.from.x,hashbox.xdim);
-	transRay.from.y=MAPTF(transRay.from.y,hashbox.ydim);
-	transRay.from.z=MAPTF(transRay.from.z,hashbox.zdim);
-	transRay.dir.x=MAPTF(transRay.dir.x,hashbox.xdim);
-	transRay.dir.y=MAPTF(transRay.dir.y,hashbox.ydim);
-	transRay.dir.z=MAPTF(transRay.dir.z,hashbox.zdim);
+	transRay.from=pointTF(hashbox,transRay.from);
+	transRay.dir=pointTF(hashbox,transRay.dir);
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,1) in x,y,z)
 

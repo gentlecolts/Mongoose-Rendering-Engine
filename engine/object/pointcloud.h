@@ -11,10 +11,9 @@ namespace MG{
 	/*points in this point cloud are represented as an elipsoid
 	Todo: need material information and color
 	*/
-		vec3d pos;
-		float wx,wy,wz;
+		vec3d pos,wid;
 
-		point():pos(),wx(1),wy(1),wz(1){}
+		point():pos(),wid(1,1,1){}
 
 		bool intersects(const ray& r,float &t0,float& t1) const;
 	};
@@ -33,6 +32,7 @@ namespace MG{
 		unsigned int xbits,ybits,zbits;
 		unsigned int xmask,ymask,zmask;
 		unsigned int xdim,ydim,zdim;
+		vec3d pos,scale;
 
 		spacehash(int hashsize);
 		spacehash(int hashsize,point points[],int npoints);
