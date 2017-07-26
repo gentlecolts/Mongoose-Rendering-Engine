@@ -55,7 +55,7 @@ namespace MG{
         pointcloud(engine* e,point points[],int numpoints,int density=100);
         pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density=100);
 
-        virtual bool bounceRay(const ray &r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0);
+        virtual bool bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0);
 	};
 }
 

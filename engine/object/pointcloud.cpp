@@ -1,6 +1,8 @@
 #include "pointcloud.h"
 #include <cmath>
+//for some reason gcc lets me comment these two out?  leaving them in for safety
 #include <algorithm>
+#include <utility>
 using namespace MG;
 
 ///// point stuff goes here /////
@@ -145,14 +147,16 @@ inline vec3d pointTF(const spacehash &space,const vec3d &p){
 		space.zdim*(p.z-space.pos.z)/space.scale.z
 	);
 }
-//#define MAPTF(point,dim) (dim*((point)+1)/2)
+
+inline void maskpoint(const spacehash &space,const vec3d &p,unsigned int &x,unsigned int &y,unsigned int &z){
+	x=((unsigned int)p.x)&space.xmask;
+	y=((unsigned int)p.y)&space.ymask;
+	z=((unsigned int)p.z)&space.zmask;
+}
 
 //the int representing index in the array
 inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned int &y,unsigned int &z){
-	const vec3d mapped=pointTF(space,p);
-	x=((unsigned int)mapped.x)&space.xmask;
-	y=((unsigned int)mapped.y)&space.ymask;
-	z=((unsigned int)mapped.z)&space.zmask;
+	maskpoint(space,pointTF(space,p),x,y,z);
 }
 
 void spacehash::hash(point points[],int npoints){
@@ -211,18 +215,49 @@ pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e
 pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
 }
 
-bool pointcloud::bounceRay(const ray &r_in,uint32_t &color,ray &r_out,double *d,vec3d *normal){
+bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *normal){
 	//convert the ray to the space of the hash
 	//TODO: implement transform matrix(?), calculated before the hashbox transform
-	ray transRay=r_in;
-	transRay.from-=pos;
-	//[matrix part would go here]
-	transRay.from=pointTF(hashbox,transRay.from);
-	transRay.dir=pointTF(hashbox,transRay.dir);
+	r_in.from-=pos;
+	//[matrix transform would go here]
+	r_in.from=pointTF(hashbox,r_in.from);
+	r_in.dir=pointTF(hashbox,r_in.dir);
 
-	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,1) in x,y,z)
+	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
+	vec3d tmin,tmax;
+	float t0,t1;
+
+	tmin.x=(hashbox.xdim-r_in.from.x)/r_in.dir.x; tmax.x=-r_in.from.x/r_in.dir.x;
+	tmin.y=(hashbox.ydim-r_in.from.y)/r_in.dir.y; tmax.y=-r_in.from.y/r_in.dir.y;
+	tmin.z=(hashbox.zdim-r_in.from.z)/r_in.dir.z; tmax.z=-r_in.from.z/r_in.dir.z;
+
+	//TODO: better approach to this?
+	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
+	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
+	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
+
+	//the ray enters the cube at the last of the possible entry planes
+	t0=std::max(std::max(tmin.x,tmin.y),tmin.z);
+	//the ray exits the cube at the first of the possible exit planes
+	t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+
+	unsigned int xin,yin,zin,xout,yout,zout;
+	maskpoint(hashbox,r_in.dir*t0+r_in.from,xin,yin,zin);
+	maskpoint(hashbox,r_in.dir*t1+r_in.from,xout,yout,zout);
 
 	//gather all cells and find the the closeset point
+	const int
+		dx=xout-xin,dy=yout-yin,dz=zout-zin,
+		n=std::max(std::max(dx,dy),dz);
+	//TODO: should this be i<=n ?
+	for(int i=0;i<n;i++){
+		//get the correct chunk of the hash
+		unsigned int
+			x=xin+i*dx/n,
+			y=yin+i*dy/n,
+			z=zin+i*dz/n;
+		std::list<int> &plist=hashbox.pointhash[x+hashbox.xdim*(y+hashbox.ydim*z)];
+	}
 
 	//set the returns up
 
