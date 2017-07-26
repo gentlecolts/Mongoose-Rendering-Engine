@@ -3,9 +3,7 @@
 using namespace MG;
 
 ///// point stuff goes here /////
-
-bool point::intersects(ray& r,float &t0,float& t1){
-	/*
+inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
 	P=a point on the ellipsoid
 		[	1/a		0		0	]
 	M=	[	0		1/b		0	]
@@ -38,14 +36,14 @@ bool point::intersects(ray& r,float &t0,float& t1){
 	c=|P1|^2 - 1
 	*/
 	const vec3d P1(
-		(r.from.x-pos.x)/wx,
-		(r.from.y-pos.y)/wy,
-		(r.from.z-pos.z)/wz
+		(r.from.x-p.pos.x)/p.wx,
+		(r.from.y-p.pos.y)/p.wy,
+		(r.from.z-p.pos.z)/p.wz
 	);
 	const vec3d v1(
-		r.dir.x/wx,
-		r.dir.y/wy,
-		r.dir.z/wz
+		r.dir.x/p.wx,
+		r.dir.y/p.wy,
+		r.dir.z/p.wz
 	);
 
 	const float
@@ -62,6 +60,10 @@ bool point::intersects(ray& r,float &t0,float& t1){
 	//*/
 
 	return (eq>=0) & ((t0>=0) | (t1>0));
+}
+
+bool point::intersects(const ray& r,float &t0,float& t1) const{
+	return intersect(*this,r,t0,t1);
 }
 
 ///// spacehash stuff goes here /////
@@ -129,29 +131,61 @@ spacehash::~spacehash(){
 	delete[] pointhash;
 }
 
+//linear transform applied to any given point that's going to be mapped
+#define MAPTF(point,dim) (dim*(point))
+//#define MAPTF(point,dim) (dim*((point)+1)/2)
+
+//the int representing index in the array
+#define REMAP(point,dim,mask) (MAPTF((unsigned int)point,dim)&mask)
+
 void spacehash::hash(point points[],int npoints){
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
-		unsigned int
-			x=((unsigned int)pointarr[i].pos.x)&xmask,
-			y=((unsigned int)pointarr[i].pos.y)&xmask,
-			z=((unsigned int)pointarr[i].pos.z)&xmask;
+		const unsigned int
+			x=REMAP(pointarr[i].pos.x,xdim,xmask),
+			y=REMAP(pointarr[i].pos.y,ydim,ymask),
+			z=REMAP(pointarr[i].pos.z,zdim,zmask);
 		pointhash[x+xdim*(y+ydim*z)].push_back(i);
 	}
+}
+
+inline std::list<int>& fetch(const spacehash& space,const vec3d& point){
+	const unsigned int
+		x=REMAP(point.x,space.xdim,space.xmask),
+		y=REMAP(point.y,space.ydim,space.ymask),
+		z=REMAP(point.x,space.zdim,space.zmask);
+	return space.pointhash[x+space.xdim*(y+space.ydim*z)];
+}
+
+std::list<int>& spacehash::fetchcell(const vec3d& point){
+	return fetch(*this,point);
 }
 
 ///// pointcloud stuff goes here /////
 
 pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e),hashbox(numpoints/density,points,numpoints){
-	//init(points,numpoints,density);
 }
 pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
-	//init(points,numpoints,density);
 }
 
-void pointcloud::init(vec3d points[],int numpoints,int density){
-}
+bool pointcloud::bounceRay(const ray &r_in,uint32_t &color,ray &r_out,double *d,vec3d *normal){
+	//convert the ray to the space of the hash
+	//TODO: implement transform matrix(?), calculated before the hashbox transform
+	ray transRay=r_in;
+	transRay.from-=pos;
+	//[matrix part would go here]
+	transRay.from.x=MAPTF(transRay.from.x,hashbox.xdim);
+	transRay.from.y=MAPTF(transRay.from.y,hashbox.ydim);
+	transRay.from.z=MAPTF(transRay.from.z,hashbox.zdim);
+	transRay.dir.x=MAPTF(transRay.dir.x,hashbox.xdim);
+	transRay.dir.y=MAPTF(transRay.dir.y,hashbox.ydim);
+	transRay.dir.z=MAPTF(transRay.dir.z,hashbox.zdim);
 
-bool pointcloud::bounceRay(ray &r_in,uint32_t &color,ray &r_out,double *d,vec3d *normal){
+	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,1) in x,y,z)
+
+	//gather all cells and find the the closeset point
+
+	//set the returns up
+
 	return false;
 }

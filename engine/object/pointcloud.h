@@ -16,7 +16,7 @@ namespace MG{
 
 		point():pos(),wx(1),wy(1),wz(1){}
 
-		bool intersects(ray& r,float &t0,float& t1);
+		bool intersects(const ray& r,float &t0,float& t1) const;
 	};
 
 	struct spacehash{
@@ -39,6 +39,7 @@ namespace MG{
 		~spacehash();
 
 		void hash(point points[],int npoints);
+		std::list<int>& fetchcell(const vec3d& point);
 
 		//void transform(fn,condition_fn=0)
 	};
@@ -46,7 +47,6 @@ namespace MG{
 	class pointcloud:obj{
 	protected:
 		spacehash hashbox;
-		void init(vec3d points[],int numpoints,int density);
 	public:
 		/*
 		TODO: major revision of this once more robust file reading is implemented
@@ -55,7 +55,7 @@ namespace MG{
         pointcloud(engine* e,point points[],int numpoints,int density=100);
         pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density=100);
 
-        virtual bool bounceRay(ray &r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0);
+        virtual bool bounceRay(const ray &r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0);
 	};
 }
 

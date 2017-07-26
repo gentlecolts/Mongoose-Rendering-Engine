@@ -839,7 +839,7 @@
 	<SDL2/SDL.h>
 	<stdint.h>
 
-1500408922 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/object.h
+1500581925 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	"meta.h"
@@ -960,13 +960,13 @@
 	"core.h"
 	"SDL2/SDL.h"
 
-1500485846 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
+1500581925 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
 	"object.h"
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	<list>
 
-1500485531 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
+1500560359 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
 	<cmath>
 
