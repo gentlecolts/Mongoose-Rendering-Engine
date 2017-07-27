@@ -124,7 +124,7 @@ spacehash::spacehash(int hashsize){
 	zmask=zdim-1;
 
 	pointarr=new point[hashsize]();
-	pointhash=new std::list<int>[xdim*ydim*zdim];
+	pointhash=new hashtype[xdim*ydim*zdim];
 }
 spacehash::spacehash(int hashsize,point points[],int npoints):spacehash(hashsize){
 	hash(points,npoints);
@@ -198,13 +198,13 @@ void spacehash::hash(point points[],int npoints){
 	}
 }
 
-inline std::list<int>& fetch(const spacehash& space,const vec3d& point){
+inline hashtype& fetch(const spacehash& space,const vec3d& point){
 	unsigned int x,y,z;
 		remap(space,point,x,y,z);
 	return space.pointhash[x+space.xdim*(y+space.ydim*z)];
 }
 
-std::list<int>& spacehash::fetchcell(const vec3d& point){
+hashtype& spacehash::fetchcell(const vec3d& point){
 	return fetch(*this,point);
 }
 
@@ -249,6 +249,13 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 	const int
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
 		n=std::max(std::max(dx,dy),dz);
+
+	struct interholder{
+		float t0=INFINITY,t1=INFINITY;
+		int index=-1;
+		bool hit=false;
+	} closest,itest;
+
 	//TODO: should this be i<=n ?
 	for(int i=0;i<n;i++){
 		//get the correct chunk of the hash
@@ -256,7 +263,20 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 			x=xin+i*dx/n,
 			y=yin+i*dy/n,
 			z=zin+i*dz/n;
-		std::list<int> &plist=hashbox.pointhash[x+hashbox.xdim*(y+hashbox.ydim*z)];
+		hashtype &plist=hashbox.pointhash[x+hashbox.xdim*(y+hashbox.ydim*z)];
+
+		itest=closest;
+		std::for_each(plist.begin(),plist.end(),[this,&r_in,&closest,&itest](int pos){
+			itest.index=pos;
+			itest.hit=intersect(hashbox.pointarr[pos],r_in,itest.t0,itest.t1);
+
+			//TODO: make this more elegant
+			if(itest.hit & closest.hit){
+				//choose the one with the smallest t that is greater than 0
+			}else if(itest.hit){
+				closest=itest;
+			}//any other cases do not require action
+		});
 	}
 
 	//set the returns up

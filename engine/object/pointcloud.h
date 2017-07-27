@@ -5,6 +5,7 @@
 #include "../math/vec3d.h"
 #include "../camera/ray.h"
 #include <list>
+#include <vector>
 
 namespace MG{
 	struct point{
@@ -18,6 +19,9 @@ namespace MG{
 		bool intersects(const ray& r,float &t0,float& t1) const;
 	};
 
+	//typedef std::list<int> hashtype;
+	typedef std::vector<int> hashtype;
+
 	struct spacehash{
 		/*store this list separate for a few reasons
 		1 - keep all the points in consecutive memory
@@ -26,7 +30,14 @@ namespace MG{
 		TODO: consider if there's any value in the ability to add/remove points
 		*/
 		point *pointarr;
-		std::list<int> *pointhash;
+		/*TODO: weigh the access speed of std::vector vs the insert/remove speed of std::list
+		vectors have better random access (maybe better begin to end iteration?) which may happen a lot more
+		however transforming individual points requires inserts and deletes, more or less depending on how flexible said transforms are
+		-free transforms like that (probably) dont happen too often, is it worth how much they'd a vector vector vs list?
+		-vector push_back isnt so bad in terms of performance
+		-begin to end iteration will happen many times per frame regardless of how often transforms happen
+		*/
+		hashtype *pointhash;
 
 		//some constants determined at initialization
 		unsigned int xbits,ybits,zbits;
@@ -39,7 +50,7 @@ namespace MG{
 		~spacehash();
 
 		void hash(point points[],int npoints);
-		std::list<int>& fetchcell(const vec3d& point);
+		hashtype& fetchcell(const vec3d& point);
 
 		//void transform(fn,condition_fn=0)
 	};

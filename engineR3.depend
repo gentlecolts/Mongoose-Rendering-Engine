@@ -960,11 +960,12 @@
 	"core.h"
 	"SDL2/SDL.h"
 
-1501089534 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
+1501119124 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
 	"object.h"
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	<list>
+	<vector>
 
 1501078256 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
