@@ -125,9 +125,7 @@
 		<Unit filename="engine/math/matrix.h" />
 		<Unit filename="engine/math/quat.cpp" />
 		<Unit filename="engine/math/quat.h" />
-		<Unit filename="engine/math/vec2d.cpp" />
 		<Unit filename="engine/math/vec2d.h" />
-		<Unit filename="engine/math/vec3d.cpp" />
 		<Unit filename="engine/math/vec3d.h" />
 		<Unit filename="engine/object/chunk.h" />
 		<Unit filename="engine/object/io/polyToOct.cpp" />

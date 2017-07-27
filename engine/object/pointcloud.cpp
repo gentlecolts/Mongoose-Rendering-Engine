@@ -252,7 +252,7 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 
 	struct interholder{
 		float t0=INFINITY,t1=INFINITY;
-		int index=-1;
+		int index=0;
 		bool hit=false;
 	} closest,itest;
 
@@ -268,11 +268,24 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 		itest=closest;
 		std::for_each(plist.begin(),plist.end(),[this,&r_in,&closest,&itest](int pos){
 			itest.index=pos;
+			//note, t0 is always less than t1
 			itest.hit=intersect(hashbox.pointarr[pos],r_in,itest.t0,itest.t1);
 
 			//TODO: make this more elegant
 			if(itest.hit & closest.hit){
 				//choose the one with the smallest t that is greater than 0
+				float
+					close_t=(closest.t0>=0)?closest.t0:closest.t1,
+					test_t=(itest.t0>=0)?itest.t0:itest.t1;
+
+				if((close_t>=0) & (test_t>=0)){
+					if(test_t<close_t){
+						closest=itest;
+					}
+				}else if(test_t>=0){
+					closest=itest;
+				}
+
 			}else if(itest.hit){
 				closest=itest;
 			}//any other cases do not require action

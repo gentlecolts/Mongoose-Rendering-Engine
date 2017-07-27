@@ -5,43 +5,94 @@ This header outlines the struct vec3d
 the vec3d struct provides many commontly used operators for 3d vectors
 */
 namespace MG{
-	struct vec3d{
+	template<typename T>
+	struct vec3{
 		/*
 		this union allows for a user to easily access the points as an array for efficency
 		or as names for readability as the user chooses;
 		*/
 		union{
-			struct{double x,y,z;};
-			double xyz[3];
+			struct{T x,y,z;};
+			T xyz[3];
 		};
 
-		vec3d():x(0),y(0),z(0){}
-		vec3d(double x0,double y0,double z0):x(x0),y(y0),z(z0){}
-		vec3d(double v[3]):x(v[0]),y(v[1]),z(v[2]){}
+		vec3():x(0),y(0),z(0){}
+		vec3(T x0,T y0,T z0):x(x0),y(y0),z(z0){}
+		vec3(T v[3]):x(v[0]),y(v[1]),z(v[2]){}
 
-		vec3d operator +(const vec3d &v) const;
-		vec3d operator -(const vec3d &v) const;
-		vec3d& operator =(const vec3d &v);
-		vec3d& operator +=(const vec3d &v);
-		vec3d& operator -=(const vec3d &v);
+		vec3 operator +(const vec3 &v) const{return vec3(x+v.x,y+v.y,z+v.z);}
+		vec3 operator -(const vec3 &v) const{return vec3(x-v.x,y-v.y,z-v.z);}
 
-		vec3d operator *(double a) const;
-		vec3d operator /(double a) const;
-		vec3d& operator *=(double a);
-		vec3d& operator /=(double a);
+		vec3& operator =(const vec3 &v){
+			x=v.x;
+			y=v.y;
+			z=v.z;
+			return *this;
+		}
+		vec3& operator +=(const vec3 &v){
+			x+=v.x;
+			y+=v.y;
+			z+=v.z;
+			return *this;
+		}
+		vec3& operator -=(const vec3 &v){
+			x-=v.x;
+			y-=v.y;
+			z-=v.z;
+			return *this;
+		}
 
-		void normalize();
-		vec3d getNormalized();
+		vec3 operator *(T a) const{return vec3(x*a,y*a,z*a);}
+		vec3 operator /(T a) const{return vec3(x/a,y/a,z/a);}
+		vec3& operator *=(T a){
+			x*=a;
+			y*=a;
+			z*=a;
+			return *this;
+		}
+		vec3& operator /=(T a){
+			x/=a;
+			y/=a;
+			z/=a;
+			return *this;
+		}
 
-		double dot(const vec3d &v) const;
-		vec3d cross(const vec3d &v) const;
+		void normalize(){
+			const T d=1/sqrt(x*x+y*y+z*z);
+			x*=d;
+			y*=d;
+			z*=d;
+		}
+		vec3 getNormalized(){
+			const T d=1/sqrt(x*x+y*y+z*z);
+			return vec3d(x*d,y*d,z*d);
+		}
+
+		T dot(const vec3 &v) const{return x*v.x+y*v.y+z*v.z;}
+		vec3 cross(const vec3 &v) const{
+			return vec3(
+				y*v.z-z*v.y,
+				z*v.x-x*v.z,
+				x*v.y-y*v.x
+			);
+		}
 	};
 
-	double abs(const vec3d &v);//returns the magnitude
-	double abs2(const vec3d &v);//returns the magnitude squared
-	double invabs(const vec3d &v);//returns 1/magnitude
-	double invabs2(const vec3d &v);//returns 1/magnitude^2
+	//returns the magnitude
+	template<typename T> T abs(const vec3<T> &v){return sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
+	//returns the magnitude squared
+	template<typename T> T abs2(const vec3<T> &v){return v.x*v.x+v.y*v.y+v.z*v.z;}
+	//returns 1/magnitude
+	template<typename T> T invabs(const vec3<T> &v){return 1/sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
+	//returns 1/magnitude^2
+	template<typename T> T invabs2(const vec3<T> &v){return 1/(v.x*v.x+v.y*v.y+v.z*v.z);}
+
+
+	typedef vec3<float> vec3f;
+	typedef vec3<double> vec3d;
+	typedef vec3<long double> vec3l;
 }
 //this is outside of the namespace because otherwise things refuse to compile
-MG::vec3d operator *(double a,const MG::vec3d &v);
+template<typename T>
+MG::vec3<T> operator *(T a,const MG::vec3<T> &v){return MG::vec3<T>(v.x*a,v.y*a,v.z*a);}
 #endif // VEC3D_H_INCLUDED

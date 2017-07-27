@@ -846,7 +846,7 @@
 	<stdint.h>
 	<fstream>
 
-1500404541 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
+1501167273 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
 
 1500396440 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/ray.h
 	"../math/vec3d.h"
@@ -866,13 +866,14 @@
 	"../math/math.h"
 	"../core/scene.h"
 
-1474919161 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/math.h
+1501166092 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/math.h
 	"vec2d.h"
 	"vec3d.h"
 	"quat.h"
 	"matrix.h"
 
-1500404539 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec2d.h
+1501169502 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec2d.h
+	<cmath>
 
 1482016109 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/quat.h
 	"vec3d.h"
@@ -967,8 +968,9 @@
 	<list>
 	<vector>
 
-1501078256 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
+1501165400 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
 	<cmath>
 	<algorithm>
+	<utility>
 
