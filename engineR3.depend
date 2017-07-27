@@ -811,7 +811,7 @@
 	<cstdlib>
 	<iostream>
 
-1476282615 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1501187349 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 
 1474208977 /home/zangoose/git/Mongoose-Rendering-Engine/demos/demos.h
@@ -862,7 +862,7 @@
 	<thread>
 	<cstdarg>
 
-1482012078 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+1501188715 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 	"../math/math.h"
 	"../core/scene.h"
@@ -896,7 +896,7 @@
 1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
-1501181632 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+1501189286 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 	"camera.h"
 	"../core/threadpool.h"
 
@@ -910,9 +910,10 @@
 1500395548 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/main.cpp
 	"core.h"
 
-1482018208 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+1501185506 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
 	"core.h"
 	"scene.h"
+	<algorithm>
 
 1476285361 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/threadpool.cpp
 	"threadpool.h"
@@ -969,7 +970,7 @@
 	<list>
 	<vector>
 
-1501182986 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
+1501184886 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
 	<cmath>
 	<algorithm>

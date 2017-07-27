@@ -1,4 +1,5 @@
 #include "demos.h"
+#include <cmath>
 using namespace std;
 
 /**TODO: as it turns out, simple scenes arent actually so simple
@@ -17,6 +18,13 @@ public:
 	cube(MG::engine* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
 };
 
+MG::pointcloud pointbubble(){
+	int npoints=100;
+	MG::point pointarr[npoints];
+
+	for(int i=0;i<npoints;i++){
+	}
+}
 
 void demos::simpleScene(){
 	MG::engine e;

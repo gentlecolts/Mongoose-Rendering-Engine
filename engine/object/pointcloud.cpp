@@ -1,6 +1,5 @@
 #include "pointcloud.h"
 #include <cmath>
-//for some reason gcc lets me comment these two out?  leaving them in for safety
 #include <algorithm>
 #include <utility>
 using namespace MG;

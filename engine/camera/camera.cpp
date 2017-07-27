@@ -43,8 +43,9 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 	threadPool raypool(&camera::initRays,numthreads,true,this,rays,raycount,bounces);
 
 	/*passing numthreads should be equivalent to passing -1
-	however numthreads is passed anyways for consistency in case there is some bizarre edge case in which std::thread::hardware_concurrency() can change*/
-	threadPool drawPool(&camera::renderLoop,numthreads,true,this,rays,raw,raycount,pxcount,bounces,renderScene);
+	however numthreads is passed anyways for consistency in case there is some bizarre edge case in which std::thread::hardware_concurrency() can change
+	*/
+	threadPool drawPool(&camera::renderLoop,numthreads,true,this,rays,raw,raycount,renderTarget,bounces,renderScene);
 	//TODO: add one more function for rasterizing the ray array?
 	threadPool postPool(&camera::doPost,numthreads,true,this,raw,renderTarget);
 
@@ -87,7 +88,7 @@ void camera::initRays(int id,int numthreads,ray **rays,int raycount,int bounces)
 	}
 }
 
-void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount,int pxcount,int bounces,sceneContainer *usingScene){
+void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount,surface *renderTarget,int bounces,sceneContainer *usingScene){
 	//this will run a test pattern, TODO: this can be removed once ray bounces are correct
 	#if 0
 	const int start=(id*pxcount)/numthreads,stop=((id+1)*pxcount)/numthreads;
@@ -104,10 +105,28 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 		usingScene->render(rcount,&(rays[id][i*rcount]),&(rays[id][(i+1)*rcount]));
 	}
 
+	vec3d xcomp(axes.x),ycomp(axes.y),norm(axes.z),origin=position+norm;
+
 	//convert rays to raw image
 	//for(int i=0;i<((bounces+1)*raycount)/numthreads;i++){//this loop is for actually using all rays
 	for(int i=rcount;i<2*rcount;i++){//rays are from camera, only the first bounce matters, TODO: remove and replace with above line when possible
-		//put ray on the image
+		//project intersection point onto screen
+		ray &r=rays[id][i];
+
+		double t=norm.dot(origin-r.from)/norm.dot(r.dir);
+		vec3d point=r.dir*t+r.from-origin;
+
+		//convert to array index and set
+		int
+			x=renderTarget->w*(point.dot(xcomp.getNormalized())+1)/2,
+			y=renderTarget->h*(1-(point.dot(ycomp.getNormalized())+1)/2);//need to flip the y
+		if(
+			(x>=0) & (x<renderTarget->w) &
+			(y>=0) & (y<renderTarget->h)
+		){
+			printf("projecting ray to coord: (%i, %i), width is (%i, %i)\n",x,y,renderTarget->w,renderTarget->h);
+			raw[x+renderTarget->w*y]=r.c;
+		}
 	}
 	#endif
 }
