@@ -1,9 +1,11 @@
 #ifndef VEC3D_H_INCLUDED
 #define VEC3D_H_INCLUDED
 /*
-This header outlines the struct vec3d
-the vec3d struct provides many commontly used operators for 3d vectors
+This header outlines the struct vec3
+the vec3 struct provides many commontly used operators for 3d vectors
 */
+#include <cmath>
+
 namespace MG{
 	template<typename T>
 	struct vec3{
@@ -58,14 +60,14 @@ namespace MG{
 		}
 
 		void normalize(){
-			const T d=1/sqrt(x*x+y*y+z*z);
+			const T d=1/std::sqrt(x*x+y*y+z*z);
 			x*=d;
 			y*=d;
 			z*=d;
 		}
 		vec3 getNormalized(){
-			const T d=1/sqrt(x*x+y*y+z*z);
-			return vec3d(x*d,y*d,z*d);
+			const T d=1/std::sqrt(x*x+y*y+z*z);
+			return vec3(x*d,y*d,z*d);
 		}
 
 		T dot(const vec3 &v) const{return x*v.x+y*v.y+z*v.z;}
@@ -79,11 +81,11 @@ namespace MG{
 	};
 
 	//returns the magnitude
-	template<typename T> T abs(const vec3<T> &v){return sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
+	template<typename T> T abs(const vec3<T> &v){return std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
 	//returns the magnitude squared
 	template<typename T> T abs2(const vec3<T> &v){return v.x*v.x+v.y*v.y+v.z*v.z;}
 	//returns 1/magnitude
-	template<typename T> T invabs(const vec3<T> &v){return 1/sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
+	template<typename T> T invabs(const vec3<T> &v){return 1/std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z);}
 	//returns 1/magnitude^2
 	template<typename T> T invabs2(const vec3<T> &v){return 1/(v.x*v.x+v.y*v.y+v.z*v.z);}
 

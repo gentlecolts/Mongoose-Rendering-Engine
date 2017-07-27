@@ -39,14 +39,14 @@ inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
 	c=|P1|^2 - 1
 	*/
 	const vec3d P1(
-		(r.from.x-p.pos.x)/p.wid.x,
-		(r.from.y-p.pos.y)/p.wid.y,
-		(r.from.z-p.pos.z)/p.wid.z
+		(r.from.x-p.pos.x)/p.scale.x,
+		(r.from.y-p.pos.y)/p.scale.y,
+		(r.from.z-p.pos.z)/p.scale.z
 	);
 	const vec3d v1(
-		r.dir.x/p.wid.x,
-		r.dir.y/p.wid.y,
-		r.dir.z/p.wid.z
+		r.dir.x/p.scale.x,
+		r.dir.y/p.scale.y,
+		r.dir.z/p.scale.z
 	);
 
 	const float
@@ -160,14 +160,18 @@ inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned
 }
 
 void spacehash::hash(point points[],int npoints){
+	//TODO: merge instead of clearing
+	delete[] pointarr;
+	delete[] pointhash;
+
 	vec3d
-		minp=points[0].pos-points[0].wid,
-		maxp=points[0].pos+points[0].wid,
+		minp=points[0].pos-points[0].scale,
+		maxp=points[0].pos+points[0].scale,
 		mintest,maxtest;
 
 	for(int i=1;i<npoints;i++){
-		mintest=points[i].pos-points[i].wid;
-		maxtest=points[i].pos+points[i].wid;
+		mintest=points[i].pos-points[i].scale;
+		maxtest=points[i].pos+points[i].scale;
 
 		minp.x=std::min(minp.x,mintest.x);
 		minp.y=std::min(minp.y,mintest.y);
@@ -215,21 +219,22 @@ pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e
 pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
 }
 
-bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *normal){
+bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 	//convert the ray to the space of the hash
 	//TODO: implement transform matrix(?), calculated before the hashbox transform
-	r_in.from-=pos;
+	ray rin_loc=r_in;
+	rin_loc.from-=pos;
 	//[matrix transform would go here]
-	r_in.from=pointTF(hashbox,r_in.from);
-	r_in.dir=pointTF(hashbox,r_in.dir);
+	rin_loc.from=pointTF(hashbox,rin_loc.from);
+	rin_loc.dir=pointTF(hashbox,rin_loc.dir);
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
 	vec3d tmin,tmax;
 	float t0,t1;
 
-	tmin.x=(hashbox.xdim-r_in.from.x)/r_in.dir.x; tmax.x=-r_in.from.x/r_in.dir.x;
-	tmin.y=(hashbox.ydim-r_in.from.y)/r_in.dir.y; tmax.y=-r_in.from.y/r_in.dir.y;
-	tmin.z=(hashbox.zdim-r_in.from.z)/r_in.dir.z; tmax.z=-r_in.from.z/r_in.dir.z;
+	tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=-rin_loc.from.x/rin_loc.dir.x;
+	tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=-rin_loc.from.y/rin_loc.dir.y;
+	tmin.z=(hashbox.zdim-rin_loc.from.z)/rin_loc.dir.z; tmax.z=-rin_loc.from.z/rin_loc.dir.z;
 
 	//TODO: better approach to this?
 	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
@@ -242,8 +247,8 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 	t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
 
 	unsigned int xin,yin,zin,xout,yout,zout;
-	maskpoint(hashbox,r_in.dir*t0+r_in.from,xin,yin,zin);
-	maskpoint(hashbox,r_in.dir*t1+r_in.from,xout,yout,zout);
+	maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
+	maskpoint(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
 
 	//gather all cells and find the the closeset point
 	const int
@@ -258,18 +263,17 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 
 	//TODO: should this be i<=n ?
 	for(int i=0;i<n;i++){
-		//get the correct chunk of the hash
+		//get the correct chunk of the box
 		unsigned int
 			x=xin+i*dx/n,
 			y=yin+i*dy/n,
 			z=zin+i*dz/n;
 		hashtype &plist=hashbox.pointhash[x+hashbox.xdim*(y+hashbox.ydim*z)];
 
-		itest=closest;
-		std::for_each(plist.begin(),plist.end(),[this,&r_in,&closest,&itest](int pos){
+		std::for_each(plist.begin(),plist.end(),[this,&rin_loc,&closest,&itest](int pos){
 			itest.index=pos;
 			//note, t0 is always less than t1
-			itest.hit=intersect(hashbox.pointarr[pos],r_in,itest.t0,itest.t1);
+			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,itest.t0,itest.t1);
 
 			//TODO: make this more elegant
 			if(itest.hit & closest.hit){
@@ -292,7 +296,23 @@ bool pointcloud::bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d,vec3d *
 		});
 	}
 
-	//set the returns up
+	//set the returns up, remember to stay in world coords and not the cord space of this object
+	d=(closest.t0>=0)?closest.t0:closest.t1;
+	r_out.from=r_in.dir*d+r_in.from;
 
-	return false;
+	point &p=hashbox.pointarr[closest.index];
+	//TODO: instead of referencing, copy and apply this object's transform matrix to the point
+	vec3d inters=r_out.from-pos-p.pos;
+
+	normal=vec3d(
+		2*p.scale.x*inters.x,
+		2*p.scale.y*inters.y,
+		2*p.scale.z*inters.z
+	).getNormalized();
+
+	//compute a purely reflected ray, TODO: more complex, material based bounces
+	r_out.dir=r_in.dir-2*(r_in.dir.dot(normal))*normal;
+	r_out.c=p.col;
+
+	return closest.hit;
 }

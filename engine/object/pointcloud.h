@@ -12,9 +12,10 @@ namespace MG{
 	/*points in this point cloud are represented as an elipsoid
 	Todo: need material information and color
 	*/
-		vec3d pos,wid;
+		vec3d pos,scale;
+		color col;
 
-		point():pos(),wid(1,1,1){}
+		point():pos(),scale(1,1,1){}
 
 		bool intersects(const ray& r,float &t0,float& t1) const;
 	};
@@ -29,7 +30,7 @@ namespace MG{
 
 		TODO: consider if there's any value in the ability to add/remove points
 		*/
-		point *pointarr;
+		point *pointarr=0;
 		/*TODO: weigh the access speed of std::vector vs the insert/remove speed of std::list
 		vectors have better random access (maybe better begin to end iteration?) which may happen a lot more
 		however transforming individual points requires inserts and deletes, more or less depending on how flexible said transforms are
@@ -37,7 +38,7 @@ namespace MG{
 		-vector push_back isnt so bad in terms of performance
 		-begin to end iteration will happen many times per frame regardless of how often transforms happen
 		*/
-		hashtype *pointhash;
+		hashtype *pointhash=0;
 
 		//some constants determined at initialization
 		unsigned int xbits,ybits,zbits;
@@ -66,7 +67,7 @@ namespace MG{
         pointcloud(engine* e,point points[],int numpoints,int density=100);
         pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density=100);
 
-        virtual bool bounceRay(ray r_in,uint32_t &color,ray &r_out,double *d=0,vec3d *normal=0);
+        virtual bool bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal);
 	};
 }
 

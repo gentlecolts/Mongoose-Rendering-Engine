@@ -120,6 +120,6 @@ void camera::doPost(int id,int numthreads,color *raw,surface *target){
 		r=255*raw[i].r;
 		g=255*raw[i].g;
 		b=255*raw[i].b;
-		target->pixels[i]=0xff000000|(r<<16)|(g<<8)|b;
+		target->pixels[i]=0xff000000|((r&0xff)<<16)|((g&0xff)<<8)|(b&0xff);
 	}
 }

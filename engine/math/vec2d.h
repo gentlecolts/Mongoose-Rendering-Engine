@@ -55,13 +55,13 @@ namespace MG{
 
 		//note that std::hypot has increased precision, but may come at a performance cost
 		void normalize(){
-			const T d=1/sqrt(x*x+y*y);
+			const T d=1/std::sqrt(x*x+y*y);
 			//const T d=1/std::hypot(x,y);
 			x*=d;
 			y*=d;
 		}
 		vec2 getNormalized(){
-			const T d=1/sqrt(x*x+y*y);
+			const T d=1/std::sqrt(x*x+y*y);
 			//const T d=1/std::hypot(x,y);
 			return vec2(x*d,y*d);
 		}
@@ -71,7 +71,7 @@ namespace MG{
 
 	//returns the magnitude
 	template<typename T> T abs(const vec2<T> &v){
-		return sqrt(v.x*v.x+v.y*v.y);
+		return std::sqrt(v.x*v.x+v.y*v.y);
 		//return std::hypot(v.x,v.y);
 	}
 	//returns the magnitude squared
@@ -79,7 +79,7 @@ namespace MG{
 
 	//returns 1/magnitude
 	template<typename T> T invabs(const vec2<T> &v){
-		return 1/sqrt(v.x*v.x+v.y*v.y);
+		return 1/std::sqrt(v.x*v.x+v.y*v.y);
 		//return 1/hypot(v.x,v.y);
 	}
 	//returns 1/magnitude^2
