@@ -44,10 +44,12 @@ namespace MG{
 		unsigned int xbits,ybits,zbits;
 		unsigned int xmask,ymask,zmask;
 		unsigned int xdim,ydim,zdim;
+		unsigned int npoints=0,hashsize=0;
 		vec3d pos,scale;
 
 		spacehash(int hashsize);
-		spacehash(int hashsize,point points[],int npoints);
+		spacehash(int hashsize,point points[],int pointcount);
+		//spacehash(const spacehash &space);//is deep copy needed?
 		~spacehash();
 
 		void hash(point points[],int npoints);

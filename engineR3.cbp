@@ -65,7 +65,7 @@
 			<Target title="DebugLinux">
 				<Option output="bin/DebugLinux/engineR3" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/DebugLinux/" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
@@ -80,14 +80,13 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-march=core2" />
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-lmingw32 -lsdl2main -lsdl2" />
+					<Add option="-lSDL2 -lpthread" />
 				</Linker>
 			</Target>
 		</Build>

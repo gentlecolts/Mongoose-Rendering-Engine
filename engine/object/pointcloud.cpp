@@ -122,12 +122,16 @@ spacehash::spacehash(int hashsize){
 	ymask=ydim-1;
 	zmask=zdim-1;
 
-	pointarr=new point[hashsize]();
-	pointhash=new hashtype[xdim*ydim*zdim];
+	hashsize=1u<<(xbits+ybits+zbits);
+	pointhash=new hashtype[hashsize];
 }
-spacehash::spacehash(int hashsize,point points[],int npoints):spacehash(hashsize){
+spacehash::spacehash(int hashsize,point points[],int pointcount):spacehash(hashsize){
+	npoints=pointcount;
+	pointarr=new point[npoints]();
+
 	hash(points,npoints);
 }
+//spacehash::spacehash(const spacehash &space){}
 spacehash::~spacehash(){
 	delete[] pointarr;
 	delete[] pointhash;
@@ -158,10 +162,29 @@ inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned
 	maskpoint(space,pointTF(space,p),x,y,z);
 }
 
+inline hashtype& fetch(const spacehash &space,const unsigned int x,const unsigned int y,const unsigned int z){
+	const unsigned int index=((((x&space.xmask)<<space.ybits)|(y&space.ymask))<<space.zbits)|(z&space.zmask);
+	//const unsigned int index=x+space.xdim*(y+space.ydim*z);
+
+	//printf("dims: (%u, %u, %u)...accessing point: (%u, %u, %u), gives index: %u, max: %u\n",space.xdim,space.ydim,space.zdim,x,y,z,index,1u<<(space.xbits+space.ybits+space.zbits));
+
+	//return space.pointhash[x+space.xdim*(y+space.ydim*z)];
+	return space.pointhash[index];
+}
+inline hashtype& fetch(const spacehash& space,const vec3d& point){
+	unsigned int x,y,z;
+		remap(space,point,x,y,z);
+	return fetch(space,x,y,z);
+}
+
+hashtype& spacehash::fetchcell(const vec3d& point){
+	return fetch(*this,point);
+}
+
 void spacehash::hash(point points[],int npoints){
 	//TODO: merge instead of clearing
-	delete[] pointarr;
-	delete[] pointhash;
+	//delete[] pointarr;
+	//delete[] pointhash;
 
 	vec3d
 		minp=points[0].pos-points[0].scale,
@@ -194,21 +217,13 @@ void spacehash::hash(point points[],int npoints){
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
 
-		unsigned int x,y,z;
-		remap(*this,pointarr[i].pos,x,y,z);
-
-		pointhash[x+xdim*(y+ydim*z)].push_back(i);
+		//printf("adding point %i\n",i);
+		auto box=fetch(*this,points[i].pos);
+		//printf("size of target vector is: %u\n",i,box.size());
+		box.push_back(i);
+		//printf("vector size is now: %u\n\n",box.size());
 	}
-}
-
-inline hashtype& fetch(const spacehash& space,const vec3d& point){
-	unsigned int x,y,z;
-		remap(space,point,x,y,z);
-	return space.pointhash[x+space.xdim*(y+space.ydim*z)];
-}
-
-hashtype& spacehash::fetchcell(const vec3d& point){
-	return fetch(*this,point);
+	printf("hash done\n");
 }
 
 ///// pointcloud stuff goes here /////
@@ -267,7 +282,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 			x=xin+i*dx/n,
 			y=yin+i*dy/n,
 			z=zin+i*dz/n;
-		hashtype &plist=hashbox.pointhash[x+hashbox.xdim*(y+hashbox.ydim*z)];
+		hashtype &plist=fetch(hashbox,x,y,z);
 
 		std::for_each(plist.begin(),plist.end(),[this,&rin_loc,&closest,&itest](int pos){
 			itest.index=pos;
@@ -313,5 +328,5 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 	r_out.dir=r_in.dir-2*(r_in.dir.dot(normal))*normal;
 	r_out.c=p.col;
 
-	return closest.hit;
+	return r_out.hit=closest.hit;
 }

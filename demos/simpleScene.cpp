@@ -18,12 +18,17 @@ public:
 	cube(MG::engine* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
 };
 
-MG::pointcloud pointbubble(){
+MG::pointcloud pointbubble(MG::engine *e){
 	int npoints=100;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
+		pointarr[i].col.r=1;
+		pointarr[i].col.g=1;
+		pointarr[i].col.b=1;
 	}
+
+	return MG::pointcloud(e,pointarr,npoints,10);
 }
 
 void demos::simpleScene(){
@@ -39,6 +44,10 @@ void demos::simpleScene(){
 	e.targetFPS=60;
 
 	//generate some objects
+	MG::pointcloud thing=pointbubble(&e);
+	printf("cloud made\n");
+
+	e.mainCamera.position.x=-5;
 
 	//draw scene at desired framerate
 	while(1){

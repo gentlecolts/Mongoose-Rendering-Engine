@@ -30,6 +30,7 @@ namespace MG{
 	struct ray{
 		vec3d from,dir;
 		color c;
+		bool hit;
 	};
 }
 

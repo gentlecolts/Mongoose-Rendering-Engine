@@ -7,6 +7,8 @@ camera::camera(surface* renderTarget,sceneContainer* sceneToDraw){
 	scene=sceneToDraw;
 
 	position=vec3d(0,0,0);
+
+	//axes.y=double(renderTarget->
 }
 
 void camera::render(surface *drawTo,sceneContainer *drawScene){
@@ -31,13 +33,10 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 		bounces=1;//TODO: parameterize this
 	color *raw=new color[pxcount];
 
-	/*the order of this array is to be treated as it were [threadcount][bouncenum][pixels/threadcount]
-	the reason for this is that this this means that sequential pixels and bounces will be adjacent to eachother in memory
+	/*the order of this array is to be treated as it were [threadcount][bouncenum][raycount/threadcount]
+	the reason for this is that this this means that sequential rays and bounces will be adjacent to eachother in memory
 	and will be split evenly between threads
-	also sequential pixels will be adjacent in memory
-	this layout is designed for optimizing caching, something which would not be achieved by the 2d array it's initialized as
-	TODO: in the future, this will not be the case, as rays will be emitted from a light source
-	will probably look like: drawScene.initRays(bounces,this)
+	this layout is designed for optimizing caching
 	*/
 	ray **rays=new ray*[numthreads];
 	threadPool raypool(&camera::initRays,numthreads,true,this,rays,raycount,bounces);
@@ -120,11 +119,12 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 		int
 			x=renderTarget->w*(point.dot(xcomp.getNormalized())+1)/2,
 			y=renderTarget->h*(1-(point.dot(ycomp.getNormalized())+1)/2);//need to flip the y
+		printf("got ray(%i) with coord: (%i, %i), width is (%i, %i)\n",r.hit,x,y,renderTarget->w,renderTarget->h);
 		if(
 			(x>=0) & (x<renderTarget->w) &
 			(y>=0) & (y<renderTarget->h)
 		){
-			printf("projecting ray to coord: (%i, %i), width is (%i, %i)\n",x,y,renderTarget->w,renderTarget->h);
+			printf("passed test, projecting\n");
 			raw[x+renderTarget->w*y]=r.c;
 		}
 	}
