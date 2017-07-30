@@ -104,7 +104,7 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 		usingScene->render(rcount,&(rays[id][i*rcount]),&(rays[id][(i+1)*rcount]));
 	}
 
-	vec3d xcomp(axes.x),ycomp(axes.y),norm(axes.z),origin=position+norm;
+	const vec3d xcomp(axes.x),ycomp(axes.y),norm(axes.z),origin=position+norm;
 
 	//convert rays to raw image
 	//for(int i=0;i<((bounces+1)*raycount)/numthreads;i++){//this loop is for actually using all rays
@@ -112,8 +112,10 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 		//project intersection point onto screen
 		const ray &r=rays[id][i];
 
-		const double t=norm.dot(origin-r.from)/norm.dot(r.dir);
-		const vec3d point=r.dir*t+r.from-origin;
+		const vec3d pointToCam=position-r.from;
+
+		const double t=norm.dot(origin-r.from)/norm.dot(pointToCam);
+		const vec3d point=pointToCam*t+r.from-origin;
 
 		//convert to array index and setgit
 		const int

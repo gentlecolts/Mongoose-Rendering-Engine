@@ -276,16 +276,17 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 	//gather all cells and find the the closeset point
 	const int
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
-		n=std::max(std::max(dx,dy),dz);
+		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
 
 	struct interholder{
 		double t0=INFINITY,t1=INFINITY;
 		int index=0;
 		bool hit=false;
-	} closest,itest;
+	} closest;
 
 	//TODO: should this be i<=n ?
 	for(int i=0;i<n;i++){
+		interholder itest;
 		//get the correct chunk of the box
 		unsigned int
 			x=xin+i*dx/n,
@@ -301,7 +302,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 			//TODO: make this more elegant
 			if(itest.hit & closest.hit){
 				//choose the one with the smallest t that is greater than 0
-				double
+				const double
 					close_t=(closest.t0>=0)?closest.t0:closest.t1,
 					test_t=(itest.t0>=0)?itest.t0:itest.t1;
 
