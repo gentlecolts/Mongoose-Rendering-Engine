@@ -17,7 +17,7 @@ namespace MG{
 
 		point():pos(),scale(1,1,1){}
 
-		bool intersects(const ray& r,float &t0,float& t1) const;
+		bool intersects(const ray& r,double &t0,double& t1) const;
 	};
 
 	//typedef std::list<int> hashtype;

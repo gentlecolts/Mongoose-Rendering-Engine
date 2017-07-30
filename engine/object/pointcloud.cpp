@@ -5,7 +5,7 @@
 using namespace MG;
 
 ///// point stuff goes here /////
-inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
+inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 	P=a point on the ellipsoid
 		[	1/a		0		0	]
 	M=	[	0		1/b		0	]
@@ -48,12 +48,12 @@ inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
 		r.dir.z/p.scale.z
 	);
 
-	const float
+	const double
 		a=v1.dot(v1),
 		b=2*P1.dot(v1),
 		c=P1.dot(P1)-1;
 
-	const float
+	const double
 		eq=b*b-4*a*c,
 		rt=std::sqrt(eq);
 	//in this context, (a) is a sum of squares and thus must always be positive, t0 will always be the lower value
@@ -64,7 +64,7 @@ inline bool intersect(const point& p,const ray& r,float &t0,float& t1){	/*
 	return (eq>=0) & ((t0>=0) | (t1>0));
 }
 
-bool point::intersects(const ray& r,float &t0,float& t1) const{
+bool point::intersects(const ray& r,double &t0,double& t1) const{
 	return intersect(*this,r,t0,t1);
 }
 
@@ -234,6 +234,15 @@ pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int
 }
 
 bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
+	//*testcode, rays always hit and out ray is red, if screen is red then all other code works
+	d=1;
+	normal=vec3d(1,1,1);
+	r_out.c.r=1;
+	r_out.from=r_in.dir+r_in.from;
+	r_out.dir=-1.0*r_in.dir;
+	return r_out.hit=true;
+	//*/
+
 	//convert the ray to the space of the hash
 	//TODO: implement transform matrix(?), calculated before the hashbox transform
 	ray rin_loc=r_in;
@@ -244,7 +253,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
 	vec3d tmin,tmax;
-	float t0,t1;
+	double t0,t1;
 
 	tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=-rin_loc.from.x/rin_loc.dir.x;
 	tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=-rin_loc.from.y/rin_loc.dir.y;
@@ -270,7 +279,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 		n=std::max(std::max(dx,dy),dz);
 
 	struct interholder{
-		float t0=INFINITY,t1=INFINITY;
+		double t0=INFINITY,t1=INFINITY;
 		int index=0;
 		bool hit=false;
 	} closest,itest;
@@ -292,7 +301,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 			//TODO: make this more elegant
 			if(itest.hit & closest.hit){
 				//choose the one with the smallest t that is greater than 0
-				float
+				double
 					close_t=(closest.t0>=0)?closest.t0:closest.t1,
 					test_t=(itest.t0>=0)?itest.t0:itest.t1;
 

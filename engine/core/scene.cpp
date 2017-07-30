@@ -14,7 +14,8 @@ sceneContainer::sceneContainer(){
 void sceneContainer::render(int numRays,ray *raysIn,ray *raysOut){
 	for(int i=0;i<numRays;i++){
 		double tmin=INFINITY;
-		std::for_each(objects.begin(),objects.end(),[&raysIn,&raysOut,&i,&tmin](obj* object){
+		//std::for_each(objects.begin(),objects.end(),[&raysIn,&raysOut,&i,&tmin](obj* object){
+		std::for_each(objects.begin(),objects.end(),[&](obj* object){
 			double t;
 			ray r_out;
 			vec3d norm;

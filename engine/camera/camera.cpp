@@ -72,14 +72,14 @@ void camera::initRays(int id,int numthreads,ray **rays,int raycount,int bounces)
 	rays[id]=new ray[((bounces+1)*raycount)/numthreads];//1 is added to bounces to provide space for the initial set of rays
 
 	//make each ray come out of the camera
-	int reali;//the absolute ith ray
-	double px,py;
 	const int offset=(raycount*id)/numthreads;//size of each chunk divided by the bounces
 	for(int i=0;i<raycount/numthreads;i++){
-		reali=i+offset;//from (raycount*id)/numthreads to (raycount*(id+1))/numthreads -1
+		const int reali=i+offset;//from (raycount*id)/numthreads to (raycount*(id+1))/numthreads -1
 		//-1 to 1
-		px=2*(double)(reali%target->w)/target->w-1;
-		py=2*(double)(reali/target->w)/target->h-1;
+		//saving the double cast to the very latest it can be (marginally) reduces rounding error
+		double
+			px=(double)(2*(reali%target->w)-target->w)/target->w,
+			py=(double)(2*(reali/target->w)-target->h)/target->h;
 
 		rays[id][i].from=this->position;
 		rays[id][i].dir=px*vec3d(this->axes.x)+py*vec3d(this->axes.y)+vec3d(this->axes.z);//TODO: determine if using +z or -z for right vs left hand coords
@@ -110,21 +110,21 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 	//for(int i=0;i<((bounces+1)*raycount)/numthreads;i++){//this loop is for actually using all rays
 	for(int i=rcount;i<2*rcount;i++){//rays are from camera, only the first bounce matters, TODO: remove and replace with above line when possible
 		//project intersection point onto screen
-		ray &r=rays[id][i];
+		const ray &r=rays[id][i];
 
-		double t=norm.dot(origin-r.from)/norm.dot(r.dir);
-		vec3d point=r.dir*t+r.from-origin;
+		const double t=norm.dot(origin-r.from)/norm.dot(r.dir);
+		const vec3d point=r.dir*t+r.from-origin;
 
-		//convert to array index and set
-		int
-			x=renderTarget->w*(point.dot(xcomp.getNormalized())+1)/2,
-			y=renderTarget->h*(1-(point.dot(ycomp.getNormalized())+1)/2);//need to flip the y
-		printf("got ray(%i) with coord: (%i, %i), width is (%i, %i)\n",r.hit,x,y,renderTarget->w,renderTarget->h);
+		//convert to array index and setgit
+		const int
+			x=(renderTarget->w-1)*(point.dot(xcomp)+1)/2,
+			y=(renderTarget->h-1)*(1-point.dot(ycomp))/2;//need to flip the y
+		//printf("got ray(%i) with coord: (%i, %i), width is (%i, %i)\n",r.hit,x,y,renderTarget->w,renderTarget->h);
 		if(
 			(x>=0) & (x<renderTarget->w) &
 			(y>=0) & (y<renderTarget->h)
 		){
-			printf("passed test, projecting\n");
+			//printf("passed test, projecting\n");
 			raw[x+renderTarget->w*y]=r.c;
 		}
 	}
@@ -134,11 +134,11 @@ void camera::doPost(int id,int numthreads,color *raw,surface *target){
 	//TODO: this assumes that the target and input have the same
 	const int count=target->w*target->h;
 	const int start=(id*count)/numthreads,stop=((id+1)*count)/numthreads;
-	uint32_t r,g,b;
 	for(int i=start;i<stop;i++){
-		r=255*raw[i].r;
-		g=255*raw[i].g;
-		b=255*raw[i].b;
+		uint32_t
+			r=255*raw[i].r,
+			g=255*raw[i].g,
+			b=255*raw[i].b;
 		target->pixels[i]=0xff000000|((r&0xff)<<16)|((g&0xff)<<8)|(b&0xff);
 	}
 }
