@@ -18,8 +18,7 @@ void sceneContainer::render(int numRays,ray *raysIn,ray *raysOut){
 		std::for_each(objects.begin(),objects.end(),[&](obj* object){
 			double t;
 			ray r_out;
-			vec3d norm;
-			if(object->bounceRay(raysIn[i],r_out,t,norm) && t<tmin){
+			if(object->bounceRay(raysIn[i],r_out,t) && t<tmin){
 				raysOut[i]=r_out;
 				tmin=t;
 			}

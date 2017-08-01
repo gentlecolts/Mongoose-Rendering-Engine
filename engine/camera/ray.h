@@ -11,12 +11,17 @@ namespace MG{
 		};
 
 		color():r(0),g(0),b(0){}
-		color(double r0,double g0,double b0):r(r0),g(g0),b(b0){}
-		color(double c[3]):r(c[0]),g(c[1]),b(c[2]){}
+		color(const double r0,const double g0,const double b0):r(r0),g(g0),b(b0){}
+		color(const double c[3]):r(c[0]),g(c[1]),b(c[2]){}
 
 		template<typename T> explicit operator vec3<T>() const{
 			return vec3<T>(r,g,b);
 		}
+	};
+
+	struct depthbuffer{
+		double t;
+		vec3d norm;
 	};
 
 	/*TODO: consider need for additional parameters, such as:
@@ -28,7 +33,10 @@ namespace MG{
 	and other factors that might be needed
 	*/
 	struct ray{
-		vec3d from,dir;
+		vec3d
+			from,//origin of ray
+			dir,//ray direction
+			normal;//for intersected rays, normal at point of intersection
 		color c;
 		bool hit;
 	};

@@ -23,7 +23,7 @@ namespace MG{
 	public:
 		vec3d pos;
 
-		virtual bool bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal) = 0;
+		virtual bool bounceRay(const ray &r_in,ray &r_out,double &d) = 0;
 
 		virtual void firstUpdate(){}//the firstUpdate of every object will be called each frame before any object's update
 		virtual void forkedUpdate(){}//forkedUpdate is called after first update and is called in true threaded parallel

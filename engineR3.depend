@@ -811,7 +811,7 @@
 	<cstdlib>
 	<iostream>
 
-1501266721 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1501384476 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 	<cmath>
 
@@ -840,7 +840,7 @@
 	<SDL2/SDL.h>
 	<stdint.h>
 
-1501181511 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/object.h
+1501595677 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/object.h
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	"meta.h"
@@ -850,7 +850,7 @@
 1501182808 /home/zangoose/git/Mongoose-Rendering-Engine/engine/math/vec3d.h
 	<cmath>
 
-1501255021 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/ray.h
+1501598292 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/ray.h
 	"../math/vec3d.h"
 
 1474914226 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/meta.h
@@ -863,7 +863,7 @@
 	<thread>
 	<cstdarg>
 
-1501188715 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.h
+1501467846 /home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.h
 	"../2d/surface.h"
 	"../math/math.h"
 	"../core/scene.h"
@@ -897,7 +897,7 @@
 1466460908 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/2d/surface.cpp
 	"surface.h"
 
-1501377746 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
+1501598253 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/camera/camera.cpp
 	"camera.h"
 	"../core/threadpool.h"
 
@@ -911,7 +911,7 @@
 1500395548 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/main.cpp
 	"core.h"
 
-1501377286 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
+1501595697 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/core/scene.cpp
 	"core.h"
 	"scene.h"
 	<algorithm>
@@ -964,14 +964,14 @@
 	"core.h"
 	"SDL2/SDL.h"
 
-1501373367 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
+1501595677 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.h
 	"object.h"
 	"../math/vec3d.h"
 	"../camera/ray.h"
 	<list>
 	<vector>
 
-1501376400 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
+1501599790 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
 	<cmath>
 	<algorithm>

@@ -31,6 +31,7 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 		raycount=pxcount,//number of rays, for now this is equal to number of pixels
 		numthreads=threadPool::getMaxThreads(),
 		bounces=1;//TODO: parameterize this
+	//this and rays are allocated on heap because they may be too big for the stack
 	color *raw=new color[pxcount];
 
 	/*the order of this array is to be treated as it were [threadcount][bouncenum][raycount/threadcount]
@@ -53,6 +54,8 @@ void camera::render(surface *drawTo,sceneContainer *drawScene){
 		delete[] rays[i];
 	}
 	delete[] rays;
+
+	printf("render done\n");
 }
 
 /**
@@ -122,14 +125,48 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 			x=(renderTarget->w-1)*(point.dot(xcomp)+1)/2,
 			y=(renderTarget->h-1)*(1-point.dot(ycomp))/2;//need to flip the y
 		//printf("got ray(%i) with coord: (%i, %i), width is (%i, %i)\n",r.hit,x,y,renderTarget->w,renderTarget->h);
+		if(x>=0 || y>=0){
+			//printf("got a point with positive value\n");
+		}
 		if(
 			(x>=0) & (x<renderTarget->w) &
 			(y>=0) & (y<renderTarget->h)
 		){
 			//printf("passed test, projecting\n");
+			/*
 			raw[x+renderTarget->w*y]=r.c;
+			/*/
+			//color is from normal
+			//double dot=std::abs(r.normal.dot(r.dir));
+			//double dot=(norm.dot(pointToCam)/abs(pointToCam)+1)/2;
+			//double dot=(norm.dot(r.normal)/abs(r.normal)+1)/2;
+			//raw[x+renderTarget->w*y]=color(dot,dot,dot);
+			raw[x+renderTarget->w*y]=color(r.normal.xyz);
+			//*/
 		}
 	}
+
+	/*debugging
+	auto drawline=[&](vec3d v0,vec3d v1,color c){
+		const int
+			x0=(renderTarget->w-1)*(v0.dot(xcomp)+1)/2,
+			y0=(renderTarget->h-1)*(1-v0.dot(ycomp))/2,
+			x1=(renderTarget->w-1)*(v1.dot(xcomp)+1)/2,
+			y1=(renderTarget->h-1)*(1-v1.dot(ycomp))/2,
+			dx=x1-x0,dy=y1-y0,
+			n=std::max(std::abs(dx),std::abs(dy));
+		for(int i=0;i<=n;i++){
+			const int
+				x=x0+i*dx/n,
+				y=y0+i*dy/n;
+			raw[x+renderTarget->w*y]=c;
+		}
+	};
+
+	drawline(vec3d(0,0,0),vec3d(1,0,0),color(1,0,0));
+	drawline(vec3d(0,0,0),vec3d(0,1,0),color(0,1,0));
+	drawline(vec3d(0,0,0),vec3d(0,0,1),color(0,0,1));
+	//*/
 	#endif
 }
 void camera::doPost(int id,int numthreads,color *raw,surface *target){

@@ -61,7 +61,7 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 	t1=(-b+rt)/(2*a);
 	//*/
 
-	return (eq>=0) & ((t0>=0) | (t1>0));
+	return (eq>=0) & ((t0>=0) | (t1>=0));
 }
 
 bool point::intersects(const ray& r,double &t0,double& t1) const{
@@ -173,7 +173,8 @@ inline hashtype& fetch(const spacehash &space,const unsigned int x,const unsigne
 }
 inline hashtype& fetch(const spacehash& space,const vec3d& point){
 	unsigned int x,y,z;
-		remap(space,point,x,y,z);
+	remap(space,point,x,y,z);
+
 	return fetch(space,x,y,z);
 }
 
@@ -217,13 +218,23 @@ void spacehash::hash(point points[],int npoints){
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
 
-		//printf("adding point %i\n",i);
-		auto box=fetch(*this,points[i].pos);
+		printf("adding point %i to pos (%f, %f, %f)\n",i,points[i].pos.x,points[i].pos.y,points[i].pos.z);
+		auto &box=fetch(*this,points[i].pos);
 		//printf("size of target vector is: %u\n",i,box.size());
 		box.push_back(i);
-		//printf("vector size is now: %u\n\n",box.size());
+		printf("vector size is now: %lu\n\n",box.size());
+	}
+
+	//*debugging
+	for(unsigned int x=0;x<xdim;x++){
+		for(unsigned int y=0;y<ydim;y++){
+			for(unsigned int z=0;z<zdim;z++){
+				printf("(%i, %i, %i) has size: %lu\n",x,y,z,fetch(*this,x,y,z).size());
+			}
+		}
 	}
 	printf("hash done\n");
+	//*/
 }
 
 ///// pointcloud stuff goes here /////
@@ -233,10 +244,10 @@ pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e
 pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
 }
 
-bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
-	//*testcode, rays always hit and out ray is red, if screen is red then all other code works
+bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
+	/*testcode, rays always hit and out ray is red, if screen is red then all other code works
 	d=1;
-	normal=vec3d(1,1,1);
+	r_out.normal=vec3d(1,1,1);
 	r_out.c.r=1;
 	r_out.from=r_in.dir+r_in.from;
 	r_out.dir=-1.0*r_in.dir;
@@ -246,18 +257,19 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 	//convert the ray to the space of the hash
 	//TODO: implement transform matrix(?), calculated before the hashbox transform
 	ray rin_loc=r_in;
+	//move the ray so that the hashbox's lower corner is at origin
 	rin_loc.from-=pos;
 	//[matrix transform would go here]
-	rin_loc.from=pointTF(hashbox,rin_loc.from);
-	rin_loc.dir=pointTF(hashbox,rin_loc.dir);
+	//rin_loc.from=pointTF(hashbox,rin_loc.from);
+	//rin_loc.dir=pointTF(hashbox,rin_loc.dir);
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
 	vec3d tmin,tmax;
 	double t0,t1;
 
-	tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=-rin_loc.from.x/rin_loc.dir.x;
-	tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=-rin_loc.from.y/rin_loc.dir.y;
-	tmin.z=(hashbox.zdim-rin_loc.from.z)/rin_loc.dir.z; tmax.z=-rin_loc.from.z/rin_loc.dir.z;
+	tmin.x=(hashbox.xdim+hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x;
+	tmin.y=(hashbox.ydim+hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y;
+	tmin.z=(hashbox.zdim+hashbox.pos.z-rin_loc.from.z)/rin_loc.dir.z; tmax.z=(hashbox.pos.z-rin_loc.from.z)/rin_loc.dir.z;
 
 	//TODO: better approach to this?
 	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
@@ -284,28 +296,45 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 		bool hit=false;
 	} closest;
 
-	//TODO: should this be i<=n ?
-	for(int i=0;i<n;i++){
-		interholder itest;
+	//*
+	for(int i=0;i<=n;i++){
 		//get the correct chunk of the box
-		unsigned int
+		const unsigned int
 			x=xin+i*dx/n,
 			y=yin+i*dy/n,
 			z=zin+i*dz/n;
 		hashtype &plist=fetch(hashbox,x,y,z);
+	/*/
+	for(int i=0;i<hashbox.hashsize;i++){
+		hashtype &plist=hashbox.pointhash[i];
+	//*/
+		interholder itest;
+
+		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
 
 		std::for_each(plist.begin(),plist.end(),[this,&rin_loc,&closest,&itest](int pos){
 			itest.index=pos;
 			//note, t0 is always less than t1
 			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,itest.t0,itest.t1);
 
-			//TODO: make this more elegant
-			if(itest.hit & closest.hit){
-				//choose the one with the smallest t that is greater than 0
-				const double
-					close_t=(closest.t0>=0)?closest.t0:closest.t1,
-					test_t=(itest.t0>=0)?itest.t0:itest.t1;
+			//printf("testing point #%i\n",pos);
 
+			//printf("did ray hit point #%i:\t%s,\tt0=%f\tt1=%f\n",pos,itest.hit?"yes":"no",itest.t0,itest.t1);
+			if(itest.hit){printf("hit!\n");}
+
+			const double
+				close_t=(closest.t0>=0)?closest.t0:closest.t1,
+				test_t=(itest.t0>=0)?itest.t0:itest.t1;
+
+			//*
+			//if hit is true, then test_t must be positive
+			closest=(itest.hit & (test_t<close_t))?itest:closest;
+			/*/
+			//TODO: make this more elegant
+			//if hit is true, then test_t must be positive
+			if(itest.hit & closest.hit){\
+				//choose the one with the smallest t that is greater than 0
+				//printf("testing close_t=%f vs test_t=%f\n",close_t,test_t);
 				if((close_t>=0) & (test_t>=0)){
 					if(test_t<close_t){
 						closest=itest;
@@ -317,6 +346,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 			}else if(itest.hit){
 				closest=itest;
 			}//any other cases do not require action
+			//*/
 		});
 	}
 
@@ -328,14 +358,14 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d,vec3d &normal){
 	//TODO: instead of referencing, copy and apply this object's transform matrix to the point
 	vec3d inters=r_out.from-pos-p.pos;
 
-	normal=vec3d(
+	r_out.normal=vec3d(
 		2*p.scale.x*inters.x,
 		2*p.scale.y*inters.y,
 		2*p.scale.z*inters.z
 	).getNormalized();
 
 	//compute a purely reflected ray, TODO: more complex, material based bounces
-	r_out.dir=r_in.dir-2*(r_in.dir.dot(normal))*normal;
+	r_out.dir=r_in.dir-2*(r_in.dir.dot(r_out.normal))*r_out.normal;
 	r_out.c=p.col;
 
 	return r_out.hit=closest.hit;

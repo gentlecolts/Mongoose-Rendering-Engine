@@ -26,6 +26,8 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].col.r=1;
 		pointarr[i].col.g=1;
 		pointarr[i].col.b=1;
+
+		pointarr[i].pos=MG::vec3d((double(i))/npoints,0,0);
 	}
 
 	return MG::pointcloud(e,pointarr,npoints,10);
