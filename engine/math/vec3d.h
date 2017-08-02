@@ -65,7 +65,7 @@ namespace MG{
 			y*=d;
 			z*=d;
 		}
-		vec3 getNormalized(){
+		vec3 getNormalized() const{
 			const T d=1/std::sqrt(x*x+y*y+z*z);
 			return vec3(x*d,y*d,z*d);
 		}

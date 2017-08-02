@@ -121,6 +121,7 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 		const vec3d point=pointToCam*t+r.from-origin;
 
 		//convert to array index and setgit
+		//TODO: get this mapping just right
 		const int
 			x=(renderTarget->w-1)*(point.dot(xcomp)+1)/2,
 			y=(renderTarget->h-1)*(1-point.dot(ycomp))/2;//need to flip the y
@@ -133,7 +134,7 @@ void camera::renderLoop(int id,int numthreads,ray **rays,color *raw,int raycount
 			(y>=0) & (y<renderTarget->h)
 		){
 			//printf("passed test, projecting\n");
-			/*
+			//*
 			raw[x+renderTarget->w*y]=r.c;
 			/*/
 			//color is from normal

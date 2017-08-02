@@ -15,7 +15,7 @@ namespace MG{
 		vec3d pos,scale;
 		color col;
 
-		point():pos(),scale(1,1,1){}
+		point():scale(1,1,1){}
 
 		bool intersects(const ray& r,double &t0,double& t1) const;
 	};

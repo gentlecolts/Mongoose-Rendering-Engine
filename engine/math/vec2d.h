@@ -60,7 +60,7 @@ namespace MG{
 			x*=d;
 			y*=d;
 		}
-		vec2 getNormalized(){
+		vec2 getNormalized() const{
 			const T d=1/std::sqrt(x*x+y*y);
 			//const T d=1/std::hypot(x,y);
 			return vec2(x*d,y*d);

@@ -1,5 +1,7 @@
 #include "demos.h"
 #include <cmath>
+#include <chrono>
+#include <cmath>
 using namespace std;
 
 /**TODO: as it turns out, simple scenes arent actually so simple
@@ -19,7 +21,7 @@ public:
 };
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=100;
+	int npoints=2;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -32,6 +34,15 @@ MG::pointcloud pointbubble(MG::engine *e){
 
 	return MG::pointcloud(e,pointarr,npoints,10);
 }
+
+uint64_t ctimeMillis(){
+	chrono::microseconds ms=chrono::duration_cast< chrono::milliseconds >(
+		chrono::system_clock::now().time_since_epoch()
+	);
+	return ms.count();
+}
+double PI=4*atan(1.0);
+
 
 void demos::simpleScene(){
 	MG::engine e;
@@ -49,11 +60,15 @@ void demos::simpleScene(){
 	MG::pointcloud thing=pointbubble(&e);
 	printf("cloud made\n");
 
-	e.mainCamera.position.x=-5;
+	e.mainCamera.position.z=-5;
 
 	//draw scene at desired framerate
 	while(1){
 		if(e.isTimeToUpdate()){
+			double t=ctimeMillis()/1000.0;
+			//e.mainCamera.position.x=0.5*cos(2*PI*t);
+			//e.mainCamera.position.y=0.5*sin(2*PI*t);
+			//e.mainCamera.position.z=-2.5*cos(2*PI*t)-3;
 			e.update();
 		}
 	}

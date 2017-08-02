@@ -48,6 +48,7 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 		r.dir.z/p.scale.z
 	);
 
+	//*
 	const double
 		a=v1.dot(v1),
 		b=2*P1.dot(v1),
@@ -59,6 +60,20 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 	//in this context, (a) is a sum of squares and thus must always be positive, t0 will always be the lower value
 	t0=(-b-rt)/(2*a);
 	t1=(-b+rt)/(2*a);
+	/*/
+	//this should be completely equivalent to the above, since the 2 can be factored out of b
+	//the above, more traditional version will be preserved for clarity
+	const double
+		a=v1.dot(v1),
+		b=P1.dot(v1),
+		c=P1.dot(P1)-1;
+
+	const double
+		eq=(b*b-a*c),
+		rt=std::sqrt(eq);
+	//in this context, (a) is a sum of squares and thus must always be positive, t0 will always be the lower value
+	t0=(-b-rt)/a;
+	t1=(-b+rt)/a;
 	//*/
 
 	return (eq>=0) & ((t0>=0) | (t1>=0));
@@ -97,7 +112,7 @@ static inline int minbits(const uint32_t x){
 			return x?32-__builtin_clz(x):1;
 		#endif
 	#else
-		return (x?1+log2(x):1)
+		return (x?1+std::log2(x):1)
 	#endif
 }
 
@@ -265,7 +280,6 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
 	vec3d tmin,tmax;
-	double t0,t1;
 
 	tmin.x=(hashbox.xdim+hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x;
 	tmin.y=(hashbox.ydim+hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y;
@@ -276,10 +290,13 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
 	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
 
-	//the ray enters the cube at the last of the possible entry planes
-	t0=std::max(std::max(tmin.x,tmin.y),tmin.z);
-	//the ray exits the cube at the first of the possible exit planes
-	t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+	const double
+		//the ray enters the cube at the last of the possible entry planes
+		t0=std::max(std::max(tmin.x,tmin.y),tmin.z),
+		//the ray exits the cube at the first of the possible exit planes
+		t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+
+	if(!( (t1>=t0)&((t0>=0)|(t1>=0)) )){return r_out.hit=false;}
 
 	unsigned int xin,yin,zin,xout,yout,zout;
 	maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
@@ -290,8 +307,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
 		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
 
+	if(n<=0){return r_out.hit=false;}
+
 	struct interholder{
-		double t0=INFINITY,t1=INFINITY;
+		double t=INFINITY;
 		int index=0;
 		bool hit=false;
 	} closest;
@@ -308,50 +327,42 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	for(int i=0;i<hashbox.hashsize;i++){
 		hashtype &plist=hashbox.pointhash[i];
 	//*/
-		interholder itest;
-
 		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
 
-		std::for_each(plist.begin(),plist.end(),[this,&rin_loc,&closest,&itest](int pos){
+		std::for_each(plist.begin(),plist.end(),[&](int pos){
+			interholder itest;
+			double t0,t1;
 			itest.index=pos;
 			//note, t0 is always less than t1
-			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,itest.t0,itest.t1);
+			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
+			itest.t=(t0>=0)?t0:t1;
 
-			//printf("testing point #%i\n",pos);
+			/*
+			printf("testing point #%i\nray: <%f, %f, %f>*t + <%f, %f, %f>\npoint: <%f, %f, %f>\n",pos,
+				rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,
+				rin_loc.from.x,rin_loc.from.y,rin_loc.from.z,
+				hashbox.pointarr[pos].pos.x,hashbox.pointarr[pos].pos.y,hashbox.pointarr[pos].pos.z
+			);//*/
 
-			//printf("did ray hit point #%i:\t%s,\tt0=%f\tt1=%f\n",pos,itest.hit?"yes":"no",itest.t0,itest.t1);
-			if(itest.hit){printf("hit!\n");}
-
-			const double
-				close_t=(closest.t0>=0)?closest.t0:closest.t1,
-				test_t=(itest.t0>=0)?itest.t0:itest.t1;
-
-			//*
-			//if hit is true, then test_t must be positive
-			closest=(itest.hit & (test_t<close_t))?itest:closest;
-			/*/
-			//TODO: make this more elegant
-			//if hit is true, then test_t must be positive
-			if(itest.hit & closest.hit){\
-				//choose the one with the smallest t that is greater than 0
-				//printf("testing close_t=%f vs test_t=%f\n",close_t,test_t);
-				if((close_t>=0) & (test_t>=0)){
-					if(test_t<close_t){
-						closest=itest;
-					}
-				}else if(test_t>=0){
-					closest=itest;
-				}
-
-			}else if(itest.hit){
-				closest=itest;
-			}//any other cases do not require action
+			//printf("did ray hit point #%i:\t%s,\tt0=%f\tt1=%f\n",pos,itest.hit?"yes":"no",t0,t1);
+			/*
+			if(itest.hit){
+				//printf("hit #%i\n",pos);
+				//printf("hit #%i:\tt0=%f\tt1=%f\n",pos,t0,t1);
+				//printf("hit #%i:\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",pos,itest.t,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,rin_loc.from.x,rin_loc.from.y,rin_loc.from.z);
+				printf("hit #%i:\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",pos,itest.t,r_in.dir.x,r_in.dir.y,r_in.dir.z,r_in.from.x,r_in.from.y,r_in.from.z);
+			}
 			//*/
+
+
+			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
+			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+			//closest=itest.hit?itest:closest;
 		});
 	}
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
-	d=(closest.t0>=0)?closest.t0:closest.t1;
+	d=closest.t;
 	r_out.from=r_in.dir*d+r_in.from;
 
 	point &p=hashbox.pointarr[closest.index];
@@ -368,5 +379,14 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	r_out.dir=r_in.dir-2*(r_in.dir.dot(r_out.normal))*r_out.normal;
 	r_out.c=p.col;
 
+	//printf("final: hit(%i)\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",closest.hit,d,r_out.dir.x,r_out.dir.y,r_out.dir.z,r_out.from.x,r_out.from.y,r_out.from.z);
+	//*
+	if(closest.hit){
+		printf("final: t=%f\tin:<%f, %f, %f>*t + <%f, %f, %f>\tout:<%f, %f, %f>*t + <%f, %f, %f>\n",d,
+			r_in.dir.x,r_in.dir.y,r_in.dir.z,r_in.from.x,r_in.from.y,r_in.from.z,
+			r_out.dir.x,r_out.dir.y,r_out.dir.z,r_out.from.x,r_out.from.y,r_out.from.z
+		);
+	}
+	//*/
 	return r_out.hit=closest.hit;
 }
