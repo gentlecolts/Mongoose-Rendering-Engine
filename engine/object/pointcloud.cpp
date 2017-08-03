@@ -36,6 +36,20 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 	a=|v1|^2
 	b=2*(P1 dot v1)
 	c=|P1|^2 - 1
+
+	additionally, factoring the 2 out of b can be used to simplify things slightly:
+
+	let u=(P1 dot v1)
+	b=2*u
+
+	t=(-b ± sqrt(b*b-4*a*c))/(2*a)
+	t=(-2*u ± sqrt(2*u*2*u-4*a*c))/(2*a)
+	t=(-2*u ± sqrt(4*(u*u-a*c)))/(2*a)
+	t=(-2*u ± 2*sqrt(u*u-a*c))/(2*a)
+	t=2*(-u ± sqrt(u*u-a*c))/(2*a)
+	t=(-u ± sqrt(u*u-a*c))/a
+
+	this is, of course, an extremely minor simplification, but it's free and any little bit helps
 	*/
 	const vec3d P1(
 		(r.from.x-p.pos.x)/p.scale.x,
@@ -48,21 +62,6 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 		r.dir.z/p.scale.z
 	);
 
-	//*
-	const double
-		a=v1.dot(v1),
-		b=2*P1.dot(v1),
-		c=P1.dot(P1)-1;
-
-	const double
-		eq=b*b-4*a*c,
-		rt=std::sqrt(eq);
-	//in this context, (a) is a sum of squares and thus must always be positive, t0 will always be the lower value
-	t0=(-b-rt)/(2*a);
-	t1=(-b+rt)/(2*a);
-	/*/
-	//this should be completely equivalent to the above, since the 2 can be factored out of b
-	//the above, more traditional version will be preserved for clarity
 	const double
 		a=v1.dot(v1),
 		b=P1.dot(v1),
@@ -74,7 +73,6 @@ inline bool intersect(const point& p,const ray& r,double &t0,double& t1){	/*
 	//in this context, (a) is a sum of squares and thus must always be positive, t0 will always be the lower value
 	t0=(-b-rt)/a;
 	t1=(-b+rt)/a;
-	//*/
 
 	return (eq>=0) & ((t0>=0) | (t1>=0));
 }
@@ -259,6 +257,36 @@ pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e
 pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
 }
 
+//do comparisons without worrying about division by zero
+struct safecompare{
+	double num,denom;
+	safecompare(double x):num(x),denom(1){}
+	safecompare(double n,double d):num(n),denom(d){}
+
+	//if denom is negative, the expression needs to be negated
+	#define numcomp(op) bool operator op(const double &x) const{return (denom<0)^(num op x*denom);}
+
+	numcomp(>)
+	numcomp(<)
+	numcomp(==)
+	numcomp(>=)
+	numcomp(<=)
+
+	#undef numcomp
+
+	//if only one of the two denoms is negative, the expression needs to be negated
+	#define classcomp(op) bool operator op(const safecompare &x) const{return ((denom<0)^(x.denom<0))^(num*x.denom op x.num*denom);}
+	classcomp(>)
+	classcomp(<)
+	classcomp(==)
+	classcomp(>=)
+	classcomp(<=)
+
+	#undef classcomp
+
+	operator double() const{return num/denom;}
+};
+
 bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	/*testcode, rays always hit and out ray is red, if screen is red then all other code works
 	d=1;
@@ -275,28 +303,54 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//move the ray so that the hashbox's lower corner is at origin
 	rin_loc.from-=pos;
 	//[matrix transform would go here]
-	//rin_loc.from=pointTF(hashbox,rin_loc.from);
-	//rin_loc.dir=pointTF(hashbox,rin_loc.dir);
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
 	vec3d tmin,tmax;
+	//vec3<safecompare> tmin,tmax;
 
+	///// TODO: fix the missing pixel problem (again...check on v2) /////
+
+	//*
 	tmin.x=(hashbox.xdim+hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(hashbox.pos.x-rin_loc.from.x)/rin_loc.dir.x;
 	tmin.y=(hashbox.ydim+hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(hashbox.pos.y-rin_loc.from.y)/rin_loc.dir.y;
 	tmin.z=(hashbox.zdim+hashbox.pos.z-rin_loc.from.z)/rin_loc.dir.z; tmax.z=(hashbox.pos.z-rin_loc.from.z)/rin_loc.dir.z;
+	/*/
+	tmin.x=safecompare(hashbox.xdim+hashbox.pos.x-rin_loc.from.x,rin_loc.dir.x); tmax.x=safecompare(hashbox.pos.x-rin_loc.from.x,rin_loc.dir.x);
+	tmin.y=safecompare(hashbox.ydim+hashbox.pos.y-rin_loc.from.y,rin_loc.dir.y); tmax.y=safecompare(hashbox.pos.y-rin_loc.from.y,rin_loc.dir.y);
+	tmin.z=safecompare(hashbox.zdim+hashbox.pos.z-rin_loc.from.z,rin_loc.dir.z); tmax.z=safecompare(hashbox.pos.z-rin_loc.from.z,rin_loc.dir.z);
+	//*/
 
 	//TODO: better approach to this?
 	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
 	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
 	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
 
+	/*
+	tmin.x=(std::abs(tmin.x)==INFINITY)?NAN:tmin.x;
+	tmax.x=(std::abs(tmax.x)==INFINITY)?NAN:tmax.x;
+	tmin.y=(std::abs(tmin.y)==INFINITY)?NAN:tmin.y;
+	tmax.y=(std::abs(tmax.y)==INFINITY)?NAN:tmax.y;
+	tmin.z=(std::abs(tmin.z)==INFINITY)?NAN:tmin.z;
+	tmax.z=(std::abs(tmax.z)==INFINITY)?NAN:tmax.z;
+	//*/
+
 	const double
 		//the ray enters the cube at the last of the possible entry planes
 		t0=std::max(std::max(tmin.x,tmin.y),tmin.z),
+		//t0=*(double*)&std::max(std::max(*(long long*)&tmin.x,*(long long*)&tmin.y),*(long long*)&tmin.z),
 		//the ray exits the cube at the first of the possible exit planes
 		t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+		//t1=*(double*)&std::min(std::min(*(long long*)&tmax.x,*(long long*)&tmax.y),*(long long*)&tmax.z);
 
-	if(!( (t1>=t0)&((t0>=0)|(t1>=0)) )){return r_out.hit=false;}
+	if((t0>t1)|(t1<0)){return r_out.hit=false;}
+
+	/*test hitbox only
+	d=(t0>=0)?t0:t1;
+	r_out.from=r_in.dir*d+r_in.from;
+	r_out.c=color(1,1,1);
+
+	return r_out.hit=true;
+	//*/
 
 	unsigned int xin,yin,zin,xout,yout,zout;
 	maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
@@ -307,7 +361,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
 		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
 
-	if(n<=0){return r_out.hit=false;}
+	const double
+		dxn=(double)(dx)/n,
+		dyn=(double)(dy)/n,
+		dzn=(double)(dz)/n;
 
 	struct interholder{
 		double t=INFINITY;
@@ -315,13 +372,14 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		bool hit=false;
 	} closest;
 
+	#if 1
 	//*
 	for(int i=0;i<=n;i++){
 		//get the correct chunk of the box
 		const unsigned int
-			x=xin+i*dx/n,
-			y=yin+i*dy/n,
-			z=zin+i*dz/n;
+			x=xin+(int)(i*dxn),
+			y=yin+(int)(i*dyn),
+			z=zin+(int)(i*dzn);
 		hashtype &plist=fetch(hashbox,x,y,z);
 	/*/
 	for(int i=0;i<hashbox.hashsize;i++){
@@ -329,7 +387,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//*/
 		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
 
-		std::for_each(plist.begin(),plist.end(),[&](int pos){
+		for(int pos:plist){
 			interholder itest;
 			double t0,t1;
 			itest.index=pos;
@@ -358,8 +416,20 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 			//closest=itest.hit?itest:closest;
-		});
+		}
 	}
+	#endif
+
+	/*forget the above and intersect a single point at origin
+	{
+		point p;
+		p.col=color(1,1,1);
+		double tlow,thigh;
+		hashbox.pointarr[closest.index=0]=p;
+		closest.hit=intersect(p,r_in,tlow,thigh);
+		closest.t=(tlow>=0)?tlow:thigh;
+	}
+	//*/
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
 	d=closest.t;
@@ -380,7 +450,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	r_out.c=p.col;
 
 	//printf("final: hit(%i)\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",closest.hit,d,r_out.dir.x,r_out.dir.y,r_out.dir.z,r_out.from.x,r_out.from.y,r_out.from.z);
-	//*
+	/*
 	if(closest.hit){
 		printf("final: t=%f\tin:<%f, %f, %f>*t + <%f, %f, %f>\tout:<%f, %f, %f>*t + <%f, %f, %f>\n",d,
 			r_in.dir.x,r_in.dir.y,r_in.dir.z,r_in.from.x,r_in.from.y,r_in.from.z,

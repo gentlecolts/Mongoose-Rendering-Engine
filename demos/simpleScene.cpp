@@ -66,8 +66,8 @@ void demos::simpleScene(){
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
-			//e.mainCamera.position.x=0.5*cos(2*PI*t);
-			//e.mainCamera.position.y=0.5*sin(2*PI*t);
+			//e.mainCamera.position.x=0.5*cos(2*PI*t/1000);
+			//e.mainCamera.position.y=0.5*sin(2*PI*t/1000);
 			//e.mainCamera.position.z=-2.5*cos(2*PI*t)-3;
 			e.update();
 		}
