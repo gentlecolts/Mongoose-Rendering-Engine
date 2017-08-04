@@ -114,6 +114,30 @@ static inline int minbits(const uint32_t x){
 	#endif
 }
 
+spacehash::spacehash(const spacehash &space){
+	npoints=space.npoints;
+	pointarr=new point[npoints];
+	std::copy(space.pointarr,space.pointarr+npoints,pointarr);
+
+	hashsize=space.hashsize;
+	pointhash=new hashtype[hashsize];
+	std::copy(space.pointhash,space.pointhash+hashsize,pointhash);
+
+	#define duplicate(x) x=space.x;
+	duplicate(xbits)
+	duplicate(ybits)
+	duplicate(zbits)
+	duplicate(xmask)
+	duplicate(ymask)
+	duplicate(zmask)
+	duplicate(xdim)
+	duplicate(ydim)
+	duplicate(zdim)
+	duplicate(pos)
+	duplicate(scale)
+	#undef duplicate
+}
+
 spacehash::spacehash(int hashsize){
 	int bits=minbits(hashsize);
 	xbits=ybits=zbits=(bits>2)?bits/3:1;
@@ -242,11 +266,11 @@ void spacehash::hash(point points[],int npoints){
 	for(unsigned int x=0;x<xdim;x++){
 		for(unsigned int y=0;y<ydim;y++){
 			for(unsigned int z=0;z<zdim;z++){
-				printf("(%i, %i, %i) has size: %lu\n",x,y,z,fetch(*this,x,y,z).size());
+				printf("(%u, %u, %u) has size: %lu\n",x,y,z,fetch(*this,x,y,z).size());
 			}
 		}
 	}
-	printf("hash done\n");
+	printf("hash done...\n\tmy size is: <%f, %f, %f>\n\tmy \"min\" corner is <%f, %f, %f>\n",scale.x,scale.y,scale.z,pos.x,pos.y,pos.z);
 	//*/
 }
 
@@ -342,7 +366,12 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
 		//t1=*(double*)&std::min(std::min(*(long long*)&tmax.x,*(long long*)&tmax.y),*(long long*)&tmax.z);
 
+	//if(!(std::isfinite(t0) & std::isfinite(t1))){printf("bad t: {%f, %f}\n",t0,t1);}
+
+	//this might not actually be causing the dot problem
 	if((t0>t1)|(t1<0)){return r_out.hit=false;}
+
+	//printf("hitbox intersection: {%f, %f}\n",t0,t1);
 
 	/*test hitbox only
 	d=(t0>=0)?t0:t1;
@@ -362,9 +391,11 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
 
 	const double
-		dxn=(double)(dx)/n,
-		dyn=(double)(dy)/n,
-		dzn=(double)(dz)/n;
+		dxn=n?(double)(dx)/n:0,
+		dyn=n?(double)(dy)/n:0,
+		dzn=n?(double)(dz)/n:0;
+
+	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 
 	struct interholder{
 		double t=INFINITY;
@@ -385,7 +416,9 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	for(int i=0;i<hashbox.hashsize;i++){
 		hashtype &plist=hashbox.pointhash[i];
 	//*/
+
 		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
+		//if(plist.size()){printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());}
 
 		for(int pos:plist){
 			interholder itest;

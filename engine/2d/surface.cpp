@@ -2,10 +2,7 @@
 using namespace MG;
 
 void surface::initSurface(const window *win){
-	w=win->w;
-	h=win->h;
-	tex=SDL_CreateTexture(win->r,SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING,w,h);
-	pixels=new uint32_t[w*h];
+	initSurface(win->w,win->h,win);
 }
 void surface::initSurface(int width,int height,const window *win){
 	w=width;

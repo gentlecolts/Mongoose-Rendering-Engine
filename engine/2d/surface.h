@@ -6,8 +6,8 @@ namespace MG{
 	//*
 	struct window;
 	struct surface{
-		SDL_Texture *tex;
-		uint32_t *pixels;
+		SDL_Texture *tex=0;
+		uint32_t *pixels=0;
 		int w,h;
 
 		void initSurface(const window *win);
@@ -17,8 +17,8 @@ namespace MG{
 	//*/
 
 	struct window{
-		SDL_Window *win;
-		SDL_Renderer *r;
+		SDL_Window *win=0;
+		SDL_Renderer *r=0;
 		//*
 		surface s;
 		/*/

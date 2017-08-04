@@ -47,6 +47,7 @@ namespace MG{
 		unsigned int npoints=0,hashsize=0;
 		vec3d pos,scale;
 
+		spacehash(const spacehash &space);
 		spacehash(int hashsize);
 		spacehash(int hashsize,point points[],int pointcount);
 		//spacehash(const spacehash &space);//is deep copy needed?

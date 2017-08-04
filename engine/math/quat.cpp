@@ -69,12 +69,12 @@ void quat::applyTo(vec3d v[],int count) const{
 		cx1=(a*a+b*b-c*c-d*d),cx2=2*(b*c-a*d),cx3=2*(a*c+b*d),
 		cy1=(a*a-b*b+c*c-d*d),cy2=2*(c*d-a*b),cy3=2*(a*d+b*c),
 		cz1=(a*a-b*b-c*c+d*d),cz2=2*(b*d-a*c),cz3=2*(a*b+c*d);
-	double x,y,z;
 
 	for(int i=0;i<count;i++){
-		x=cx1*v[i].x + cx2*v[i].y + cx3*v[i].z;
-		y=cy1*v[i].y + cy2*v[i].z + cy3*v[i].x;
-		z=cz1*v[i].z + cz2*v[i].x + cz3*v[i].y;
+		double
+			x=cx1*v[i].x + cx2*v[i].y + cx3*v[i].z,
+			y=cy1*v[i].y + cy2*v[i].z + cy3*v[i].x,
+			z=cz1*v[i].z + cz2*v[i].x + cz3*v[i].y;
 		v[i].x=x;v[i].y=y;v[i].z=z;
 	}
 }
@@ -83,13 +83,13 @@ void quat::applyTo(matrix3 &m) const{
 		cx1=(a*a+b*b-c*c-d*d),cx2=2*(b*c-a*d),cx3=2*(a*c+b*d),
 		cy1=(a*a-b*b+c*c-d*d),cy2=2*(c*d-a*b),cy3=2*(a*d+b*c),
 		cz1=(a*a-b*b-c*c+d*d),cz2=2*(b*d-a*c),cz3=2*(a*b+c*d);
-	double x,y,z;
 
 	//xyz[3*i] = x cord, xyz[3*i+1] = y cord, xyz[3*i+2] = z cord
 	for(int i=0;i<3;i++){
-		x=cx1*m.xyz[3*i] + cx2*m.xyz[3*i+1] + cx3*m.xyz[3*i+2];
-		y=cy1*m.xyz[3*i+1] + cy2*m.xyz[3*i+2] + cy3*m.xyz[3*i];
-		z=cz1*m.xyz[3*i+2] + cz2*m.xyz[3*i] + cz3*m.xyz[3*i+1];
+		double
+			x=cx1*m.xyz[3*i] + cx2*m.xyz[3*i+1] + cx3*m.xyz[3*i+2],
+			y=cy1*m.xyz[3*i+1] + cy2*m.xyz[3*i+2] + cy3*m.xyz[3*i],
+			z=cz1*m.xyz[3*i+2] + cz2*m.xyz[3*i] + cz3*m.xyz[3*i+1];
 		m.xyz[3*i]=x;
 		m.xyz[3*i+1]=y;
 		m.xyz[3*i+2]=z;
