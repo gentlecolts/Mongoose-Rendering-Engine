@@ -138,8 +138,8 @@ spacehash::spacehash(const spacehash &space){
 	#undef duplicate
 }
 
-spacehash::spacehash(int hashsize){
-	int bits=minbits(hashsize);
+spacehash::spacehash(int boxcount){
+	int bits=minbits(boxcount);
 	xbits=ybits=zbits=(bits>2)?bits/3:1;
 
 	if(bits>2){
@@ -162,7 +162,7 @@ spacehash::spacehash(int hashsize){
 	hashsize=1u<<(xbits+ybits+zbits);
 	pointhash=new hashtype[hashsize];
 }
-spacehash::spacehash(int hashsize,point points[],int pointcount):spacehash(hashsize){
+spacehash::spacehash(int boxcount,point points[],int pointcount):spacehash(boxcount){
 	npoints=pointcount;
 	pointarr=new point[npoints]();
 
@@ -256,7 +256,7 @@ void spacehash::hash(point points[],int npoints){
 		pointarr[i]=points[i];
 
 		printf("adding point %i to pos (%f, %f, %f)\n",i,points[i].pos.x,points[i].pos.y,points[i].pos.z);
-		auto &box=fetch(*this,points[i].pos);
+		hashtype &box=fetch(*this,points[i].pos);
 		//printf("size of target vector is: %u\n",i,box.size());
 		box.push_back(i);
 		printf("vector size is now: %lu\n\n",box.size());
@@ -396,6 +396,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		dzn=n?(double)(dz)/n:0;
 
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
+	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
 
 	struct interholder{
 		double t=INFINITY;
@@ -404,21 +405,29 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	} closest;
 
 	#if 1
-	//*
+	/*
+	//printf("hashsize: %i\n",hashbox.hashsize);
+	for(int i=0;i<hashbox.hashsize;i++){
+		//printf("%i\n",i);
+		hashtype &plist=hashbox.pointhash[i];
+	/*/
 	for(int i=0;i<=n;i++){
 		//get the correct chunk of the box
+		#if 0
+		const double t=t0+(double(i))*(t1-t0)/n;
+		hashtype &plist=fetch(hashbox,r_in.dir*t+r_in.from);
+		#else
 		const unsigned int
 			x=xin+(int)(i*dxn),
 			y=yin+(int)(i*dyn),
 			z=zin+(int)(i*dzn);
 		hashtype &plist=fetch(hashbox,x,y,z);
-	/*/
-	for(int i=0;i<hashbox.hashsize;i++){
-		hashtype &plist=hashbox.pointhash[i];
+		#endif
 	//*/
 
 		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
 		//if(plist.size()){printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());}
+		//if(plist.size()){printf("<%f, %f, %f>*t+C\tline is at (%u, %u, %u), list size is: %lu\n",rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,x,y,z,plist.size());}
 
 		for(int pos:plist){
 			interholder itest;
@@ -448,6 +457,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+			//printf("closest t: %f\n",closest.t);
+			//if(closest.hit){printf("closest t: %f\n",closest.t);}
 			//closest=itest.hit?itest:closest;
 		}
 	}
@@ -460,6 +471,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		double tlow,thigh;
 		hashbox.pointarr[closest.index=0]=p;
 		closest.hit=intersect(p,r_in,tlow,thigh);
+		//closest.hit=intersect(p,rin_loc,tlow,thigh);
 		closest.t=(tlow>=0)?tlow:thigh;
 	}
 	//*/

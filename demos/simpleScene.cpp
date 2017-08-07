@@ -21,7 +21,7 @@ public:
 };
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=2;
+	int npoints=5;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -29,7 +29,10 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].col.g=1;
 		pointarr[i].col.b=1;
 
-		pointarr[i].pos=MG::vec3d((double(i))/npoints,0,0);
+		pointarr[i].scale=MG::vec3d(.2,.2,.2);
+
+		const double x=2*(double(i))/npoints-1;
+		pointarr[i].pos=MG::vec3d(x,0,0);
 	}
 
 	return MG::pointcloud(e,pointarr,npoints,10);

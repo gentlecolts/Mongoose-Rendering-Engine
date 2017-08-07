@@ -48,8 +48,8 @@ namespace MG{
 		vec3d pos,scale;
 
 		spacehash(const spacehash &space);
-		spacehash(int hashsize);
-		spacehash(int hashsize,point points[],int pointcount);
+		spacehash(int boxcount);
+		spacehash(int boxcount,point points[],int pointcount);
 		//spacehash(const spacehash &space);//is deep copy needed?
 		~spacehash();
 
