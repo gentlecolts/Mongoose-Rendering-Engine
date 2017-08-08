@@ -182,9 +182,9 @@ inline vec3d pointTF(const spacehash &space,const vec3d &p){
 	this could not happen unless a point had zero width/height/depth
 	*/
 	return vec3d(
-		space.xdim*(p.x-space.pos.x)/space.scale.x,
-		space.ydim*(p.y-space.pos.y)/space.scale.y,
-		space.zdim*(p.z-space.pos.z)/space.scale.z
+		2*space.xdim*(p.x-space.pos.x-space.scale.x/2)/space.scale.x,
+		2*space.ydim*(p.y-space.pos.y-space.scale.y/2)/space.scale.y,
+		2*space.zdim*(p.z-space.pos.z-space.scale.z/2)/space.scale.z
 	);
 }
 
@@ -311,6 +311,10 @@ struct safecompare{
 	operator double() const{return num/denom;}
 };
 
+template <typename T> inline int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	/*testcode, rays always hit and out ray is red, if screen is red then all other code works
 	d=1;
@@ -381,10 +385,18 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	return r_out.hit=true;
 	//*/
 
+	//*
 	unsigned int xin,yin,zin,xout,yout,zout;
-	maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
-	maskpoint(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
-
+	//maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
+	//maskpoint(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
+	remap(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
+	remap(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
+	/*/
+	const vec3d v0=rin_loc.dir*t0+rin_loc.from,v1=rin_loc.dir*t1+rin_loc.from;
+	const double
+		xin=v0.x,yin=v0.y,zin=v0.z,
+		xout=v1.x,yout=v1.y,zout=v1.z;
+	//*/
 	//gather all cells and find the the closeset point
 	const int
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
@@ -405,17 +417,18 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	} closest;
 
 	#if 1
-	/*
+	#define SEEK_APPROACH 2
+	#if SEEK_APPROACH==0 ///// check every cell /////
 	//printf("hashsize: %i\n",hashbox.hashsize);
 	for(int i=0;i<hashbox.hashsize;i++){
 		//printf("%i\n",i);
 		hashtype &plist=hashbox.pointhash[i];
-	/*/
+	#elif SEEK_APPROACH==1 ///// draw a line (line is too simple, misses boxes) /////
 	for(int i=0;i<=n;i++){
 		//get the correct chunk of the box
-		#if 0
+		#if 1
 		const double t=t0+(double(i))*(t1-t0)/n;
-		hashtype &plist=fetch(hashbox,r_in.dir*t+r_in.from);
+		hashtype &plist=fetch(hashbox,rin_loc.dir*t+rin_loc.from);
 		#else
 		const unsigned int
 			x=xin+(int)(i*dxn),
@@ -423,7 +436,44 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			z=zin+(int)(i*dzn);
 		hashtype &plist=fetch(hashbox,x,y,z);
 		#endif
-	//*/
+	#elif SEEK_APPROACH==2 ///// draw a line hitting every box /////
+	const int
+		sgnx=sgn(rin_loc.dir.x),
+		sgny=sgn(rin_loc.dir.y),
+		sgnz=sgn(rin_loc.dir.z);
+	unsigned int
+		xp=(0 && sgnx<0)?hashbox.xdim:-1,
+		yp=(0 && sgny<0)?hashbox.ydim:-1,
+		zp=(0 && sgnz<0)?hashbox.zdim:-1;
+	vec3d state_t;
+
+	auto findNextPlane=[&](){
+		//compute the current t using last state's values
+		const double t=std::min(std::min(state_t.x,state_t.y),state_t.z);
+		//TODO: do i need to handle edge case?
+		xp+=sgnx*(t==state_t.x);
+		yp+=sgny*(t==state_t.y);
+		zp+=sgnz*(t==state_t.z);
+
+		//compute next state and return the t where you are right now
+		vec3d testvec=vec3d(xp,yp,zp)+pointTF(hashbox,vec3d(sgnx*rin_loc.from.x,sgny*rin_loc.from.y,sgnz*rin_loc.from.z));
+		state_t.x=testvec.x/(sgnx*rin_loc.dir.x);
+		state_t.y=testvec.y/(sgny*rin_loc.dir.y);
+		state_t.z=testvec.z/(sgnz*rin_loc.dir.z);
+		return std::min(std::min(state_t.x,state_t.y),state_t.z);
+	};
+	double tlow=0;
+	//find move xp,yp,zp to the entrance of the cube
+	while(tlow<t0){printf("seeking startpoint (%u,%u,%u)\n",xp,yp,zp);tlow=findNextPlane();}
+
+	printf("starting at (%u,%u,%u)\n",xp,yp,zp);
+
+	while(tlow<=t1){
+		hashtype &plist=fetch(hashbox,xp,yp,zp);
+		tlow=findNextPlane();
+		printf("testing: (%u,%u,%u)\t list size:%lu\n",xp,yp,zp,plist.size());
+	#endif
+	#undef SEEK_APPROACH
 
 		//printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());
 		//if(plist.size()){printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());}

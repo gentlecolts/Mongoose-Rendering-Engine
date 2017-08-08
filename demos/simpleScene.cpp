@@ -21,7 +21,7 @@ public:
 };
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=5;
+	int npoints=50;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -31,7 +31,8 @@ MG::pointcloud pointbubble(MG::engine *e){
 
 		pointarr[i].scale=MG::vec3d(.2,.2,.2);
 
-		const double x=2*(double(i))/npoints-1;
+		//const double x=2*(double(i))/npoints-1;
+		const double x=(double(i))/npoints;
 		pointarr[i].pos=MG::vec3d(x,0,0);
 	}
 
@@ -69,8 +70,8 @@ void demos::simpleScene(){
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
-			//e.mainCamera.position.x=0.5*cos(2*PI*t/1000);
-			//e.mainCamera.position.y=0.5*sin(2*PI*t/1000);
+			e.mainCamera.position.x=0.5*cos(2*PI*t/3000);
+			e.mainCamera.position.y=0.5*sin(2*PI*t/3000);
 			//e.mainCamera.position.z=-2.5*cos(2*PI*t)-3;
 			e.update();
 		}
