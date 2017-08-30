@@ -181,11 +181,19 @@ inline vec3d pointTF(const spacehash &space,const vec3d &p){
 	however, since determining pos and scale accounts for the size of each point,
 	this could not happen unless a point had zero width/height/depth
 	*/
+	//*
+	return vec3d(
+		space.xdim*(p.x-space.pos.x)/space.scale.x,
+		space.ydim*(p.y-space.pos.y)/space.scale.y,
+		space.zdim*(p.z-space.pos.z)/space.scale.z
+	);
+	/*/
 	return vec3d(
 		2*space.xdim*(p.x-space.pos.x-space.scale.x/2)/space.scale.x,
 		2*space.ydim*(p.y-space.pos.y-space.scale.y/2)/space.scale.y,
 		2*space.zdim*(p.z-space.pos.z-space.scale.z/2)/space.scale.z
 	);
+	//*/
 }
 
 inline void maskpoint(const spacehash &space,const vec3d &p,unsigned int &x,unsigned int &y,unsigned int &z){
@@ -417,7 +425,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	} closest;
 
 	#if 1
-	#define SEEK_APPROACH 2
+	#define SEEK_APPROACH 3
 	#if SEEK_APPROACH==0 ///// check every cell /////
 	//printf("hashsize: %i\n",hashbox.hashsize);
 	for(int i=0;i<hashbox.hashsize;i++){
@@ -437,41 +445,111 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		hashtype &plist=fetch(hashbox,x,y,z);
 		#endif
 	#elif SEEK_APPROACH==2 ///// draw a line hitting every box /////
+	/*
 	const int
 		sgnx=sgn(rin_loc.dir.x),
 		sgny=sgn(rin_loc.dir.y),
 		sgnz=sgn(rin_loc.dir.z);
-	unsigned int
-		xp=(0 && sgnx<0)?hashbox.xdim:-1,
-		yp=(0 && sgny<0)?hashbox.ydim:-1,
-		zp=(0 && sgnz<0)?hashbox.zdim:-1;
-	vec3d state_t;
+	*/
+	int
+		xp=xin-1,
+		yp=yin-1,
+		zp=zin-1;
+		/*/
+		xp=(sgnx<0)?hashbox.xdim:-1,
+		yp=(sgny<0)?hashbox.ydim:-1,
+		zp=(sgnz<0)?hashbox.zdim:-1;
+		//*/
+	vec3d state_tplus,state_tminus;
 
 	auto findNextPlane=[&](){
 		//compute the current t using last state's values
-		const double t=std::min(std::min(state_t.x,state_t.y),state_t.z);
+		//const double t=std::min(std::min(state_tplus.x,state_tplus.y),state_tplus.z);
+		double t=(state_tplus.x>=0)?state_tplus.x:INFINITY;
+		t=((state_tplus.y>=0) & (state_tplus.y<t))?state_tplus.y:t;
+		t=((state_tplus.z>=0) & (state_tplus.z<t))?state_tplus.z:t;
+
+		t=((state_tminus.x>=0) & (state_tminus.x<t))?state_tminus.x:t;
+		t=((state_tminus.y>=0) & (state_tminus.y<t))?state_tminus.y:t;
+		t=((state_tminus.z>=0) & (state_tminus.z<t))?state_tminus.z:t;
 		//TODO: do i need to handle edge case?
+		//*
+		xp+=(t==state_tplus.x) - (t==state_tminus.x);
+		yp+=(t==state_tplus.y) - (t==state_tminus.y);
+		zp+=(t==state_tplus.z) - (t==state_tminus.z);
+		/*/
 		xp+=sgnx*(t==state_t.x);
 		yp+=sgny*(t==state_t.y);
 		zp+=sgnz*(t==state_t.z);
+		//*/
 
 		//compute next state and return the t where you are right now
-		vec3d testvec=vec3d(xp,yp,zp)+pointTF(hashbox,vec3d(sgnx*rin_loc.from.x,sgny*rin_loc.from.y,sgnz*rin_loc.from.z));
-		state_t.x=testvec.x/(sgnx*rin_loc.dir.x);
-		state_t.y=testvec.y/(sgny*rin_loc.dir.y);
-		state_t.z=testvec.z/(sgnz*rin_loc.dir.z);
-		return std::min(std::min(state_t.x,state_t.y),state_t.z);
+		vec3d testvec=vec3d(xp,yp,zp)-pointTF(hashbox,rin_loc.from);
+		state_tminus.x=testvec.x/rin_loc.dir.x;
+		state_tminus.y=testvec.y/rin_loc.dir.y;
+		state_tminus.z=testvec.z/rin_loc.dir.z;
+
+		state_tplus.x=(testvec.x+1)/rin_loc.dir.x;
+		state_tplus.y=(testvec.y+1)/rin_loc.dir.y;
+		state_tplus.z=(testvec.z+1)/rin_loc.dir.z;
+		return std::min(std::min(state_tplus.x,state_tplus.y),state_tplus.z);
 	};
 	double tlow=0;
 	//find move xp,yp,zp to the entrance of the cube
-	while(tlow<t0){printf("seeking startpoint (%u,%u,%u)\n",xp,yp,zp);tlow=findNextPlane();}
+	/*
+	do{
+		printf("seeking startpoint (%u,%u,%u)\n",xp,yp,zp);
+		tlow=findNextPlane();
+	}while(tlow<t0);
+	//}while(tlow<t0 && xp<hashbox.xdim && yp<hashbox.ydim && zp<hashbox.zdim);
+	*/
 
 	printf("starting at (%u,%u,%u)\n",xp,yp,zp);
 
 	while(tlow<=t1){
+	//while(tlow<=t1 && xp<hashbox.xdim && yp<hashbox.ydim && zp<hashbox.zdim){
 		hashtype &plist=fetch(hashbox,xp,yp,zp);
 		tlow=findNextPlane();
-		printf("testing: (%u,%u,%u)\t list size:%lu\n",xp,yp,zp,plist.size());
+		printf("testing: (%i,%i,%i)\t list size:%lu\n",xp,yp,zp,plist.size());
+		//printf("testing: (%u,%u,%u)\t list size:%lu\n",xp,yp,zp,plist.size());
+	#elif SEEK_APPROACH==3
+	//gather list of all possible points
+	vec3<unsigned int> linearr[9*(n+1)];
+	unsigned int linesize=0;
+
+	int
+		xshift[]={-1,-1,-1,0,0,0,1,1,1},
+		yshift[]={-1,0,1,-1,0,1,-1,0,1},
+		zshift[]={ 0,0,0, 0,0,0, 0,0,0};
+
+	if(n==std::abs(dx)){
+		std::swap(xshift,zshift);
+	}
+	//if both of these ifs happen, it doesnt matter because either x or y can be zeroed in that case
+	if(n==std::abs(dy)){
+		std::swap(yshift,zshift);
+	}
+
+	for(int i=0;i<=n;i++){
+		const unsigned int
+			x=xin+(int)(i*dxn),
+			y=yin+(int)(i*dyn),
+			z=zin+(int)(i*dzn);
+		for(int j=0;j<9;j++){
+			linearr[linesize].x=x+xshift[j];
+			linearr[linesize].y=y+yshift[j];
+			linearr[linesize].z=z+zshift[j];
+
+			//only increase size if the current point is in bounds
+			linesize+=
+				(linearr[linesize].x<hashbox.xdim) &
+				(linearr[linesize].y<hashbox.ydim) &
+				(linearr[linesize].z<hashbox.zdim);
+		}
+	}
+
+	for(int i=0;i<linesize;i++){
+		hashtype &plist=fetch(hashbox,linearr[i].x,linearr[i].y,linearr[i].z);
 	#endif
 	#undef SEEK_APPROACH
 
