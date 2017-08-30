@@ -1,6 +1,6 @@
 #include "demos.h"
 #include <cmath>
-#include <cstdlib>
+#include <random>
 #include <chrono>
 #include <cmath>
 using namespace std;
@@ -21,13 +21,15 @@ public:
 	cube(MG::engine* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
 };
 
+random_device generator;
+uniform_real_distribution<double> randnum(-1.0,1.0);
+
 double dubrand(){
-	//from -1 to 1
-	return ((double)rand()/(RAND_MAX))+1;
+	return randnum(generator);
 }
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=5000;
+	int npoints=50;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -35,15 +37,15 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].col.g=1;
 		pointarr[i].col.b=1;
 
-		pointarr[i].scale=MG::vec3d(.2,.2,.2);
+		pointarr[i].scale=0.1*MG::vec3d(1,1,1);
 
 		//const double x=2*(double(i))/npoints-1;
-		const double x=(double(i))/npoints;
+		//const double x=(double(i))/npoints;
 		//pointarr[i].pos=MG::vec3d(x,0,0);
 		pointarr[i].pos=MG::vec3d(dubrand(),dubrand(),dubrand());
 	}
 
-	return MG::pointcloud(e,pointarr,npoints,10);
+	return MG::pointcloud(e,pointarr,npoints,5);
 }
 
 uint64_t ctimeMillis(){
@@ -77,9 +79,9 @@ void demos::simpleScene(){
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
-			//e.mainCamera.position.x=0.5*cos(2*PI*t/3000);
-			//e.mainCamera.position.y=0.5*sin(2*PI*t/3000);
-			//e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
+			e.mainCamera.position.x=0.5*cos(2*PI*t/3000);
+			e.mainCamera.position.y=0.5*sin(2*PI*t/3000);
+			e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
 			e.update();
 		}
 	}

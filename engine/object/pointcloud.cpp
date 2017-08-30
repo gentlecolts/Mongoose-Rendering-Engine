@@ -530,6 +530,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		std::swap(yshift,zshift);
 	}
 
+	//this is, a surprisingly big bottleneck
+	//TODO: optimize this
 	for(int i=0;i<=n;i++){
 		const unsigned int
 			x=xin+(int)(i*dxn),
@@ -589,6 +591,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if(closest.hit){printf("closest t: %f\n",closest.t);}
 			//closest=itest.hit?itest:closest;
 		}
+
+		//if(closest.hit){break;}
 	}
 	#endif
 
