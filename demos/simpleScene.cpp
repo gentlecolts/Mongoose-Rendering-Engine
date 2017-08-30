@@ -23,29 +23,30 @@ public:
 
 random_device generator;
 uniform_real_distribution<double> randnum(-1.0,1.0);
+uniform_real_distribution<double> randcol(-1.0,1.0);
 
-double dubrand(){
-	return randnum(generator);
+double next(uniform_real_distribution<double> &rng){
+	return rng(generator);
 }
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=50;
+	int npoints=100;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
-		pointarr[i].col.r=1;
-		pointarr[i].col.g=1;
-		pointarr[i].col.b=1;
+		pointarr[i].col.r=next(randcol);
+		pointarr[i].col.g=next(randcol);
+		pointarr[i].col.b=next(randcol);
 
 		pointarr[i].scale=0.1*MG::vec3d(1,1,1);
 
 		//const double x=2*(double(i))/npoints-1;
 		//const double x=(double(i))/npoints;
 		//pointarr[i].pos=MG::vec3d(x,0,0);
-		pointarr[i].pos=MG::vec3d(dubrand(),dubrand(),dubrand());
+		pointarr[i].pos=MG::vec3d(next(randnum),next(randnum),next(randnum));
 	}
 
-	return MG::pointcloud(e,pointarr,npoints,5);
+	return MG::pointcloud(e,pointarr,npoints,10);
 }
 
 uint64_t ctimeMillis(){

@@ -84,17 +84,10 @@ bool point::intersects(const ray& r,double &t0,double& t1) const{
 ///// spacehash stuff goes here /////
 /**returns the minimum number of bits required to represent the given value
 ex:
-f(0)=1
-f(1)=1
-f(2)=2
-f(3)=2
-f(4)=3
-f(5)=3
-f(6)=3
-f(7)=3
-f(8)=4
-f(9)=4
-f(10)=4
+f(0)=f(1)=1
+f(2)=f(3)=2
+f(4)=f(5)=f(6)=f(7)=3
+f(8)=f(9)=f(10)=4
 */
 static inline int minbits(const uint32_t x){
 	#if __GNUC__
@@ -187,13 +180,6 @@ inline vec3d pointTF(const spacehash &space,const vec3d &p){
 		space.ydim*(p.y-space.pos.y)/space.scale.y,
 		space.zdim*(p.z-space.pos.z)/space.scale.z
 	);
-	/*/
-	return vec3d(
-		2*space.xdim*(p.x-space.pos.x-space.scale.x/2)/space.scale.x,
-		2*space.ydim*(p.y-space.pos.y-space.scale.y/2)/space.scale.y,
-		2*space.zdim*(p.z-space.pos.z-space.scale.z/2)/space.scale.z
-	);
-	//*/
 }
 
 inline void maskpoint(const spacehash &space,const vec3d &p,unsigned int &x,unsigned int &y,unsigned int &z){
@@ -250,15 +236,9 @@ void spacehash::hash(point points[],int npoints){
 		maxp.z=std::max(maxp.z,maxtest.z);
 	}
 
-	/*
-	//map all points to [-1,1]
-	pos=(maxp+minp)/2;
-	scale=(maxp-minp)/2;
-	/*/
 	//map all points to [0,1]
 	pos=minp;
 	scale=maxp-minp;
-	//*/
 
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
@@ -270,16 +250,15 @@ void spacehash::hash(point points[],int npoints){
 		printf("vector size is now: %lu\n\n",box.size());
 	}
 
-	//*debugging
+	/*debugging
 	for(unsigned int x=0;x<xdim;x++){
 		for(unsigned int y=0;y<ydim;y++){
 			for(unsigned int z=0;z<zdim;z++){
 				printf("(%u, %u, %u) has size: %lu\n",x,y,z,fetch(*this,x,y,z).size());
 			}
 		}
-	}
+	}//*/
 	printf("hash done...\n\tmy size is: <%f, %f, %f>\n\tmy \"min\" corner is <%f, %f, %f>\n",scale.x,scale.y,scale.z,pos.x,pos.y,pos.z);
-	//*/
 }
 
 ///// pointcloud stuff goes here /////
@@ -361,15 +340,6 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
 	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
 
-	/*
-	tmin.x=(std::abs(tmin.x)==INFINITY)?NAN:tmin.x;
-	tmax.x=(std::abs(tmax.x)==INFINITY)?NAN:tmax.x;
-	tmin.y=(std::abs(tmin.y)==INFINITY)?NAN:tmin.y;
-	tmax.y=(std::abs(tmax.y)==INFINITY)?NAN:tmax.y;
-	tmin.z=(std::abs(tmin.z)==INFINITY)?NAN:tmin.z;
-	tmax.z=(std::abs(tmax.z)==INFINITY)?NAN:tmax.z;
-	//*/
-
 	const double
 		//the ray enters the cube at the last of the possible entry planes
 		t0=std::max(std::max(tmin.x,tmin.y),tmin.z),
@@ -393,19 +363,25 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	return r_out.hit=true;
 	//*/
 
-	//*
 	unsigned int xin,yin,zin,xout,yout,zout;
-	//maskpoint(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
-	//maskpoint(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
 	remap(hashbox,rin_loc.dir*t0+rin_loc.from,xin,yin,zin);
 	remap(hashbox,rin_loc.dir*t1+rin_loc.from,xout,yout,zout);
-	/*/
-	const vec3d v0=rin_loc.dir*t0+rin_loc.from,v1=rin_loc.dir*t1+rin_loc.from;
-	const double
-		xin=v0.x,yin=v0.y,zin=v0.z,
-		xout=v1.x,yout=v1.y,zout=v1.z;
-	//*/
-	//gather all cells and find the the closeset point
+
+	struct interholder{
+		double t=INFINITY;
+		int index=0;
+		bool hit=false;
+	} closest;
+
+	#if 1
+	#define SEEK_APPROACH 1
+	#if SEEK_APPROACH==0 ///// check every cell /////
+	//printf("hashsize: %i\n",hashbox.hashsize);
+	for(int i=0;i<hashbox.hashsize;i++){
+		//printf("%i\n",i);
+		hashtype &plist=hashbox.pointhash[i];
+	#elif SEEK_APPROACH==1
+		//gather all cells and find the the closeset point
 	const int
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
 		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
@@ -417,102 +393,6 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
-
-	struct interholder{
-		double t=INFINITY;
-		int index=0;
-		bool hit=false;
-	} closest;
-
-	#if 1
-	#define SEEK_APPROACH 3
-	#if SEEK_APPROACH==0 ///// check every cell /////
-	//printf("hashsize: %i\n",hashbox.hashsize);
-	for(int i=0;i<hashbox.hashsize;i++){
-		//printf("%i\n",i);
-		hashtype &plist=hashbox.pointhash[i];
-	#elif SEEK_APPROACH==1 ///// draw a line (line is too simple, misses boxes) /////
-	for(int i=0;i<=n;i++){
-		//get the correct chunk of the box
-		#if 1
-		const double t=t0+(double(i))*(t1-t0)/n;
-		hashtype &plist=fetch(hashbox,rin_loc.dir*t+rin_loc.from);
-		#else
-		const unsigned int
-			x=xin+(int)(i*dxn),
-			y=yin+(int)(i*dyn),
-			z=zin+(int)(i*dzn);
-		hashtype &plist=fetch(hashbox,x,y,z);
-		#endif
-	#elif SEEK_APPROACH==2 ///// draw a line hitting every box /////
-	/*
-	const int
-		sgnx=sgn(rin_loc.dir.x),
-		sgny=sgn(rin_loc.dir.y),
-		sgnz=sgn(rin_loc.dir.z);
-	*/
-	int
-		xp=xin-1,
-		yp=yin-1,
-		zp=zin-1;
-		/*/
-		xp=(sgnx<0)?hashbox.xdim:-1,
-		yp=(sgny<0)?hashbox.ydim:-1,
-		zp=(sgnz<0)?hashbox.zdim:-1;
-		//*/
-	vec3d state_tplus,state_tminus;
-
-	auto findNextPlane=[&](){
-		//compute the current t using last state's values
-		//const double t=std::min(std::min(state_tplus.x,state_tplus.y),state_tplus.z);
-		double t=(state_tplus.x>=0)?state_tplus.x:INFINITY;
-		t=((state_tplus.y>=0) & (state_tplus.y<t))?state_tplus.y:t;
-		t=((state_tplus.z>=0) & (state_tplus.z<t))?state_tplus.z:t;
-
-		t=((state_tminus.x>=0) & (state_tminus.x<t))?state_tminus.x:t;
-		t=((state_tminus.y>=0) & (state_tminus.y<t))?state_tminus.y:t;
-		t=((state_tminus.z>=0) & (state_tminus.z<t))?state_tminus.z:t;
-		//TODO: do i need to handle edge case?
-		//*
-		xp+=(t==state_tplus.x) - (t==state_tminus.x);
-		yp+=(t==state_tplus.y) - (t==state_tminus.y);
-		zp+=(t==state_tplus.z) - (t==state_tminus.z);
-		/*/
-		xp+=sgnx*(t==state_t.x);
-		yp+=sgny*(t==state_t.y);
-		zp+=sgnz*(t==state_t.z);
-		//*/
-
-		//compute next state and return the t where you are right now
-		vec3d testvec=vec3d(xp,yp,zp)-pointTF(hashbox,rin_loc.from);
-		state_tminus.x=testvec.x/rin_loc.dir.x;
-		state_tminus.y=testvec.y/rin_loc.dir.y;
-		state_tminus.z=testvec.z/rin_loc.dir.z;
-
-		state_tplus.x=(testvec.x+1)/rin_loc.dir.x;
-		state_tplus.y=(testvec.y+1)/rin_loc.dir.y;
-		state_tplus.z=(testvec.z+1)/rin_loc.dir.z;
-		return std::min(std::min(state_tplus.x,state_tplus.y),state_tplus.z);
-	};
-	double tlow=0;
-	//find move xp,yp,zp to the entrance of the cube
-	/*
-	do{
-		printf("seeking startpoint (%u,%u,%u)\n",xp,yp,zp);
-		tlow=findNextPlane();
-	}while(tlow<t0);
-	//}while(tlow<t0 && xp<hashbox.xdim && yp<hashbox.ydim && zp<hashbox.zdim);
-	*/
-
-	printf("starting at (%u,%u,%u)\n",xp,yp,zp);
-
-	while(tlow<=t1){
-	//while(tlow<=t1 && xp<hashbox.xdim && yp<hashbox.ydim && zp<hashbox.zdim){
-		hashtype &plist=fetch(hashbox,xp,yp,zp);
-		tlow=findNextPlane();
-		printf("testing: (%i,%i,%i)\t list size:%lu\n",xp,yp,zp,plist.size());
-		//printf("testing: (%u,%u,%u)\t list size:%lu\n",xp,yp,zp,plist.size());
-	#elif SEEK_APPROACH==3
 	//gather list of all possible points
 	vec3<unsigned int> linearr[9*(n+1)];
 	unsigned int linesize=0;
@@ -567,46 +447,13 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
 			itest.t=(t0>=0)?t0:t1;
 
-			/*
-			printf("testing point #%i\nray: <%f, %f, %f>*t + <%f, %f, %f>\npoint: <%f, %f, %f>\n",pos,
-				rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,
-				rin_loc.from.x,rin_loc.from.y,rin_loc.from.z,
-				hashbox.pointarr[pos].pos.x,hashbox.pointarr[pos].pos.y,hashbox.pointarr[pos].pos.z
-			);//*/
-
-			//printf("did ray hit point #%i:\t%s,\tt0=%f\tt1=%f\n",pos,itest.hit?"yes":"no",t0,t1);
-			/*
-			if(itest.hit){
-				//printf("hit #%i\n",pos);
-				//printf("hit #%i:\tt0=%f\tt1=%f\n",pos,t0,t1);
-				//printf("hit #%i:\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",pos,itest.t,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,rin_loc.from.x,rin_loc.from.y,rin_loc.from.z);
-				printf("hit #%i:\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",pos,itest.t,r_in.dir.x,r_in.dir.y,r_in.dir.z,r_in.from.x,r_in.from.y,r_in.from.z);
-			}
-			//*/
-
-
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
-			//printf("closest t: %f\n",closest.t);
-			//if(closest.hit){printf("closest t: %f\n",closest.t);}
-			//closest=itest.hit?itest:closest;
 		}
 
 		//if(closest.hit){break;}
 	}
 	#endif
-
-	/*forget the above and intersect a single point at origin
-	{
-		point p;
-		p.col=color(1,1,1);
-		double tlow,thigh;
-		hashbox.pointarr[closest.index=0]=p;
-		closest.hit=intersect(p,r_in,tlow,thigh);
-		//closest.hit=intersect(p,rin_loc,tlow,thigh);
-		closest.t=(tlow>=0)?tlow:thigh;
-	}
-	//*/
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
 	d=closest.t;
@@ -626,14 +473,5 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	r_out.dir=r_in.dir-2*(r_in.dir.dot(r_out.normal))*r_out.normal;
 	r_out.c=p.col;
 
-	//printf("final: hit(%i)\tt=%f\t<%f, %f, %f>*t + <%f, %f, %f>\n",closest.hit,d,r_out.dir.x,r_out.dir.y,r_out.dir.z,r_out.from.x,r_out.from.y,r_out.from.z);
-	/*
-	if(closest.hit){
-		printf("final: t=%f\tin:<%f, %f, %f>*t + <%f, %f, %f>\tout:<%f, %f, %f>*t + <%f, %f, %f>\n",d,
-			r_in.dir.x,r_in.dir.y,r_in.dir.z,r_in.from.x,r_in.from.y,r_in.from.z,
-			r_out.dir.x,r_out.dir.y,r_out.dir.z,r_out.from.x,r_out.from.y,r_out.from.z
-		);
-	}
-	//*/
 	return r_out.hit=closest.hit;
 }
