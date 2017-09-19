@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include <array>
 using namespace MG;
 
 ///// point stuff goes here /////
@@ -132,6 +133,20 @@ spacehash::spacehash(const spacehash &space){
 }
 
 spacehash::spacehash(int boxcount){
+	/*TODO:this may need some serious revision
+	currently, the hashsize grows roughly
+	2^(3*log2(x)/3) which is just x
+	that isnt really ideal, the size of this array should grow roughly log2(x)
+
+	consider perhaps
+	bits=minbits(x)
+	xb=yb=zb=bits/3; and divide it up as needed
+
+	then just use xb/yb/zb as the actual x,y,z dimensions of the box
+	this should give a growth of
+
+	xb*yb*zb = (log2(x)/3)^3
+	*/
 	int bits=minbits(boxcount);
 	xbits=ybits=zbits=(bits>2)?bits/3:1;
 
@@ -412,6 +427,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 	//this is, a surprisingly big bottleneck
 	//TODO: optimize this
+	//*
 	for(int i=0;i<=n;i++){
 		const unsigned int
 			x=xin+(int)(i*dxn),
@@ -429,6 +445,28 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 				(linearr[linesize].z<hashbox.zdim);
 		}
 	}
+	/*/
+	vec3<unsigned int> oldarr[9*(n+1)];
+	for(int i=0;i<=n;i++){
+		const unsigned int
+			x=xin+(int)(i*dxn),
+			y=yin+(int)(i*dyn),
+			z=zin+(int)(i*dzn);
+		for(int j=0;j<9;j++){
+			oldarr[9*i+j].x=x+xshift[j];
+			oldarr[9*i+j].y=y+yshift[j];
+			oldarr[9*i+j].z=z+zshift[j];
+		}
+	}
+
+	linesize=(int)(std::copy_if(oldarr,oldarr+9*(n+1),linearr,
+		[&](vec3<unsigned int> &x){
+			return (x.x<hashbox.xdim) &
+				(x.y<hashbox.ydim) &
+				(x.z<hashbox.zdim);
+		}
+	) - linearr);
+	//*/
 
 	for(int i=0;i<linesize;i++){
 		hashtype &plist=fetch(hashbox,linearr[i].x,linearr[i].y,linearr[i].z);
@@ -439,6 +477,11 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//if(plist.size()){printf("line is at (%u, %u, %u), list size is: %lu\n",x,y,z,plist.size());}
 		//if(plist.size()){printf("<%f, %f, %f>*t+C\tline is at (%u, %u, %u), list size is: %lu\n",rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z,x,y,z,plist.size());}
 
+		//std::array<interholder,plist.size()> arr;
+		//for(){
+
+
+		//*
 		for(int pos:plist){
 			interholder itest;
 			double t0,t1;
@@ -450,6 +493,20 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 		}
+		/*/
+		auto minfn=[&closest,this,&rin_loc](int pos){
+			interholder itest;
+			double t0,t1;
+			itest.index=pos;
+			//note, t0 is always less than t1
+			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
+			itest.t=(t0>=0)?t0:t1;
+
+			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
+			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+		};
+		std::for_each(plist.begin(),plist.end(),minfn);
+		//*/
 
 		//if(closest.hit){break;}
 	}

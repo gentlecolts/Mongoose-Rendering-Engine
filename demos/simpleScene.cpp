@@ -77,6 +77,7 @@ void demos::simpleScene(){
 	e.mainCamera.position.z=-5;
 
 	//draw scene at desired framerate
+	int counter=0,framecount=100;
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
@@ -84,6 +85,11 @@ void demos::simpleScene(){
 			e.mainCamera.position.y=0.5*sin(2*PI*t/3000);
 			e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
 			e.update();
+
+			++counter;
+			if(counter==framecount){
+				break;
+			}
 		}
 	}
 }
