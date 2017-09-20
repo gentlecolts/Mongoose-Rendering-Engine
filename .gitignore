@@ -45,3 +45,4 @@ Temporary Items
 # Dont include executables
 bin
 obj
+gmon\.out

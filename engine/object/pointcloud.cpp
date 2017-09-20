@@ -159,6 +159,7 @@ spacehash::spacehash(int boxcount){
 		}
 	}
 
+	/*
 	xdim=(1u<<xbits);
 	ydim=(1u<<ybits);
 	zdim=(1u<<zbits);
@@ -168,6 +169,22 @@ spacehash::spacehash(int boxcount){
 	zmask=zdim-1;
 
 	hashsize=1u<<(xbits+ybits+zbits);
+	/*/
+	xdim=(1<<minbits(xbits));
+	ydim=(1<<minbits(ybits));
+	zdim=(1<<minbits(zbits));
+
+	//xmask=(1<<minbits(xdim))-1;
+	//ymask=(1<<minbits(ydim))-1;
+	//zmask=(1<<minbits(zdim))-1;
+
+	xmask=ymask=zmask=-1u;
+
+	//hashsize=1u<<(xbits+ybits+zbits);
+	hashsize=xdim*ydim*zdim;
+	//*/
+
+
 	pointhash=new hashtype[hashsize];
 }
 spacehash::spacehash(int boxcount,point points[],int pointcount):spacehash(boxcount){
@@ -209,8 +226,10 @@ inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned
 }
 
 inline hashtype& fetch(const spacehash &space,const unsigned int x,const unsigned int y,const unsigned int z){
-	const unsigned int index=((((x&space.xmask)<<space.ybits)|(y&space.ymask))<<space.zbits)|(z&space.zmask);
-	//const unsigned int index=x+space.xdim*(y+space.ydim*z);
+	const unsigned int index=
+		//((((x&space.xmask)<<space.ybits)|(y&space.ymask))<<space.zbits)|(z&space.zmask);
+		x+space.xdim*(y+space.ydim*z);
+		//x+space.xdim*(y+space.ydim*z);
 
 	//printf("dims: (%u, %u, %u)...accessing point: (%u, %u, %u), gives index: %u, max: %u\n",space.xdim,space.ydim,space.zdim,x,y,z,index,1u<<(space.xbits+space.ybits+space.zbits));
 
@@ -481,7 +500,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//for(){
 
 
-		//*
+		/*
 		for(int pos:plist){
 			interholder itest;
 			double t0,t1;

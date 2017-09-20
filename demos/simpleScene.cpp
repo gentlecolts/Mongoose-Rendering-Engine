@@ -74,7 +74,7 @@ void demos::simpleScene(){
 	MG::pointcloud thing=pointbubble(&e);
 	printf("cloud made\n");
 
-	e.mainCamera.position.z=-5;
+	e.mainCamera.position.z=-3;
 
 	//draw scene at desired framerate
 	int counter=0,framecount=100;
@@ -83,7 +83,7 @@ void demos::simpleScene(){
 			double t=ctimeMillis()/1000.0;
 			e.mainCamera.position.x=0.5*cos(2*PI*t/3000);
 			e.mainCamera.position.y=0.5*sin(2*PI*t/3000);
-			e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
+			//e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
 			e.update();
 
 			++counter;
