@@ -23,14 +23,14 @@ public:
 
 random_device generator;
 uniform_real_distribution<double> randnum(-1.0,1.0);
-uniform_real_distribution<double> randcol(-1.0,1.0);
+uniform_real_distribution<double> randcol(0,1.0);
 
 double next(uniform_real_distribution<double> &rng){
 	return rng(generator);
 }
 
 MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=100;
+	int npoints=1000;
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -46,7 +46,7 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].pos=MG::vec3d(next(randnum),next(randnum),next(randnum));
 	}
 
-	return MG::pointcloud(e,pointarr,npoints,10);
+	return MG::pointcloud(e,pointarr,npoints,1);
 }
 
 uint64_t ctimeMillis(){

@@ -170,9 +170,18 @@ spacehash::spacehash(int boxcount){
 
 	hashsize=1u<<(xbits+ybits+zbits);
 	/*/
-	xdim=(1<<minbits(xbits));
-	ydim=(1<<minbits(ybits));
-	zdim=(1<<minbits(zbits));
+	//xdim=(1<<minbits(xbits))*2;
+	//ydim=(1<<minbits(ybits))*2;
+	//zdim=(1<<minbits(zbits))*2;
+
+	xdim=std::max(xbits,2u)*3;
+	ydim=std::max(ybits,2u)*3;
+	zdim=std::max(zbits,2u)*3;
+
+	//xdim=ydim=zdim=1;
+	//xdim=ydim=zdim=bits;
+	//const double rt3=std::sqrt(3.0);
+	//xdim=ydim=zdim=std::max(std::sqrt(boxcount*rt3),2.);
 
 	//xmask=(1<<minbits(xdim))-1;
 	//ymask=(1<<minbits(ydim))-1;
@@ -180,7 +189,6 @@ spacehash::spacehash(int boxcount){
 
 	xmask=ymask=zmask=-1u;
 
-	//hashsize=1u<<(xbits+ybits+zbits);
 	hashsize=xdim*ydim*zdim;
 	//*/
 
@@ -500,7 +508,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//for(){
 
 
-		/*
+		#define LOOP_APPROACH 2
+		#if LOOP_APPROACH==0
 		for(int pos:plist){
 			interholder itest;
 			double t0,t1;
@@ -512,7 +521,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 		}
-		/*/
+		#elif LOOP_APPROACH==1
 		auto minfn=[&closest,this,&rin_loc](int pos){
 			interholder itest;
 			double t0,t1;
@@ -520,12 +529,36 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//note, t0 is always less than t1
 			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
 			itest.t=(t0>=0)?t0:t1;
+			//itest.t=((!itest.hit) | (itest.t<0))?INFINITY:itest.t;
 
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 		};
 		std::for_each(plist.begin(),plist.end(),minfn);
-		//*/
+		#elif LOOP_APPROACH==2
+		//std::vector<interholder> inters;
+		const int lsize=plist.size();
+		interholder inters[lsize];
+		//printf("transforming\n");
+		std::transform(plist.begin(),plist.end(),inters,[&](int pos) -> interholder{
+			interholder itest;
+			double t0,t1;
+			itest.index=pos;
+			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
+			itest.t=(t0>=0)?t0:t1;
+			return itest;
+		});
+
+		auto mintest=[](interholder &test,interholder &old){
+			return test.hit & (test.t<old.t);
+		};
+
+		auto closeptr=std::min_element(inters,inters+lsize,mintest);
+
+		if(closeptr!=inters+lsize){
+			closest=mintest(*closeptr,closest)?*closeptr:closest;
+		}
+		#endif
 
 		//if(closest.hit){break;}
 	}
