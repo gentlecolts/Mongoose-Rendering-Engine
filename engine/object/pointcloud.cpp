@@ -180,8 +180,8 @@ spacehash::spacehash(int boxcount){
 
 	//xdim=ydim=zdim=1;
 	//xdim=ydim=zdim=bits;
-	//const double rt3=std::sqrt(3.0);
-	//xdim=ydim=zdim=std::max(std::sqrt(boxcount*rt3),2.);
+	const double rt3=std::sqrt(3.0);const int t=bits;
+	//xdim=ydim=zdim=std::max(std::sqrt(boxcount*rt3/t),2.);
 
 	//xmask=(1<<minbits(xdim))-1;
 	//ymask=(1<<minbits(ydim))-1;
@@ -415,7 +415,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		bool hit=false;
 	} closest;
 
-	#if 1
+	std::vector<interholder> intersections;
+
 	#define SEEK_APPROACH 1
 	#if SEEK_APPROACH==0 ///// check every cell /////
 	//printf("hashsize: %i\n",hashbox.hashsize);
@@ -453,8 +454,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	}
 
 	//this is, a surprisingly big bottleneck
-	//TODO: optimize this
-	//*
+	//TODO: optimize this?
+	//replacing i*dxn with (i*dx)/n is actually slower by a bit, dont do it
 	for(int i=0;i<=n;i++){
 		const unsigned int
 			x=xin+(int)(i*dxn),
@@ -466,37 +467,23 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			linearr[linesize].z=z+zshift[j];
 
 			//only increase size if the current point is in bounds
-			linesize+=
-				(linearr[linesize].x<hashbox.xdim) &
-				(linearr[linesize].y<hashbox.ydim) &
-				(linearr[linesize].z<hashbox.zdim);
-		}
-	}
-	/*/
-	vec3<unsigned int> oldarr[9*(n+1)];
-	for(int i=0;i<=n;i++){
-		const unsigned int
-			x=xin+(int)(i*dxn),
-			y=yin+(int)(i*dyn),
-			z=zin+(int)(i*dzn);
-		for(int j=0;j<9;j++){
-			oldarr[9*i+j].x=x+xshift[j];
-			oldarr[9*i+j].y=y+yshift[j];
-			oldarr[9*i+j].z=z+zshift[j];
+			#define compfn ((linearr[linesize].x<hashbox.xdim) &&\
+				(linearr[linesize].y<hashbox.ydim) &&\
+				(linearr[linesize].z<hashbox.zdim))
+
+			linesize+=compfn;
+			//if(compfn){++linesize;}
 		}
 	}
 
-	linesize=(int)(std::copy_if(oldarr,oldarr+9*(n+1),linearr,
-		[&](vec3<unsigned int> &x){
-			return (x.x<hashbox.xdim) &
-				(x.y<hashbox.ydim) &
-				(x.z<hashbox.zdim);
-		}
-	) - linearr);
-	//*/
-
+	int counter=0;
+	/*
 	for(int i=0;i<linesize;i++){
 		hashtype &plist=fetch(hashbox,linearr[i].x,linearr[i].y,linearr[i].z);
+	/*/
+	for(auto i=linearr;i<linearr+linesize;i++){
+		hashtype &plist=fetch(hashbox,i->x,i->y,i->z);
+	//*/
 	#endif
 	#undef SEEK_APPROACH
 
@@ -508,7 +495,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//for(){
 
 
-		#define LOOP_APPROACH 2
+		#define LOOP_APPROACH 3
 		#if LOOP_APPROACH==0
 		for(int pos:plist){
 			interholder itest;
@@ -521,8 +508,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 		}
+		//if(closest.hit){break;}
+	}
 		#elif LOOP_APPROACH==1
-		auto minfn=[&closest,this,&rin_loc](int pos){
+		std::for_each(plist.begin(),plist.end(),[&closest,this,&rin_loc](int pos){
 			interholder itest;
 			double t0,t1;
 			itest.index=pos;
@@ -533,24 +522,29 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
-		};
-		std::for_each(plist.begin(),plist.end(),minfn);
+		});
+		//if(closest.hit){break;}
+	}
 		#elif LOOP_APPROACH==2
 		//std::vector<interholder> inters;
 		const int lsize=plist.size();
 		interholder inters[lsize];
 		//printf("transforming\n");
-		std::transform(plist.begin(),plist.end(),inters,[&](int pos) -> interholder{
+		std::transform(plist.begin(),plist.end(),inters,[&](int pos){
 			interholder itest;
 			double t0,t1;
 			itest.index=pos;
 			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
 			itest.t=(t0>=0)?t0:t1;
+
+			//have to do this, cant use test.hit in the min_element check or else it messes up
+			itest.t=itest.hit?itest.t:INFINITY;
 			return itest;
 		});
 
 		auto mintest=[](interholder &test,interholder &old){
-			return test.hit & (test.t<old.t);
+			//return test.hit & (test.t<old.t);
+			return (test.t<old.t);
 		};
 
 		auto closeptr=std::min_element(inters,inters+lsize,mintest);
@@ -558,11 +552,35 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		if(closeptr!=inters+lsize){
 			closest=mintest(*closeptr,closest)?*closeptr:closest;
 		}
-		#endif
-
 		//if(closest.hit){break;}
 	}
-	#endif
+		#elif LOOP_APPROACH==3
+		//printf("transforming\n");
+		std::transform(plist.begin(),plist.end(),std::back_inserter(intersections),[&](int pos){
+			interholder itest;
+			double t0,t1;
+			itest.index=pos;
+			itest.hit=intersect(hashbox.pointarr[pos],rin_loc,t0,t1);
+			itest.t=(t0>=0)?t0:t1;
+
+			//have to do this, cant use test.hit in the min_element check or else it messes up
+			itest.t=itest.hit?itest.t:INFINITY;
+			return itest;
+		});
+		counter+=plist.size();
+		//printf("added %i elements to intersection\n",plist.size());
+	}
+	//printf("intersection has %i elements, should be %i\n",intersections.size(),counter);
+	//printf("went through %i cells and collected %i points\n",linesize,intersections.size());
+
+	auto closeptr=std::min_element(intersections.begin(),intersections.end(),[](interholder &test,interholder &old){
+		return (test.t<old.t);
+	});
+
+	if(closeptr!=intersections.end()){
+		closest=*closeptr;
+	}
+		#endif
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
 	d=closest.t;
