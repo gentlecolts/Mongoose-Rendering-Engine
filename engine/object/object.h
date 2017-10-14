@@ -19,7 +19,8 @@ namespace MG{
 		/*TODO: file streaming/caching is probably wanted, but does this really need to be in the global object model?
 		also worth noting is future plan to read a more sophisticated file format via dictionaries or something, which will need more work
 		*/
-		std::fstream file;
+		std::ifstream file;
+		engine *owner;
 	public:
 		vec3d pos;
 
@@ -31,8 +32,10 @@ namespace MG{
 		virtual void timedUpdate(){}//called at a settable interval unless the previous batch has not finished
 
 		//this is called before any child constructors, adds itself to the given engine object
+		obj(const obj &o);
 		obj(engine* e,metadata *meta=0);
 		obj(engine* e,std::string fname,metadata *meta=0);
+		virtual ~obj();
 	};
 }
 

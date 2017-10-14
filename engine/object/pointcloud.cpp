@@ -132,7 +132,7 @@ spacehash::spacehash(const spacehash &space){
 	#undef duplicate
 }
 
-spacehash::spacehash(int boxcount){
+spacehash::spacehash(int boxcount,int sizeAssert){
 	/*TODO:this may need some serious revision
 	currently, the hashsize grows roughly
 	2^(3*log2(x)/3) which is just x
@@ -174,9 +174,9 @@ spacehash::spacehash(int boxcount){
 	//ydim=(1<<minbits(ybits))*2;
 	//zdim=(1<<minbits(zbits))*2;
 
-	xdim=std::max(xbits,2u)*3;
-	ydim=std::max(ybits,2u)*3;
-	zdim=std::max(zbits,2u)*3;
+	xdim=(std::max(xbits,2u)*3)/1;
+	ydim=(std::max(ybits,2u)*3)/1;
+	zdim=(std::max(zbits,2u)*3)/1;
 
 	//xdim=ydim=zdim=1;
 	//xdim=ydim=zdim=bits;
@@ -187,6 +187,11 @@ spacehash::spacehash(int boxcount){
 	//ymask=(1<<minbits(ydim))-1;
 	//zmask=(1<<minbits(zdim))-1;
 
+	if(sizeAssert>1){
+		xdim=ydim=zdim=sizeAssert;
+	}
+
+
 	xmask=ymask=zmask=-1u;
 
 	hashsize=xdim*ydim*zdim;
@@ -195,7 +200,7 @@ spacehash::spacehash(int boxcount){
 
 	pointhash=new hashtype[hashsize];
 }
-spacehash::spacehash(int boxcount,point points[],int pointcount):spacehash(boxcount){
+spacehash::spacehash(int boxcount,point points[],int pointcount,int sizeAssert):spacehash(boxcount,sizeAssert){
 	npoints=pointcount;
 	pointarr=new point[npoints]();
 
@@ -236,7 +241,7 @@ inline void remap(const spacehash &space,const vec3d &p,unsigned int &x,unsigned
 inline hashtype& fetch(const spacehash &space,const unsigned int x,const unsigned int y,const unsigned int z){
 	const unsigned int index=
 		//((((x&space.xmask)<<space.ybits)|(y&space.ymask))<<space.zbits)|(z&space.zmask);
-		x+space.xdim*(y+space.ydim*z);
+		std::min(x+space.xdim*(y+space.ydim*z),space.hashsize-1);
 		//x+space.xdim*(y+space.ydim*z);
 
 	//printf("dims: (%u, %u, %u)...accessing point: (%u, %u, %u), gives index: %u, max: %u\n",space.xdim,space.ydim,space.zdim,x,y,z,index,1u<<(space.xbits+space.ybits+space.zbits));
@@ -285,11 +290,11 @@ void spacehash::hash(point points[],int npoints){
 	for(int i=0;i<npoints;i++){
 		pointarr[i]=points[i];
 
-		printf("adding point %i to pos (%f, %f, %f)\n",i,points[i].pos.x,points[i].pos.y,points[i].pos.z);
+		//printf("adding point %i to pos (%f, %f, %f)\n",i,points[i].pos.x,points[i].pos.y,points[i].pos.z);
 		hashtype &box=fetch(*this,points[i].pos);
 		//printf("size of target vector is: %u\n",i,box.size());
 		box.push_back(i);
-		printf("vector size is now: %lu\n\n",box.size());
+		//printf("vector size is now: %lu\n\n",box.size());
 	}
 
 	/*debugging
@@ -300,14 +305,14 @@ void spacehash::hash(point points[],int npoints){
 			}
 		}
 	}//*/
-	printf("hash done...\n\tmy size is: <%f, %f, %f>\n\tmy \"min\" corner is <%f, %f, %f>\n",scale.x,scale.y,scale.z,pos.x,pos.y,pos.z);
+	printf("hash[%i] done...\n\tmy size is: <%f, %f, %f>\n\tmy \"min\" corner is <%f, %f, %f>\n",hashsize,scale.x,scale.y,scale.z,pos.x,pos.y,pos.z);
 }
 
 ///// pointcloud stuff goes here /////
 
-pointcloud::pointcloud(engine* e,point points[],int numpoints,int density):obj(e),hashbox(numpoints/density,points,numpoints){
+pointcloud::pointcloud(engine* e,point points[],int numpoints,int density,int sizeAssert):obj(e),hashbox(numpoints/density,points,numpoints,sizeAssert){
 }
-pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density):obj(e,meta),hashbox(numpoints/density,points,numpoints){
+pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density,int sizeAssert):obj(e,meta),hashbox(numpoints/density,points,numpoints,sizeAssert){
 }
 
 //do comparisons without worrying about division by zero
@@ -418,6 +423,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	std::vector<interholder> intersections;
 
 	#define SEEK_APPROACH 1
+	#define FETCH_PLIST 1
+
 	#if SEEK_APPROACH==0 ///// check every cell /////
 	//printf("hashsize: %i\n",hashbox.hashsize);
 	for(int i=0;i<hashbox.hashsize;i++){
@@ -437,7 +444,11 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
 	//gather list of all possible points
+	#if FETCH_PLIST
+	hashtype* linearr[9*(n+1)];
+	#else
 	vec3<unsigned int> linearr[9*(n+1)];
+	#endif
 	unsigned int linesize=0;
 
 	int
@@ -462,14 +473,22 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			y=yin+(int)(i*dyn),
 			z=zin+(int)(i*dzn);
 		for(int j=0;j<9;j++){
-			linearr[linesize].x=x+xshift[j];
-			linearr[linesize].y=y+yshift[j];
-			linearr[linesize].z=z+zshift[j];
+			const unsigned int
+				px=x+xshift[j],
+				py=y+yshift[j],
+				pz=z+zshift[j];
+			#if FETCH_PLIST
+			linearr[linesize]=&fetch(hashbox,px,py,pz);
+			#else
+			linearr[linesize].x=px;
+			linearr[linesize].y=py;
+			linearr[linesize].z=pz;
+			#endif
 
 			//only increase size if the current point is in bounds
-			#define compfn ((linearr[linesize].x<hashbox.xdim) &&\
-				(linearr[linesize].y<hashbox.ydim) &&\
-				(linearr[linesize].z<hashbox.zdim))
+			#define compfn ((px<hashbox.xdim) &&\
+				(py<hashbox.ydim) &&\
+				(pz<hashbox.zdim))
 
 			linesize+=compfn;
 			//if(compfn){++linesize;}
@@ -477,9 +496,14 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	}
 
 	int counter=0;
-	/*
-	for(int i=0;i<linesize;i++){
-		hashtype &plist=fetch(hashbox,linearr[i].x,linearr[i].y,linearr[i].z);
+	//*
+	#if FETCH_PLIST
+
+	std::for_each(linearr,linearr+linesize,[&](hashtype *plist){
+	#else
+	std::for_each(linearr,linearr+linesize,[&](vec3<unsigned int> &i){
+		hashtype &plist=fetch(hashbox,i.x,i.y,i.z);
+	#endif
 	/*/
 	for(auto i=linearr;i<linearr+linesize;i++){
 		hashtype &plist=fetch(hashbox,i->x,i->y,i->z);
@@ -495,7 +519,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//for(){
 
 
-		#define LOOP_APPROACH 3
+		#define LOOP_APPROACH 1
 		#if LOOP_APPROACH==0
 		for(int pos:plist){
 			interholder itest;
@@ -511,7 +535,11 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//if(closest.hit){break;}
 	}
 		#elif LOOP_APPROACH==1
+		#if FETCH_PLIST
+		std::for_each(plist->begin(),plist->end(),[&closest,this,&rin_loc](int pos){
+		#else
 		std::for_each(plist.begin(),plist.end(),[&closest,this,&rin_loc](int pos){
+		#endif
 			interholder itest;
 			double t0,t1;
 			itest.index=pos;
@@ -581,6 +609,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		closest=*closeptr;
 	}
 		#endif
+	);
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
 	d=closest.t;

@@ -3,6 +3,7 @@ this file implements all functionality of the engine class that pertain to rende
 */
 #include "core.h"
 #include <ctime>
+#include <algorithm>
 using namespace MG;
 
 /*note that in the future this may do a lot more than just a simple time check
@@ -29,6 +30,16 @@ void engine::update(){
 		this'd help organiztion and make it easier for server code to completely skip the render task
 	*/
 	updateTimestamp=std::clock();//done at the beginning of update so that processing time is included in the dt
+
+	//printf("have %i objects and %i to remove\n",scene.objects.size(),scene.toRemove.size());
+	//remove any objects flagged for deletion
+	while(!scene.toRemove.empty()){
+		//scene.objects.erase(std::remove(scene.objects.begin(),scene.objects.end(),scene.toRemove.front()));
+		scene.objects.erase(std::find(scene.objects.begin(),scene.objects.end(),scene.toRemove.front()));
+		//scene.objects.erase(scene.toRemove.front());
+		scene.toRemove.pop();
+	}
+	//printf("rendering %i objects\n",scene.objects.size());
 
 	///check events if they're not running in a separate thread
 	if(isEventSync){

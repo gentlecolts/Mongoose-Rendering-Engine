@@ -3,6 +3,9 @@
 #include <random>
 #include <chrono>
 #include <cmath>
+#include <fstream>
+#include <map>
+#include <algorithm>
 using namespace std;
 
 /**TODO: as it turns out, simple scenes arent actually so simple
@@ -29,8 +32,7 @@ double next(uniform_real_distribution<double> &rng){
 	return rng(generator);
 }
 
-MG::pointcloud pointbubble(MG::engine *e){
-	int npoints=1000;
+MG::pointcloud pointbubble(MG::engine *e,int npoints=1000,int sizeAssert=0){
 	MG::point pointarr[npoints];
 
 	for(int i=0;i<npoints;i++){
@@ -38,7 +40,7 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].col.g=next(randcol);
 		pointarr[i].col.b=next(randcol);
 
-		pointarr[i].scale=0.1*MG::vec3d(1,1,1);
+		pointarr[i].scale=0.025*MG::vec3d(1,1,1);
 
 		//const double x=2*(double(i))/npoints-1;
 		//const double x=(double(i))/npoints;
@@ -46,7 +48,7 @@ MG::pointcloud pointbubble(MG::engine *e){
 		pointarr[i].pos=MG::vec3d(next(randnum),next(randnum),next(randnum));
 	}
 
-	return MG::pointcloud(e,pointarr,npoints,1);
+	return MG::pointcloud(e,pointarr,npoints,1,sizeAssert);
 }
 
 uint64_t ctimeMillis(){
@@ -67,17 +69,43 @@ void demos::simpleScene(){
 	e.setTitle("Mongoose Rendering Engine Demo");
 
 	e.setEventAsync(true);
-
 	e.targetFPS=60;
+	e.mainCamera.position.z=-3;
 
+	#define BENCHMARK 1
+
+	#if BENCHMARK
+	ofstream of("bench.csv");
+
+	for(int i=10;i<10000;i+=i/5){
+		map<int,long> tests;
+		for(int j=2;j<pow(i,1.0/3);j+=2){
+			//printf("testing %i elements and %i cells\n",i,j);
+			MG::pointcloud thing=pointbubble(&e,i,j);
+
+			long t=clock();
+			for(int k=0;k<10;k++){
+				e.update();
+			}
+			t=clock()-t;
+			tests[j]=t;
+		}
+
+		auto mintime=min_element(tests.begin(),tests.end(),[&tests](const pair<int,long> &test,const pair<int, long> &old){
+			return test.second<old.second;
+		});
+
+		of<<i<<','<<mintime->first<<','<<mintime->second<<endl;
+	}
+
+	#else
 	//generate some objects
 	MG::pointcloud thing=pointbubble(&e);
 	printf("cloud made\n");
 
-	e.mainCamera.position.z=-3;
+	int counter=0,framecount=100;
 
 	//draw scene at desired framerate
-	int counter=0,framecount=100;
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
@@ -92,4 +120,5 @@ void demos::simpleScene(){
 			}
 		}
 	}
+	#endif
 }

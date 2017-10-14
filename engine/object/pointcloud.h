@@ -48,8 +48,8 @@ namespace MG{
 		vec3d pos,scale;
 
 		spacehash(const spacehash &space);
-		spacehash(int boxcount);
-		spacehash(int boxcount,point points[],int pointcount);
+		spacehash(int boxcount,int sizeAssert=0);
+		spacehash(int boxcount,point points[],int pointcount,int sizeAssert=0);
 		//spacehash(const spacehash &space);//is deep copy needed?
 		~spacehash();
 
@@ -67,8 +67,8 @@ namespace MG{
 		TODO: major revision of this once more robust file reading is implemented
 		instead of reciving a vector array and lenght int, this will likely be passed a more sophisticated data type
 		*/
-        pointcloud(engine* e,point points[],int numpoints,int density=100);
-        pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density=100);
+        pointcloud(engine* e,point points[],int numpoints,int density=100,int sizeAssert=0);
+        pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density=100,int sizeAssert=0);
 
         virtual bool bounceRay(const ray &r_in,ray &r_out,double &d);
 	};

@@ -35,6 +35,13 @@ void engine::addToScene(obj *o){
 //note that this does not remove the object completely, but instead just flags it for removal
 //TODO: make sure update clears objects flagged for removal
 void engine::removeFromScene(obj *o){
+	//*
+	scene.toRemove.push(o);
+	/*/
+	auto iter=std::find(scene.objects.begin(),scene.objects.end(),o);
+	if(iter!=scene.objects.end()){
+		scene.toRemove.push(iter);
+	}//*/
 }
 
 void engine::clearScene(){
