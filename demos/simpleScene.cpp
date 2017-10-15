@@ -77,14 +77,14 @@ void demos::simpleScene(){
 	#if BENCHMARK
 	ofstream of("bench.csv");
 
-	for(int i=10;i<10000;i+=i/5){
+	for(int i=10;i<10000;i+=i/8){
 		map<int,long> tests;
-		for(int j=2;j<pow(i,1.0/3);j+=2){
+		for(int j=2;j<pow(i,1.0/3);j++){
 			//printf("testing %i elements and %i cells\n",i,j);
 			MG::pointcloud thing=pointbubble(&e,i,j);
 
 			long t=clock();
-			for(int k=0;k<10;k++){
+			for(int k=0;k<15;k++){
 				e.update();
 			}
 			t=clock()-t;
@@ -100,7 +100,7 @@ void demos::simpleScene(){
 
 	#else
 	//generate some objects
-	MG::pointcloud thing=pointbubble(&e);
+	MG::pointcloud thing=pointbubble(&e,10000);
 	printf("cloud made\n");
 
 	int counter=0,framecount=100;

@@ -132,6 +132,56 @@ spacehash::spacehash(const spacehash &space){
 	#undef duplicate
 }
 
+inline int crazyDimCalc(const double &npoints){
+	/*this function comes from the following:
+	cost t = n*(a+b*S)
+	where
+	P = number of points
+	Total cells C = d^3 = f(P)
+	n = cell count = sqrt(3)*d
+	S = points/cell = P/C = P/f(P)
+	a = cost per cell
+	b = cost per point
+
+	=============== side note ===============
+	using the above definitions, but excluding a and b, we get
+	cost t = n*S
+
+	which simplifies down to:
+	d=sqrt(P*sqrt(3)/t)
+
+	this accurately assures a near constant time lookup for uniformly
+	distributed points, but apparently the number of cells iterated over
+	causes this approach to actually be slower...
+	accounting for a and b gives a forumla which is much closer to the emperical
+	optimum cell count
+	=========================================
+
+	t = n*(a+b*S)
+	t/sqrt(3) = a*f(P)^(1/3) + b*P*f(P)^(-2/3)
+	t/sqrt(3) = a*d + b*P/d^2
+
+	solving this for d gives us a horrible, nasty cubic
+	but it turns out one of the root terms, with properly chosen values for a,b, and t
+	should give an accurate model of what the optimal cell count should be
+	*/
+
+	//values for these constants were found through experimentation
+	const double
+		A=22,
+		B=11*npoints,
+		T=7,
+
+		A2=A*A,
+		T3=T*T*T,
+		exp1=std::pow(3.,9./2)*A2*B-4*T3,
+		X=std::cbrt(std::sqrt(B*exp1)/(2*std::pow(3.,9./4)*A2)-(exp1+2*T3)/(2*std::pow(3.,9./2)*A2*A)),
+
+		d= X+T*T/(27*A2*X)+T/(std::pow(3.,3./2)*A);
+	printf("exp1=%f\tX=%f\td=%f\n",exp1,X,d);
+	return -d;
+}
+
 spacehash::spacehash(int boxcount,int sizeAssert){
 	/*TODO:this may need some serious revision
 	currently, the hashsize grows roughly
@@ -187,9 +237,13 @@ spacehash::spacehash(int boxcount,int sizeAssert){
 	//ymask=(1<<minbits(ydim))-1;
 	//zmask=(1<<minbits(zdim))-1;
 
+	xdim=ydim=zdim=std::max(crazyDimCalc(boxcount),2);
+
 	if(sizeAssert>1){
 		xdim=ydim=zdim=sizeAssert;
 	}
+
+	printf("for %i points using d=%i\n",boxcount,xdim);
 
 
 	xmask=ymask=zmask=-1u;
