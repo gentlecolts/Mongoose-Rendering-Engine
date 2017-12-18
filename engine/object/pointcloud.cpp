@@ -168,8 +168,8 @@ inline int crazyDimCalc(const double &npoints){
 
 	//values for these constants were found through experimentation
 	const double
-		A=22,
-		B=11*npoints,
+		A=21,
+		B=10.5*npoints,
 		T=7,
 
 		A2=A*A,
@@ -399,10 +399,6 @@ struct safecompare{
 	operator double() const{return num/denom;}
 };
 
-template <typename T> inline int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
 bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	/*testcode, rays always hit and out ray is red, if screen is red then all other code works
 	d=1;
@@ -437,9 +433,15 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//*/
 
 	//TODO: better approach to this?
+	//*
 	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
 	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
 	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
+	/*/
+	if(rin_loc.dir.x<0){std::swap(tmin.x,tmax.x);}
+	if(rin_loc.dir.y<0){std::swap(tmin.y,tmax.y);}
+	if(rin_loc.dir.z<0){std::swap(tmin.z,tmax.z);}
+	//*/
 
 	const double
 		//the ray enters the cube at the last of the possible entry planes
@@ -488,12 +490,17 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//gather all cells and find the the closeset point
 	const int
 		dx=xout-xin,dy=yout-yin,dz=zout-zin,
-		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz));
+		n=std::max(std::max(std::abs(dx),std::abs(dy)),std::abs(dz)),
+		n2=n?n:1;//if n is zero, n2=1, otherwise n2=n
 
+	#define POINT_CALC_TYPE 2
+
+	#if POINT_CALC_TYPE==0
 	const double
 		dxn=n?(double)(dx)/n:0,
 		dyn=n?(double)(dy)/n:0,
 		dzn=n?(double)(dz)/n:0;
+	#endif
 
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
@@ -505,6 +512,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	#endif
 	unsigned int linesize=0;
 
+	#if 1
 	int
 		xshift[]={-1,-1,-1,0,0,0,1,1,1},
 		yshift[]={-1,0,1,-1,0,1,-1,0,1},
@@ -523,9 +531,19 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//replacing i*dxn with (i*dx)/n is actually slower by a bit, dont do it
 	for(int i=0;i<=n;i++){
 		const unsigned int
-			x=xin+(int)(i*dxn),
-			y=yin+(int)(i*dyn),
-			z=zin+(int)(i*dzn);
+		#if POINT_CALC_TYPE==0
+			x=xin+(int)(i*dxn),//xin+i*dx/n
+			y=yin+(int)(i*dyn),//yin+i*dy/n
+			z=zin+(int)(i*dzn);//zin+i*dz/n
+		#elif POINT_CALC_TYPE==1
+			x=(n*xin+i*dx)/n2,//xin+i*dx/n
+			y=(n*yin+i*dy)/n2,//yin+i*dy/n
+			z=(n*zin+i*dz)/n2;//zin+i*dz/n
+		#elif POINT_CALC_TYPE==2
+			x=xin+(i*dx)/n2,//xin+i*dx/n
+			y=yin+(i*dy)/n2,//yin+i*dy/n
+			z=zin+(i*dz)/n2;//zin+i*dz/n
+		#endif
 		for(int j=0;j<9;j++){
 			const unsigned int
 				px=x+xshift[j],
@@ -548,12 +566,67 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if(compfn){++linesize;}
 		}
 	}
+	#else
+	auto x=xin,y=yin,z=zin;
+	static unsigned int facemap[]={
+		1,//xlow exit maps to xhigh entrance
+		0,//xhigh exit maps to xlow entrance
+		3,//ylow exit maps to yhigh entrance
+		2,//yhigh exit maps to ylow entrance
+		5,//zlow exit maps to zhigh entrance
+		4,//zhigh exit maps to zlow entrance
+		6//none maps to none, used for first point
+	};
+	auto lastt=t0;
+	unsigned int lastplane=6;
+
+	auto offset=hashbox.pos-rin_loc.from;
+	auto lineptr=linearr;
+
+	while(x!=xout && y!=yout && z!=zout){//if n==0, then this will never loop
+		//add current box
+		//linearr[linesize]=&fetch(hashbox,x,y,z);
+		*lineptr=&fetch(hashbox,x,y,z);
+		++lineptr;
+		++linesize;
+
+		//calculate next
+		double ts[6]={
+			(x+offset.x)/rin_loc.dir.x,(x+1+offset.x)/rin_loc.dir.x,
+			(y+offset.y)/rin_loc.dir.y,(y+1+offset.y)/rin_loc.dir.y,
+			(z+offset.z)/rin_loc.dir.z,(z+1+offset.z)/rin_loc.dir.z
+		};
+
+		auto mint=INFINITY;
+		int mini=0;
+		const unsigned int lasti=facemap[lastplane];
+		for(unsigned int i=0;i<6;i++){
+			if(i!=lasti && ts[i]>lastt && ts[i]<mint){
+				mint=ts[i];
+				mini=i;
+			}
+		}
+		x+=(mini==1)-(mini==0);
+		y+=(mini==3)-(mini==2);
+		z+=(mini==5)-(mini==4);
+
+		lastplane=mini;
+		lastt=mint;
+	}
+
+	//add the end node
+	linearr[linesize]=&fetch(hashbox,xout,yout,zout);
+	++linesize;
+	#endif
+
+	//printf("%i\n",linesize);
 
 	int counter=0;
 	//*
 	#if FETCH_PLIST
-
-	std::for_each(linearr,linearr+linesize,[&](hashtype *plist){
+	#define ALLOW_BREAK 1
+	//std::for_each(linearr,linearr+linesize,[&](hashtype *plist){
+	for(hashtype** blahrg=linearr;blahrg<linearr+linesize;blahrg++){auto plist=*blahrg;
 	#else
 	std::for_each(linearr,linearr+linesize,[&](vec3<unsigned int> &i){
 		hashtype &plist=fetch(hashbox,i.x,i.y,i.z);
@@ -605,7 +678,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
 			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
 		});
-		//if(closest.hit){break;}
+		if(closest.hit){break;}
 	}
 		#elif LOOP_APPROACH==2
 		//std::vector<interholder> inters;
@@ -663,7 +736,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		closest=*closeptr;
 	}
 		#endif
-	);
+	//);
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
 	d=closest.t;

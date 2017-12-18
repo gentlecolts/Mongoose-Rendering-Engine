@@ -72,12 +72,12 @@ void demos::simpleScene(){
 	e.targetFPS=60;
 	e.mainCamera.position.z=-3;
 
-	#define BENCHMARK 1
+	#define BENCHMARK 0
 
 	#if BENCHMARK
 	ofstream of("bench.csv");
 
-	for(int i=10;i<10000;i+=i/8){
+	for(int i=10;i<20000;i+=i/8){
 		map<int,long> tests;
 		for(int j=2;j<pow(i,1.0/3);j++){
 			//printf("testing %i elements and %i cells\n",i,j);
