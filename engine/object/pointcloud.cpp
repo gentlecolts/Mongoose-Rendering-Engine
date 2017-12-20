@@ -485,7 +485,12 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
 	//gather list of all possible points
+	#define DYNAMIC_LINEARR 0
+	#if DYNAMIC_LINEARR
+	hashtype** linearr=new hashtype*[9*(n+1)];
+	#else
 	hashtype* linearr[9*(n+1)];
+	#endif
 	unsigned int linesize=0;
 
 	#if 1
@@ -579,7 +584,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//printf("%i\n",linesize);
 
 	int counter=0;
-	#define NO_BREAK 0
+	#define NO_BREAK 1
 	#if NO_BREAK
 	std::for_each(linearr,linearr+linesize,[&](hashtype *plist){
 	#else
@@ -608,6 +613,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	#else
 		if(closest.hit){break;}
 	}
+	#endif
+
+	#if DYNAMIC_LINEARR
+	delete[] linearr;
 	#endif
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object

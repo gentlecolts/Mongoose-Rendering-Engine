@@ -32,15 +32,15 @@ double next(uniform_real_distribution<double> &rng){
 	return rng(generator);
 }
 
-MG::pointcloud pointbubble(MG::engine *e,int npoints=1000,int sizeAssert=0){
-	MG::point pointarr[npoints];
+MG::pointcloud pointbubble(MG::engine *e,const int npoints=1000,const int sizeAssert=0){
+	MG::point* pointarr=new MG::point[npoints];
 
 	for(int i=0;i<npoints;i++){
 		pointarr[i].col.r=next(randcol);
 		pointarr[i].col.g=next(randcol);
 		pointarr[i].col.b=next(randcol);
 
-		pointarr[i].scale=0.025*MG::vec3d(1,1,1);
+		pointarr[i].scale=0.01*MG::vec3d(1,1,1);
 
 		//const double x=2*(double(i))/npoints-1;
 		//const double x=(double(i))/npoints;
@@ -48,7 +48,9 @@ MG::pointcloud pointbubble(MG::engine *e,int npoints=1000,int sizeAssert=0){
 		pointarr[i].pos=MG::vec3d(next(randnum),next(randnum),next(randnum));
 	}
 
-	return MG::pointcloud(e,pointarr,npoints,1,sizeAssert);
+	MG::pointcloud p(e,pointarr,npoints,1,sizeAssert);
+	delete[] pointarr;
+	return p;
 }
 
 uint64_t ctimeMillis(){
