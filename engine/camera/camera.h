@@ -23,8 +23,10 @@ namespace MG{
 
 		camera(surface* renderTarget,sceneContainer* sceneToDraw=0);
 
-		void rotateDeg(double angle,vec3d *axis);
-		void rotateRad(double angle,vec3d *axis);
+		void rotateDeg(double angle,const vec3d& axis);
+		void rotateRad(double angle,const vec3d& axis);
+
+		void lookAt(const vec3d &point,const vec3d& up);
 
 		void render(surface *drawTo=0,sceneContainer *drawScene=0);
 	};

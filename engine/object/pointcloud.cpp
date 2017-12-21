@@ -168,9 +168,9 @@ inline int crazyDimCalc(const double &npoints){
 
 	//values for these constants were found through experimentation
 	const double
-		A=1,
-		B=1*npoints,
-		T=1,
+		A=5.771517105832961,
+		B=5.905282236635685*npoints,
+		T=19.16157310795305,
 
 		A2=A*A,
 		T3=T*T*T,
@@ -472,6 +472,11 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		double t=INFINITY;
 		int index=0;
 		bool hit=false;
+
+		bool operator <(const interholder& test) const{
+			//return hit & (t<test.t);
+			return t<test.t;
+		}
 	} closest;
 
 	std::vector<interholder> intersections;
@@ -604,9 +609,12 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			itest.hit=intersect(hashbox.pointarr[pos],r_in,t0,t1);
 			itest.t=(t0>=0)?t0:t1;
 			//itest.t=((!itest.hit) | (itest.t<0))?INFINITY:itest.t;
+			itest.t=itest.hit?itest.t:INFINITY;
 
 			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
-			closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+			//closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+			//closest=std::min(closest,itest);
+			closest=std::min(itest,closest);
 		});
 	#if NO_BREAK
 	});

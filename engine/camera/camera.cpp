@@ -182,3 +182,22 @@ void camera::doPost(int id,int numthreads,color *raw,surface *target){
 		target->pixels[i]=0xff000000|((r&0xff)<<16)|((g&0xff)<<8)|(b&0xff);
 	}
 }
+
+void camera::rotateDeg(double angle,const vec3d& axis){
+}
+void camera::rotateRad(double angle,const vec3d& axis){
+}
+
+void camera::lookAt(const vec3d &point,const vec3d& up){
+	vec3d z=point-position;
+	z.normalize();
+
+	vec3d x=z.cross(up);
+	vec3d y=x.cross(z);
+
+	for(int i=0;i<3;i++){
+		axes.x[i]=x.xyz[i];
+		axes.y[i]=y.xyz[i];
+		axes.z[i]=z.xyz[i];
+	}
+}
