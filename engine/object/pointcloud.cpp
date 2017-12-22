@@ -477,7 +477,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		yout=out.y,
 		zout=out.z;
 
-	/*this doesnt seem like a good idea, looks "ok" for now but i'm concerned about the accuracy of doing this
+	//*this doesnt seem like a good idea, looks "ok" for now but i'm concerned about the accuracy of doing this
 	if(xin==hashbox.xdim){--xin;}
 	if(yin==hashbox.ydim){--yin;}
 	if(zin==hashbox.zdim){--zin;}
@@ -565,16 +565,16 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		sy=sgn(rin_loc.dir.y),
 		sz=sgn(rin_loc.dir.z);
 
-	while(!(x==xout && y==yout && z==zout)){//if n==0, then this will never loop
-	//while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
+	//while(!(x==xout && y==yout && z==zout)){//if n==0, then this will never loop
+	while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
 		//printf("(%iu %iu %iu) out of (%iu %iu %iu) moving in dir <%f,%f,%f>\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);
 
 		//add current box
 		*lineptr=&fetch(hashbox,x,y,z);
 		//this if should not be necessary, need to correctly calculate xin/yin/zin
-		if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
+		//if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
 			++lineptr;
-		}
+		//}
 
 		double ts[3]={
 			(x+px-rin_loc.from.x)/rin_loc.dir.x,

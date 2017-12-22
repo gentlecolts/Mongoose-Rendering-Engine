@@ -105,7 +105,7 @@ double PI=4*atan(1.0);
 
 
 void demos::simpleScene(){
-	#define BENCHMARK 0
+	#define BENCHMARK 1
 
 	MG::engine e;
  	//e.setEventHandler(&checkClose);//moved this to be the default event handler
