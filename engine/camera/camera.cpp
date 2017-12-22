@@ -192,7 +192,7 @@ void camera::lookAt(const vec3d &point,const vec3d& up){
 	vec3d z=point-position;
 	z.normalize();
 
-	vec3d x=z.cross(up);
+	vec3d x=z.cross(up.getNormalized());
 	vec3d y=x.cross(z);
 
 	for(int i=0;i<3;i++){

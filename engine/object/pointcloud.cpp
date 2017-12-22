@@ -460,13 +460,18 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	const auto
 		in=rin_loc.dir*t0+rin_loc.from,
 		out=rin_loc.dir*t1+rin_loc.from;
-	const unsigned int
+
+	unsigned int
 		xin=in.x,
 		yin=in.y,
 		zin=in.z,
 		xout=out.x,
 		yout=out.y,
 		zout=out.z;
+
+	if(xin==hashbox.xdim){--xin;}
+	if(yin==hashbox.ydim){--yin;}
+	if(zin==hashbox.zdim){--zin;}
 
 	struct interholder{
 		double t=INFINITY;
@@ -498,7 +503,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	#endif
 	unsigned int linesize=0;
 
-	#if 1
+	#if 0
 	int
 		xshift[]={-1,-1,-1,0,0,0,1,1,1},
 		yshift[]={-1,0,1,-1,0,1,-1,0,1},
@@ -541,28 +546,41 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	auto x=xin,y=yin,z=zin;
 	auto lineptr=linearr;
 
+	const auto sgn=[](const double& x){return (x>0)-(x<0);};
+	const int
+		px=(rin_loc.dir.x>0),
+		py=(rin_loc.dir.y>0),
+		pz=(rin_loc.dir.z>0),
+		sx=sgn(rin_loc.dir.x),
+		sy=sgn(rin_loc.dir.y),
+		sz=sgn(rin_loc.dir.z);
+
+	//while(!(x==xout && y==yout && z==zout)){//if n==0, then this will never loop
 	while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
-		printf("(%iu %iu %iu) out of (%iu %iu %iu) moving in dir <%f,%f,%f>\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);
+		//printf("(%iu %iu %iu) out of (%iu %iu %iu) moving in dir <%f,%f,%f>\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);
 
 		//add current box
 		//linearr[linesize]=&fetch(hashbox,x,y,z);
+		//*
 		*lineptr=&fetch(hashbox,x,y,z);
 		++lineptr;
+		/*/
+		*(lineptr++)=&fetch(hashbox,x,y,z);
+		//*/
 		++linesize;
 
-		const auto sgn=[](const double& x){return (x>0)-(x<0);};
 		double ts[3]={
-			(x+(rin_loc.dir.x>0)-rin_loc.from.x)/rin_loc.dir.x,
-			(y+(rin_loc.dir.y>0)-rin_loc.from.y)/rin_loc.dir.y,
-			(z+(rin_loc.dir.z>0)-rin_loc.from.z)/rin_loc.dir.z,
+			(x+px-rin_loc.from.x)/rin_loc.dir.x,
+			(y+py-rin_loc.from.y)/rin_loc.dir.y,
+			(z+pz-rin_loc.from.z)/rin_loc.dir.z,
 		};
 
-		/*
+		//*
 		const auto mint=std::min(std::min(ts[0],ts[1]),ts[2]);
 
-		x+=(ts[0]==mint)*sgn(rin_loc.dir.x);
-		y+=(ts[1]==mint)*sgn(rin_loc.dir.y);
-		z+=(ts[2]==mint)*sgn(rin_loc.dir.z);
+		x+=(ts[0]==mint)*sx;
+		y+=(ts[1]==mint)*sy;
+		z+=(ts[2]==mint)*sz;
 		/*/
 		int mini=0;
 		int mint=INFINITY;
@@ -573,13 +591,15 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 			}
 		}
 
-		x+=(mini==0)*sgn(rin_loc.dir.x);
-		y+=(mini==1)*sgn(rin_loc.dir.y);
-		z+=(mini==2)*sgn(rin_loc.dir.z);
+		x+=(mini==0)*sx;
+		y+=(mini==1)*sy;
+		z+=(mini==2)*sz;
 		//*/
 	}
 
-	printf("end (%iu %iu %iu) out of (%iu %iu %iu)\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim);
+	if(linesize>=9*(n+1)){printf("hit too many points, ray dir: <%f,%f,%f>\n",rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);return r_out.hit=false;}
+
+	//printf("end (%iu %iu %iu) out of (%iu %iu %iu)\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim);
 
 	//add the end node
 	linearr[linesize]=&fetch(hashbox,xout,yout,zout);

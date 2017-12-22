@@ -54,6 +54,47 @@ MG::pointcloud pointbubble(MG::engine *e,const int npoints=1000,const int sizeAs
 	return p;
 }
 
+
+MG::pointcloud pointgyro(MG::engine *e,const int npoints=1000,const int sizeAssert=0){
+	int n=npoints/6;
+	MG::point* pointarr=new MG::point[6*n];
+
+	const double pi=4*atan(1.0);
+
+	MG::color cols[6]={
+		MG::color(1,0,0),
+		MG::color(.5,0,0),
+		MG::color(0,1,0),
+		MG::color(0,.5,0),
+		MG::color(0,0,1),
+		MG::color(0,0,.5)
+	};
+
+	const double r=.5;
+
+	for(int i=0;i<n;i++){
+		const double
+			theta=pi/n,
+			c=r*cos(theta),
+			s=r*sin(theta);
+		for(int j=0;j<6;j++){
+			pointarr[6*i+j].scale=.1*MG::vec3d(1,1,1);
+			pointarr[6*i+j].col=cols[j];
+		}
+
+		pointarr[6*i].pos=MG::vec3d(0,s,c);
+		pointarr[6*i+1].pos=MG::vec3d(0,-s,c);
+		pointarr[6*i+2].pos=MG::vec3d(c,0,s);
+		pointarr[6*i+3].pos=MG::vec3d(c,0,-s);
+		pointarr[6*i+4].pos=MG::vec3d(c,s,0);
+		pointarr[6*i+5].pos=MG::vec3d(c,-s,0);
+	}
+
+	MG::pointcloud p(e,pointarr,6*n,1,sizeAssert);
+	delete[] pointarr;
+	return p;
+}
+
 uint64_t ctimeMillis(){
 	chrono::milliseconds ms=chrono::duration_cast< chrono::milliseconds >(
 		chrono::system_clock::now().time_since_epoch()
@@ -118,6 +159,7 @@ void demos::simpleScene(){
 	#else
 	//generate some objects
 	MG::pointcloud thing=pointbubble(&e,10000);
+	//MG::pointcloud thing=pointgyro(&e,100);
 	printf("cloud made\n");
 
 	int counter=0,framecount=100;
@@ -126,24 +168,49 @@ void demos::simpleScene(){
 	while(1){
 		if(e.isTimeToUpdate()){
 			double t=ctimeMillis()/1000.0;
-			#if 0
+
+			#define CAMTYPE 1
+
+			#if CAMTYPE==0
 			e.mainCamera.position.x=0.5*cos(2*PI*t/3);
 			e.mainCamera.position.y=0.5*sin(2*PI*t/3);
 			//e.mainCamera.position.z=-2.5*cos(2*PI*t/6000)-3;
-			#else
+			#elif CAMTYPE==1
+			t/=5;
 			double r=3;
-			e.mainCamera.position.x=r*cos(2*PI*t/3);
-			e.mainCamera.position.z=r*sin(2*PI*t/3);
+			e.mainCamera.position.x=cos(2*PI*t/3);
+			e.mainCamera.position.z=sin(2*PI*t/3);
+			e.mainCamera.position.y=0.5*sin(2*PI*t);
+			e.mainCamera.position=e.mainCamera.position.getNormalized()*r;
+			#elif CAMTYPE==2
+			double r=2,
+				x=-r,
+				y=r,
+				z=-r;
+			MG::vec3d pos(x,y,z);
+
+			MG::vec3d off(next(randnum),next(randnum),next(randnum));
+			off*=0.01;
+
+			e.mainCamera.position=pos+off;
+			#endif
 
 			e.mainCamera.lookAt(MG::vec3d(0,0,0),MG::vec3d(0,1,0));
-			#endif
 
 			e.update();
 
+			#if 1
+			stringstream s;
+			s<<"Mongoose Rendering Engine Demo ("
+			<<e.mainCamera.position.x<<", "
+			<<e.mainCamera.position.y<<", "
+			<<e.mainCamera.position.z<<")";
+
+			e.setTitle(s.str().c_str());
+			#endif
+
 			++counter;
-			if(counter==framecount){
-				break;
-			}
+			if(counter==framecount){break;}
 		}
 	}
 	#endif
