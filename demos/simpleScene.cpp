@@ -126,7 +126,7 @@ void demos::simpleScene(){
 	#if BENCHMARK
 	ofstream of("bench.csv");
 
-	for(int i=10;i<20000;i+=i/8){
+	for(int i=100;i<20000;i+=i/8){
 		map<int,long> tests;
 
 		//eliminate some of the slowest cases

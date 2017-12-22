@@ -170,8 +170,7 @@ inline int crazyDimCalc(const double &npoints){
 	const double
 		A=1.8890925824,
 		B=1.9391318727*npoints,
-		T=7.3813138679
-,
+		T=7.3813138679,
 
 		A2=A*A,
 		T3=T*T*T,
@@ -430,10 +429,17 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//vec3<safecompare> tmin,tmax;
 
 	///// TODO: fix the missing pixel problem (again...check on v2) /////
+	//note: this seems to occur when both numerator and denominator below are zero, causing a nan
 
 	tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(-rin_loc.from.x)/rin_loc.dir.x;
 	tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(-rin_loc.from.y)/rin_loc.dir.y;
 	tmin.z=(hashbox.zdim-rin_loc.from.z)/rin_loc.dir.z; tmax.z=(-rin_loc.from.z)/rin_loc.dir.z;
+
+	/*for some reason this doesnt quite fix it
+	for(int i=0;i<3;i++){
+		if(std::isnan(tmin.xyz[i])){tmin.xyz[i]=INFINITY;}
+		if(std::isnan(tmax.xyz[i])){tmax.xyz[i]=INFINITY;}
+	}//*/
 
 	//TODO: better approach to this?
 	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
@@ -465,14 +471,17 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	unsigned int
 		xin=in.x,
 		yin=in.y,
-		zin=in.z,
+		zin=in.z;
+	const unsigned int
 		xout=out.x,
 		yout=out.y,
 		zout=out.z;
 
+	/*this doesnt seem like a good idea, looks "ok" for now but i'm concerned about the accuracy of doing this
 	if(xin==hashbox.xdim){--xin;}
 	if(yin==hashbox.ydim){--yin;}
 	if(zin==hashbox.zdim){--zin;}
+	//*/
 
 	struct interholder{
 		double t=INFINITY;
@@ -556,19 +565,22 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		sy=sgn(rin_loc.dir.y),
 		sz=sgn(rin_loc.dir.z);
 
-	//while(!(x==xout && y==yout && z==zout)){//if n==0, then this will never loop
-	while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
+	while(!(x==xout && y==yout && z==zout)){//if n==0, then this will never loop
+	//while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
 		//printf("(%iu %iu %iu) out of (%iu %iu %iu) moving in dir <%f,%f,%f>\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);
 
-		//add current box
-		//linearr[linesize]=&fetch(hashbox,x,y,z);
-		//*
-		*lineptr=&fetch(hashbox,x,y,z);
-		++lineptr;
-		/*/
-		*(lineptr++)=&fetch(hashbox,x,y,z);
-		//*/
-		++linesize;
+		//this if should not be necessary, need to correctly calculate xin/yin/zin
+		if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
+			//add current box
+			//linearr[linesize]=&fetch(hashbox,x,y,z);
+			//*
+			*lineptr=&fetch(hashbox,x,y,z);
+			++lineptr;
+			/*/
+			*(lineptr++)=&fetch(hashbox,x,y,z);
+			//*/
+			++linesize;
+		}
 
 		double ts[3]={
 			(x+px-rin_loc.from.x)/rin_loc.dir.x,
