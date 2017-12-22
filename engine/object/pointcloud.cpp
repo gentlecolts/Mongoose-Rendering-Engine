@@ -572,14 +572,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//this if should not be necessary, need to correctly calculate xin/yin/zin
 		if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
 			//add current box
-			//linearr[linesize]=&fetch(hashbox,x,y,z);
-			//*
 			*lineptr=&fetch(hashbox,x,y,z);
 			++lineptr;
-			/*/
-			*(lineptr++)=&fetch(hashbox,x,y,z);
-			//*/
-			++linesize;
 		}
 
 		double ts[3]={
@@ -609,6 +603,9 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		z+=(mini==2)*sz;
 		//*/
 	}
+
+	//if(lineptr-linearr!=linesize){printf("nope\n");}
+	linesize=lineptr-linearr;
 
 	if(linesize>=9*(n+1)){printf("hit too many points, ray dir: <%f,%f,%f>\n",rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);return r_out.hit=false;}
 
