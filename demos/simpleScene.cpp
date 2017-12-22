@@ -112,7 +112,8 @@ void demos::simpleScene(){
  	//e.initWindow(1280,720);
  	#if BENCHMARK
  	e.initWindow(320,240);
-	e.mainCamera.position.z=-2.2;
+	e.mainCamera.position=MG::vec3d(.001,.001,-2.2);
+	e.mainCamera.lookAt(MG::vec3d(0,0,0),MG::vec3d(0,1,0));
  	#else
 	e.initWindow(640,480);
 	//e.initWindow(1280,720);
