@@ -114,7 +114,8 @@ void demos::simpleScene(){
  	e.initWindow(320,240);
 	e.mainCamera.position.z=-2.2;
  	#else
- 	e.initWindow(640,480);
+	e.initWindow(640,480);
+	//e.initWindow(1280,720);
 	e.mainCamera.position.z=-3;
  	#endif
  	//e.initWindow(641,481);
@@ -126,7 +127,7 @@ void demos::simpleScene(){
 	#if BENCHMARK
 	ofstream of("bench.csv");
 
-	for(int i=100;i<20000;i+=i/8){
+	for(int i=10;i<200000;i+=i/8){
 		map<int,long> tests;
 
 		//eliminate some of the slowest cases
@@ -158,7 +159,7 @@ void demos::simpleScene(){
 
 	#else
 	//generate some objects
-	MG::pointcloud thing=pointbubble(&e,10000);
+	MG::pointcloud thing=pointbubble(&e,100000);
 	//MG::pointcloud thing=pointgyro(&e,100);
 	printf("cloud made\n");
 
