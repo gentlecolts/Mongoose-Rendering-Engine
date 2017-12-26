@@ -37,16 +37,22 @@ MG::pointcloud pointbubble(MG::engine *e,const int npoints=1000,const int sizeAs
 	MG::point* pointarr=new MG::point[npoints];
 
 	for(int i=0;i<npoints;i++){
-		pointarr[i].col.r=next(randcol);
-		pointarr[i].col.g=next(randcol);
-		pointarr[i].col.b=next(randcol);
-
 		pointarr[i].scale=0.01*MG::vec3d(1,1,1);
 
 		//const double x=2*(double(i))/npoints-1;
 		//const double x=(double(i))/npoints;
 		//pointarr[i].pos=MG::vec3d(x,0,0);
 		pointarr[i].pos=MG::vec3d(next(randnum),next(randnum),next(randnum));
+
+		/*
+		pointarr[i].col.r=next(randcol);
+		pointarr[i].col.g=next(randcol);
+		pointarr[i].col.b=next(randcol);
+		/*/
+		pointarr[i].col.r=(pointarr[i].pos.x+1)/2;
+		pointarr[i].col.g=(pointarr[i].pos.y+1)/2;
+		pointarr[i].col.b=(pointarr[i].pos.z+1)/2;
+		//*/
 	}
 
 	MG::pointcloud p(e,pointarr,npoints,1,sizeAssert);
@@ -161,7 +167,7 @@ void demos::simpleScene(){
 
 	#else
 	//generate some objects
-	MG::pointcloud thing=pointbubble(&e,100000);
+	MG::pointcloud thing=pointbubble(&e,200000);
 	//MG::pointcloud thing=pointgyro(&e,100);
 	printf("cloud made\n");
 

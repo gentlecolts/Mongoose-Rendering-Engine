@@ -167,7 +167,7 @@ inline int crazyDimCalc(const double &npoints){
 	*/
 
 	//values for these constants were found through experimentation
-	const double
+	const long double
 		A=15.220957591530816,
 		B=70.20706595138054*npoints,
 		T=13.121702908962812,
@@ -178,7 +178,8 @@ inline int crazyDimCalc(const double &npoints){
 		X=std::cbrt(std::sqrt(B*exp1)/(2*std::pow(3.,9./4)*A2)-(exp1+2*T3)/(2*std::pow(3.,9./2)*A2*A)),
 
 		d= X+T*T/(27*A2*X)+T/(std::pow(3.,3./2)*A);
-	printf("exp1=%f\tX=%f\td=%f\n",exp1,X,d);
+	//printf("exp1=%f\tX=%f\td=%f\n",exp1,X,d);
+	printf("exp1=%lf\tX=%lf\td=%lf\n",exp1,X,d);
 	return -d;
 }
 
