@@ -168,9 +168,9 @@ inline int crazyDimCalc(const double &npoints){
 
 	//values for these constants were found through experimentation
 	const double
-		A=1.8890925824,
-		B=1.9391318727*npoints,
-		T=7.3813138679,
+		A=15.220957591530816,
+		B=70.20706595138054*npoints,
+		T=13.121702908962812,
 
 		A2=A*A,
 		T3=T*T*T,

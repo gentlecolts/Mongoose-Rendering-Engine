@@ -105,7 +105,7 @@ double PI=4*atan(1.0);
 
 
 void demos::simpleScene(){
-	#define BENCHMARK 1
+	#define BENCHMARK 0
 
 	MG::engine e;
  	//e.setEventHandler(&checkClose);//moved this to be the default event handler
@@ -128,13 +128,14 @@ void demos::simpleScene(){
 	#if BENCHMARK
 	ofstream of("bench.csv");
 
-	for(int i=10;i<200000;i+=i/8){
+	for(int i=10;i<100000;i+=i/8){
 		map<int,long> tests;
 
 		//eliminate some of the slowest cases
 		const int jlow=(i>2000)?log(i/2.)/1.5:max((int)sqrt(sqrt(3.)*i/60.),2);
 
-		for(int j=jlow;j<pow(i,1.0/3);j++){
+		//for(int j=jlow;j<1.5*cbrt((double)i);j++){
+		for(int j=jlow;j<sqrt((double)i);j++){
 			//printf("testing %i elements and %i cells\n",i,j);
 			MG::pointcloud thing=pointbubble(&e,i,j);
 
