@@ -52,6 +52,8 @@ namespace MG{
 		void mainLooper();//do main loop and waiting for the user
 
 		//implemented in scene.cpp
+		//TODO: these should be in the scene class, not here.  engine should have a getCurrentScene(), this will allow background-loading scenes
+		//NOTE: this will also mean updating object and light to accept a scene instead of an engine
 		void addToScene(obj *o);
 		void removeFromScene(obj *o);
 		void clearScene();

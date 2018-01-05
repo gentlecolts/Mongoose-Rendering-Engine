@@ -49,9 +49,14 @@ MG::pointcloud pointbubble(MG::engine *e,const int npoints=1000,const int sizeAs
 		pointarr[i].col.g=next(randcol);
 		pointarr[i].col.b=next(randcol);
 		/*/
-		pointarr[i].col.r=(pointarr[i].pos.x+1)/2;
-		pointarr[i].col.g=(pointarr[i].pos.y+1)/2;
-		pointarr[i].col.b=(pointarr[i].pos.z+1)/2;
+
+		const double pi=4*atan(1.0);
+		auto fn=[&](double x){return x;};
+		//auto fn=[&](double x){return abs(sin(2*pi*x));};
+
+		pointarr[i].col.r=fn((pointarr[i].pos.x+1)/2);
+		pointarr[i].col.g=fn((pointarr[i].pos.y+1)/2);
+		pointarr[i].col.b=fn((pointarr[i].pos.z+1)/2);
 		//*/
 	}
 
@@ -168,15 +173,17 @@ void demos::simpleScene(){
 	#else
 	//generate some objects
 	MG::pointcloud thing=pointbubble(&e,200000);
-	//MG::pointcloud thing=pointgyro(&e,100);
+	//MG::pointcloud thing=pointgyro(&e,2000);
 	printf("cloud made\n");
 
 	int counter=0,framecount=100;
 
 	//draw scene at desired framerate
+	double lastt=0;
 	while(1){
 		if(e.isTimeToUpdate()){
-			double t=ctimeMillis()/1000.0;
+			const double sec=ctimeMillis()/1000.0;
+			double t=sec;
 
 			#define CAMTYPE 1
 
@@ -213,13 +220,17 @@ void demos::simpleScene(){
 			s<<"Mongoose Rendering Engine Demo ("
 			<<e.mainCamera.position.x<<", "
 			<<e.mainCamera.position.y<<", "
-			<<e.mainCamera.position.z<<")";
+			<<e.mainCamera.position.z<<")"
+			//<<" frame #"<<counter
+			<<" fps: "<<(1.0/(sec-lastt))
+			;
 
 			e.setTitle(s.str().c_str());
 			#endif
 
 			++counter;
-			if(counter==framecount){break;}
+			//if(counter==framecount){break;}
+			lastt=sec;
 		}
 	}
 	#endif

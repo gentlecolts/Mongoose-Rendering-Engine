@@ -166,7 +166,7 @@ inline int crazyDimCalc(const double &npoints){
 	should give an accurate model of what the optimal cell count should be
 	*/
 
-	//values for these constants were found through experimentation
+	//values for these constants were found emperically
 	const long double
 		A=15.220957591530816,
 		B=70.20706595138054*npoints,

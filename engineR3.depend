@@ -811,7 +811,7 @@
 	<cstdlib>
 	<iostream>
 
-1514321906 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
+1515168852 source:/home/zangoose/git/Mongoose-Rendering-Engine/demos/simpleScene.cpp
 	"demos.h"
 	<cmath>
 	<random>
@@ -833,7 +833,7 @@
 	"object/object.h"
 	"object/pointcloud.h"
 
-1508008166 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/core.h
+1515172243 /home/zangoose/git/Mongoose-Rendering-Engine/engine/core/core.h
 	"../2d/surface.h"
 	"../object/object.h"
 	"event.h"
@@ -980,10 +980,25 @@
 	<list>
 	<vector>
 
-1514309550 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
+1515168020 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/pointcloud.cpp
 	"pointcloud.h"
 	<cmath>
 	<algorithm>
 	<utility>
 	<array>
+
+1515180829 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/light/defaultLights.cpp
+	"defaultLights.h"
+	<random>
+	<cmath>
+
+1515173774 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/light/defaultLights.h
+	"lightsource.h"
+
+1515181047 /home/zangoose/git/Mongoose-Rendering-Engine/engine/object/light/lightsource.h
+	"../../math/vec3d.h"
+	"../../camera/ray.h"
+
+1515173784 source:/home/zangoose/git/Mongoose-Rendering-Engine/engine/object/light/light.cpp
+	"lightsource.h"
 
