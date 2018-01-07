@@ -183,7 +183,7 @@ inline int crazyDimCalc(const double &npoints){
 	return -d;
 }
 
-spacehash::spacehash(int boxcount,int sizeAssert){
+spacehash::spacehash(const int boxcount,const int sizeAssert){
 	/*TODO:this may need some serious revision
 	currently, the hashsize grows roughly
 	2^(3*log2(x)/3) which is just x
@@ -365,9 +365,9 @@ void spacehash::hash(point points[],int npoints){
 
 ///// pointcloud stuff goes here /////
 
-pointcloud::pointcloud(engine* e,point points[],int numpoints,int density,int sizeAssert):obj(e),hashbox(numpoints/density,points,numpoints,sizeAssert){
+pointcloud::pointcloud(sceneContainer* sc,point points[],int numpoints,int density,int sizeAssert):obj(sc),hashbox(numpoints/density,points,numpoints,sizeAssert){
 }
-pointcloud::pointcloud(engine* e,metadata *meta,point points[],int numpoints,int density,int sizeAssert):obj(e,meta),hashbox(numpoints/density,points,numpoints,sizeAssert){
+pointcloud::pointcloud(sceneContainer* sc,metadata *meta,point points[],int numpoints,int density,int sizeAssert):obj(sc,meta),hashbox(numpoints/density,points,numpoints,sizeAssert){
 }
 
 //do comparisons without worrying about division by zero

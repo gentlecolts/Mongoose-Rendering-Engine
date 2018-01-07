@@ -184,6 +184,10 @@
 		<Unit filename="engine/object/io/polyToPoint.cpp" />
 		<Unit filename="engine/object/io/readFile.cpp" />
 		<Unit filename="engine/object/io/writeFile.cpp" />
+		<Unit filename="engine/object/light/defaultLights.cpp" />
+		<Unit filename="engine/object/light/defaultLights.h" />
+		<Unit filename="engine/object/light/light.cpp" />
+		<Unit filename="engine/object/light/lightsource.h" />
 		<Unit filename="engine/object/meta.h" />
 		<Unit filename="engine/object/obj.cpp" />
 		<Unit filename="engine/object/object.h" />

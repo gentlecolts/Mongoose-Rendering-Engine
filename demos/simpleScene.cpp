@@ -22,7 +22,7 @@ need to implement:
 class cube:MG::obj{
 double rotVel;
 public:
-	cube(MG::engine* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
+	cube(MG::sceneContainer* e,double rotationalVel):MG::obj(e),rotVel(rotationalVel){}
 };
 
 random_device generator;
@@ -60,7 +60,7 @@ MG::pointcloud pointbubble(MG::engine *e,const int npoints=1000,const int sizeAs
 		//*/
 	}
 
-	MG::pointcloud p(e,pointarr,npoints,1,sizeAssert);
+	MG::pointcloud p(e->getActiveScene(),pointarr,npoints,1,sizeAssert);
 	delete[] pointarr;
 	return p;
 }
@@ -101,7 +101,7 @@ MG::pointcloud pointgyro(MG::engine *e,const int npoints=1000,const int sizeAsse
 		pointarr[6*i+5].pos=MG::vec3d(c,-s,0);
 	}
 
-	MG::pointcloud p(e,pointarr,6*n,1,sizeAssert);
+	MG::pointcloud p(e->getActiveScene(),pointarr,6*n,1,sizeAssert);
 	delete[] pointarr;
 	return p;
 }

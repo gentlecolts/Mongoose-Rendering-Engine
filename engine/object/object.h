@@ -13,14 +13,14 @@ this file contains the definition for the abstract object class, which is the pa
 
 
 namespace MG{
-	class engine;
+	class sceneContainer;
 
 	class obj{
 		/*TODO: file streaming/caching is probably wanted, but does this really need to be in the global object model?
 		also worth noting is future plan to read a more sophisticated file format via dictionaries or something, which will need more work
 		*/
 		std::ifstream file;
-		engine *owner;
+		sceneContainer *owner;
 	public:
 		vec3d pos;
 
@@ -31,10 +31,10 @@ namespace MG{
 		virtual void joinedUpdate(){}//called after all forkedUpdates finish
 		virtual void timedUpdate(){}//called at a settable interval unless the previous batch has not finished
 
-		//this is called before any child constructors, adds itself to the given engine object
+		//this is called before any child constructors, adds itself to the given scene
 		obj(const obj &o);
-		obj(engine* e,metadata *meta=0);
-		obj(engine* e,std::string fname,metadata *meta=0);
+		obj(sceneContainer* sc,metadata *meta=0);
+		obj(sceneContainer* sc,std::string fname,metadata *meta=0);
 		virtual ~obj();
 	};
 }

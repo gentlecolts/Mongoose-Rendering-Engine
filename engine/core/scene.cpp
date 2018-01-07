@@ -6,6 +6,10 @@ this file implements all functionality of the engine class that pertain to manag
 #include <algorithm>
 using namespace MG;
 
+sceneContainer* engine::getActiveScene(){
+	return &scene;
+}
+
 /////FROM sceneContainer CLASS/////
 
 sceneContainer::sceneContainer(){
@@ -26,23 +30,21 @@ void sceneContainer::render(int numRays,ray *raysIn,ray *raysOut){
 	}
 }
 
-/////FROM engine CLASS/////
-
-void engine::addToScene(obj *o){
-	scene.objects.push_back(o);
+void sceneContainer::addObject(obj *o){
+	objects.push_back(o);
 }
 
 //note that this does not remove the object completely, but instead just flags it for removal
 //TODO: make sure update clears objects flagged for removal
-void engine::removeFromScene(obj *o){
+void sceneContainer::removeObject(obj *o){
 	//*
-	scene.toRemove.push(o);
+	toRemove.push(o);
 	/*/
-	auto iter=std::find(scene.objects.begin(),scene.objects.end(),o);
-	if(iter!=scene.objects.end()){
-		scene.toRemove.push(iter);
+	auto iter=std::find(objects.begin(),objects.end(),o);
+	if(iter!=objects.end()){
+		toRemove.push(iter);
 	}//*/
 }
 
-void engine::clearScene(){
+void sceneContainer::clearScene(){
 }

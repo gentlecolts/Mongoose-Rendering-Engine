@@ -5,20 +5,20 @@
 #include "../../camera/ray.h"
 
 namespace MG{
-	class engine;
+	class sceneContainer;
 
 	class light{
 		/*TODO: file streaming/caching is probably wanted, but does this really need to be in the global object model?
 		also worth noting is future plan to read a more sophisticated file format via dictionaries or something, which will need more work
 		*/
 	protected:
-		engine *owner;
+		sceneContainer *owner;
 	public:
 		vec3d pos;
 		color c{1,1,1};
 
 		light(const light &o);
-		light(engine* e);
+		light(sceneContainer* sc);
 		virtual ~light();
 
 		virtual void getRays(const int n,ray* target) const=0;
