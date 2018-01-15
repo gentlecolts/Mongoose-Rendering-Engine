@@ -173,7 +173,7 @@ void demos::simpleScene(){
 
 	#else
 	//generate some objects
-	MG::pointcloud thing=pointbubble(&e,20000);
+	MG::pointcloud thing=pointbubble(&e,200000);
 	//MG::pointcloud thing=pointgyro(&e,2000);
 	printf("cloud made\n");
 

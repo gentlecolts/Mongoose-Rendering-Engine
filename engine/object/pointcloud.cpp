@@ -516,6 +516,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//printf("n: %i\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,dxn,dyn,dzn);
 	//printf("n: %i\t<xin,yin,zin>: <%u, %u, %u>\t<xout,yout,zout>: <%u, %u, %u>\t<dxn,dyn,dzn>: <%f, %f, %f>\n",n,xin,yin,zin,xout,yout,zout,dxn,dyn,dzn);
 	//gather list of all possible points
+
+	#define USE_LINEARR 1
+
+	#if USE_LINEARR
 	#define DYNAMIC_LINEARR 0
 	#if DYNAMIC_LINEARR
 	hashtype** linearr=new hashtype*[9*(n+1)];
@@ -523,6 +527,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	hashtype* linearr[9*(n+1)];
 	#endif
 	unsigned int linesize=0;
+	#endif
 
 	#if 0
 	int
@@ -565,7 +570,10 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	}
 	#else
 	auto x=xin,y=yin,z=zin;
+
+	#if USE_LINEARR
 	auto lineptr=linearr;
+	#endif
 
 	const auto sgn=[](const double& x){return (x>0)-(x<0);};
 	const int
@@ -580,12 +588,31 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//while(!(x==xout && y==yout && z==zout) && (x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim) && linesize<9*(n+1)){//if n==0, then this will never loop
 		//printf("(%iu %iu %iu) out of (%iu %iu %iu) moving in dir <%f,%f,%f>\n",x,y,z,hashbox.xdim,hashbox.ydim,hashbox.zdim,rin_loc.dir.x,rin_loc.dir.y,rin_loc.dir.z);
 
+		#if USE_LINEARR
 		//add current box
 		*lineptr=&fetch(hashbox,x,y,z);
 		//this if should not be necessary, need to correctly calculate xin/yin/zin
 		//if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
 			++lineptr;
 		//}
+		#else
+		hashtype* plist=&fetch(hashbox,x,y,z);
+		std::for_each(plist->begin(),plist->end(),[&](int pos){
+			interholder itest;
+			double t0,t1;
+			itest.index=pos;
+			//note, t0 is always less than t1
+			itest.hit=intersect(hashbox.pointarr[pos],r_in,t0,t1);
+			itest.t=(t0>=0)?t0:t1;
+			//itest.t=((!itest.hit) | (itest.t<0))?INFINITY:itest.t;
+			itest.t=itest.hit?itest.t:INFINITY;
+
+			//if hit is true, then test_t must be positive, close_t starts out at INFINITY
+			//closest=(itest.hit & (itest.t<closest.t))?itest:closest;
+			//closest=std::min(closest,itest);
+			closest=std::min(itest,closest);
+		});
+		#endif
 
 		double ts[3]={
 			(x+px-rin_loc.from.x)/rin_loc.dir.x,
@@ -614,7 +641,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		z+=(mini==2)*sz;
 		//*/
 	}
-
+	#if USE_LINEARR
 	//if(lineptr-linearr!=linesize){printf("nope\n");}
 	linesize=lineptr-linearr;
 
@@ -625,11 +652,14 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	//add the end node
 	linearr[linesize]=&fetch(hashbox,xout,yout,zout);
 	++linesize;
+	//*/
+	#endif
 	#endif
 
 	//printf("%i\n",linesize);
 
-	int counter=0;
+
+	#if USE_LINEARR
 	#define NO_BREAK 1
 	#if NO_BREAK
 	std::for_each(linearr,linearr+linesize,[&](hashtype *plist){
@@ -666,6 +696,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 	#if DYNAMIC_LINEARR
 	delete[] linearr;
+	#endif
 	#endif
 
 	//set the returns up, remember to stay in world coords and not the cord space of this object
