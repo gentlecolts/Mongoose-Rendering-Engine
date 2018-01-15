@@ -381,7 +381,7 @@ struct safecompare{
 
 	numcomp(>)
 	numcomp(<)
-	numcomp(==)
+	numcomp(==)//this is incorrect, does not need to correct for negatives
 	numcomp(>=)
 	numcomp(<=)
 
@@ -391,7 +391,7 @@ struct safecompare{
 	#define classcomp(op) bool operator op(const safecompare &x) const{return ((denom<0)^(x.denom<0))^(num*x.denom op x.num*denom);}
 	classcomp(>)
 	classcomp(<)
-	classcomp(==)
+	classcomp(==)//this is incorrect, does not need to correct for negatives
 	classcomp(>=)
 	classcomp(<=)
 
@@ -399,6 +399,37 @@ struct safecompare{
 
 	operator double() const{return num/denom;}
 };
+
+inline void getTs(const vec3d& rfrom,const vec3d& rdir,const vec3d& boxmin,const vec3d& boxmax,double& t0,double& t1){
+	vec3d tmin,tmax;
+	//vec3<safecompare> tmin,tmax;
+
+	///// TODO: fix the missing pixel problem (again...check on r2) /////
+	//note: this seems to occur when both numerator and denominator below are zero, causing a nan
+
+	tmin=(boxmax-rfrom)/rdir;
+	tmax=(boxmin-rfrom)/rdir;
+
+	//tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(-rin_loc.from.x)/rin_loc.dir.x;
+	//tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(-rin_loc.from.y)/rin_loc.dir.y;
+	//tmin.z=(hashbox.zdim-rin_loc.from.z)/rin_loc.dir.z; tmax.z=(-rin_loc.from.z)/rin_loc.dir.z;
+
+	/*for some reason this doesnt quite fix it
+	for(int i=0;i<3;i++){
+		if(std::isnan(tmin.xyz[i])){tmin.xyz[i]=INFINITY;}
+		if(std::isnan(tmax.xyz[i])){tmax.xyz[i]=INFINITY;}
+	}//*/
+
+	//TODO: better approach to this?
+	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
+	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
+	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
+
+	//the ray enters the cube at the last of the possible entry planes
+	t0=std::max(std::max(tmin.x,tmin.y),tmin.z);
+	//the ray exits the cube at the first of the possible exit planes
+	t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+}
 
 bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	/*testcode, rays always hit and out ray is red, if screen is red then all other code works
@@ -426,32 +457,8 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 	rin_loc.dir.z*=hashbox.zdim;
 
 	//find the t start and stop where this ray intersects the hashbox (hashbox is [0,hashbox.dim] in x,y,z)
-	vec3d tmin,tmax;
-	//vec3<safecompare> tmin,tmax;
-
-	///// TODO: fix the missing pixel problem (again...check on v2) /////
-	//note: this seems to occur when both numerator and denominator below are zero, causing a nan
-
-	tmin.x=(hashbox.xdim-rin_loc.from.x)/rin_loc.dir.x; tmax.x=(-rin_loc.from.x)/rin_loc.dir.x;
-	tmin.y=(hashbox.ydim-rin_loc.from.y)/rin_loc.dir.y; tmax.y=(-rin_loc.from.y)/rin_loc.dir.y;
-	tmin.z=(hashbox.zdim-rin_loc.from.z)/rin_loc.dir.z; tmax.z=(-rin_loc.from.z)/rin_loc.dir.z;
-
-	/*for some reason this doesnt quite fix it
-	for(int i=0;i<3;i++){
-		if(std::isnan(tmin.xyz[i])){tmin.xyz[i]=INFINITY;}
-		if(std::isnan(tmax.xyz[i])){tmax.xyz[i]=INFINITY;}
-	}//*/
-
-	//TODO: better approach to this?
-	if(tmin.x>tmax.x){std::swap(tmin.x,tmax.x);}
-	if(tmin.y>tmax.y){std::swap(tmin.y,tmax.y);}
-	if(tmin.z>tmax.z){std::swap(tmin.z,tmax.z);}
-
-	const double
-		//the ray enters the cube at the last of the possible entry planes
-		t0=std::max(std::max(tmin.x,tmin.y),tmin.z),
-		//the ray exits the cube at the first of the possible exit planes
-		t1=std::min(std::min(tmax.x,tmax.y),tmax.z);
+	double t0,t1;
+	getTs(rin_loc.from,rin_loc.dir,vec3d(hashbox.xdim,hashbox.ydim,hashbox.zdim),vec3d(0,0,0),t0,t1);
 
 	if((t0>t1)|(t1<0)){return r_out.hit=false;}
 
@@ -464,6 +471,9 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 
 	return r_out.hit=true;
 	//*/
+
+	//with bounding box test done, get the "real" intersection
+	//getTs(rin_loc.from,rin_loc.dir,vec3d(hashbox.xdim-1,hashbox.ydim-1,hashbox.zdim-1),vec3d(0,0,0),t0,t1);
 
 	const auto
 		in=rin_loc.dir*t0+rin_loc.from,
@@ -478,7 +488,7 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		yout=out.y,
 		zout=out.z;
 
-	/*this doesnt seem like a good idea, looks "ok" for now but i'm concerned about the accuracy of doing this
+	//*this doesnt seem like a good idea, looks "ok" for now but i'm concerned about the accuracy of doing this
 	if(xin==hashbox.xdim){--xin;}
 	if(yin==hashbox.ydim){--yin;}
 	if(zin==hashbox.zdim){--zin;}
@@ -573,9 +583,9 @@ bool pointcloud::bounceRay(const ray &r_in,ray &r_out,double &d){
 		//add current box
 		*lineptr=&fetch(hashbox,x,y,z);
 		//this if should not be necessary, need to correctly calculate xin/yin/zin
-		if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
+		//if(x<hashbox.xdim && y<hashbox.ydim && z<hashbox.zdim){
 			++lineptr;
-		}
+		//}
 
 		double ts[3]={
 			(x+px-rin_loc.from.x)/rin_loc.dir.x,

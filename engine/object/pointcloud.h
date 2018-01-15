@@ -65,7 +65,8 @@ namespace MG{
 	public:
 		/*
 		TODO: major revision of this once more robust file reading is implemented
-		instead of reciving a vector array and lenght int, this will likely be passed a more sophisticated data type
+		instead of receiving a vector array and length int, this will likely be passed a more sophisticated data type
+		TODO: need to re-work the relationship between the hashbox and the object.  the hashbox should map all points inside itself to [-1,1] (consider whether or not to use real coords of points/ray for intersection test though)
 		*/
         pointcloud(sceneContainer* e,point points[],const int numpoints,const int density=100,const int sizeAssert=0);
         pointcloud(sceneContainer* e,metadata *meta,point points[],const int numpoints,const int density=100,const int sizeAssert=0);
